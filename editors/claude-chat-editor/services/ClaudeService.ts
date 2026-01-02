@@ -57,6 +57,7 @@ export class ClaudeService {
     try {
       // Convert our message format to Anthropic's format
       const anthropicMessages = this.formatMessagesForClaude(
+        agent,
         messages,
         userMessage,
       );
@@ -153,10 +154,24 @@ export class ClaudeService {
    * Converts our internal message format to Anthropic's format
    */
   private formatMessagesForClaude(
+    agent: Agent,
     previousMessages: Message[],
     userMessage: string,
   ): Anthropic.Messages.MessageParam[] {
     const anthropicMessages: Anthropic.Messages.MessageParam[] = [];
+
+    // Add initial prompt as the first system-like message if it exists
+    if (agent.initialPrompt) {
+      anthropicMessages.push({
+        role: "user",
+        content: agent.initialPrompt,
+      });
+      anthropicMessages.push({
+        role: "assistant",
+        content:
+          "Understood. I will follow these instructions for our conversation.",
+      });
+    }
 
     // Add previous messages
     for (const message of previousMessages) {

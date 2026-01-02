@@ -118,6 +118,7 @@ describe("Messages Operations", () => {
         name: "Claude Assistant",
         model: "claude-3",
         apiKey: "test-key",
+        initialPrompt: "You are a helpful assistant",
       };
       document = reducer(document, addAgent(agentInput));
       const agentId = document.state.global.agents[0].id;
@@ -147,6 +148,7 @@ describe("Messages Operations", () => {
         name: "Assistant",
         model: "gpt-4",
         apiKey: "api-key",
+        initialPrompt: "Be helpful and concise",
       };
       document = reducer(document, addAgent(agentInput));
       const agentId = document.state.global.agents[0].id;
@@ -196,6 +198,7 @@ describe("Messages Operations", () => {
           name: "Claude",
           model: "claude-3",
           apiKey: "key1",
+          initialPrompt: "Be creative",
         }),
       );
       const claudeId = document.state.global.agents[0].id;
@@ -207,6 +210,7 @@ describe("Messages Operations", () => {
           name: "GPT",
           model: "gpt-4",
           apiKey: "key2",
+          initialPrompt: "Be analytical",
         }),
       );
       const gptId = document.state.global.agents[1].id;

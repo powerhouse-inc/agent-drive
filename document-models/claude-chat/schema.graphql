@@ -19,6 +19,7 @@ type ClaudeChatState {
   username: String!
   agents: [Agent!]!
   messages: [Message!]!
+  selectedAgent: OID
 }
 
 type Message {
@@ -33,6 +34,7 @@ type Agent {
   name: String!
   apiKey: String!
   model: String!
+  initialPrompt: String
 }
 
 
@@ -44,6 +46,7 @@ input AddAgentInput {
   name: String!
   apiKey: String!
   model: String!
+  initialPrompt: String
 }
 
 # messages
@@ -63,4 +66,8 @@ input AddAgentMessageInput {
 
 input SetUsernameInput {
   username: String!
+}
+
+input SetSelectedAgentInput {
+  agentId: OID
 }

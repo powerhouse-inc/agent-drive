@@ -25,9 +25,9 @@ export const documentModel: DocumentModelGlobalState = {
               id: "db81ddf7-8fc3-4d70-96e5-3835e7ede604",
               name: "ADD_AGENT",
               reducer:
-                "const newAgent = {\n  id: action.input.id,\n  name: action.input.name,\n  model: action.input.model,\n  apiKey: action.input.apiKey,\n};\nstate.agents.push(newAgent);",
+                "const newAgent = {\n  id: action.input.id,\n  name: action.input.name,\n  model: action.input.model,\n  apiKey: action.input.apiKey,\n  initialPrompt: action.input.initialPrompt || null,\n};\nstate.agents.push(newAgent);",
               schema:
-                "input AddAgentInput {\n  id: OID!\n  name: String!\n  apiKey: String!\n  model: String!\n}",
+                "input AddAgentInput {\n  id: OID!\n  name: String!\n  apiKey: String!\n  model: String!\n  initialPrompt: String\n}",
               scope: "global",
               template: "",
             },
@@ -80,6 +80,19 @@ export const documentModel: DocumentModelGlobalState = {
               scope: "global",
               template: "",
             },
+            {
+              description:
+                "Sets the currently selected agent for the chat interface",
+              errors: [],
+              examples: [],
+              id: "f4c8b2a1-3e5d-42a8-9f1c-8d7e6b9a0c3f",
+              name: "SET_SELECTED_AGENT",
+              reducer: "state.selectedAgent = action.input.agentId || null;",
+              schema: "input SetSelectedAgentInput {\n  agentId: OID\n}",
+              scope: "global",
+              template:
+                "Sets the currently selected agent for the chat interface",
+            },
           ],
         },
       ],
@@ -87,9 +100,9 @@ export const documentModel: DocumentModelGlobalState = {
         global: {
           examples: [],
           initialValue:
-            '"{\\n  \\"username\\": \\"\\",\\n  \\"agents\\": [],\\n  \\"messages\\": []\\n}"',
+            '"{\\n  \\"username\\": \\"\\",\\n  \\"agents\\": [],\\n  \\"messages\\": [],\\n  \\"selectedAgent\\": null\\n}"',
           schema:
-            'type ClaudeChatState {\n  username: String!\n  agents: [Agent!]!\n  messages: [Message!]!\n}\n\ntype Message {\n  id: OID!\n  "Agent ID or null in case of the user"\n  agent: OID\n  content: String!\n}\n\ntype Agent {\n  id: OID!\n  name: String!\n  apiKey: String!\n  model: String!\n}',
+            'type ClaudeChatState {\n  username: String!\n  agents: [Agent!]!\n  messages: [Message!]!\n  selectedAgent: OID\n}\n\ntype Message {\n  id: OID!\n  "Agent ID or null in case of the user"\n  agent: OID\n  content: String!\n}\n\ntype Agent {\n  id: OID!\n  name: String!\n  apiKey: String!\n  model: String!\n  initialPrompt: String\n}',
         },
         local: {
           examples: [],

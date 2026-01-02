@@ -14,6 +14,7 @@ import {
   AddUserMessageInputSchema,
   AddAgentMessageInputSchema,
   SetUsernameInputSchema,
+  SetSelectedAgentInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<ClaudeChatPHState> = (
@@ -56,6 +57,15 @@ const stateReducer: StateReducer<ClaudeChatPHState> = (
     case "SET_USERNAME":
       SetUsernameInputSchema().parse(action.input);
       claudeChatUserOperations.setUsernameOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+      break;
+
+    case "SET_SELECTED_AGENT":
+      SetSelectedAgentInputSchema().parse(action.input);
+      claudeChatUserOperations.setSelectedAgentOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

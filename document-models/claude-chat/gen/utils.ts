@@ -21,6 +21,7 @@ export const initialGlobalState: ClaudeChatGlobalState = {
   username: "",
   agents: [],
   messages: [],
+  selectedAgent: null,
 };
 export const initialLocalState: ClaudeChatLocalState = {};
 

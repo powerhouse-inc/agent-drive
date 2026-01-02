@@ -59,6 +59,7 @@ export type Scalars = {
 export type AddAgentInput = {
   apiKey: Scalars["String"]["input"];
   id: Scalars["OID"]["input"];
+  initialPrompt?: InputMaybe<Scalars["String"]["input"]>;
   model: Scalars["String"]["input"];
   name: Scalars["String"]["input"];
 };
@@ -77,6 +78,7 @@ export type AddUserMessageInput = {
 export type Agent = {
   apiKey: Scalars["String"]["output"];
   id: Scalars["OID"]["output"];
+  initialPrompt: Maybe<Scalars["String"]["output"]>;
   model: Scalars["String"]["output"];
   name: Scalars["String"]["output"];
 };
@@ -84,6 +86,7 @@ export type Agent = {
 export type ClaudeChatState = {
   agents: Array<Agent>;
   messages: Array<Message>;
+  selectedAgent: Maybe<Scalars["OID"]["output"]>;
   username: Scalars["String"]["output"];
 };
 
@@ -92,6 +95,10 @@ export type Message = {
   agent: Maybe<Scalars["OID"]["output"]>;
   content: Scalars["String"]["output"];
   id: Scalars["OID"]["output"];
+};
+
+export type SetSelectedAgentInput = {
+  agentId?: InputMaybe<Scalars["OID"]["input"]>;
 };
 
 export type SetUsernameInput = {

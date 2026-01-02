@@ -7,6 +7,7 @@ export const claudeChatAgentsOperations: ClaudeChatAgentsOperations = {
       name: action.input.name,
       model: action.input.model,
       apiKey: action.input.apiKey,
+      initialPrompt: action.input.initialPrompt || null,
     };
     state.agents.push(newAgent);
   },

@@ -5,6 +5,7 @@ import { useSelectedClaudeChatDocument } from "claude-demo/document-models/claud
 import {
   addUserMessage,
   addAgentMessage,
+  setSelectedAgent,
 } from "claude-demo/document-models/claude-chat";
 import { MessageItem } from "./MessageItem.js";
 import { createClaudeService } from "../services/ClaudeService.js";
@@ -12,7 +13,6 @@ import { createClaudeService } from "../services/ClaudeService.js";
 export function ChatInterface() {
   const [document, dispatch] = useSelectedClaudeChatDocument();
   const [inputMessage, setInputMessage] = useState("");
-  const [selectedAgentId, setSelectedAgentId] = useState<string>("");
   const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -23,7 +23,7 @@ export function ChatInterface() {
 
   if (!document) return null;
 
-  const { messages, agents, username } = document.state.global;
+  const { messages, agents, username, selectedAgent } = document.state.global;
 
   const handleSendMessage: FormEventHandler<HTMLFormElement> = (e) => {
     void (async () => {
@@ -44,16 +44,16 @@ export function ChatInterface() {
       );
 
       // If an agent is selected, get real Claude response
-      if (selectedAgentId) {
-        const selectedAgent = agents.find((a) => a.id === selectedAgentId);
+      if (selectedAgent) {
+        const selectedAgentObj = agents.find((a) => a.id === selectedAgent);
 
-        if (selectedAgent) {
+        if (selectedAgentObj) {
           setIsLoadingResponse(true);
 
           try {
-            const claudeService = createClaudeService(selectedAgent);
+            const claudeService = createClaudeService(selectedAgentObj);
             const response = await claudeService.sendMessage(
-              selectedAgent,
+              selectedAgentObj,
               messages,
               userMessageContent,
             );
@@ -61,7 +61,7 @@ export function ChatInterface() {
             dispatch(
               addAgentMessage({
                 id: generateId(),
-                agent: selectedAgentId,
+                agent: selectedAgent,
                 content: response.content,
               }),
             );
@@ -77,7 +77,7 @@ export function ChatInterface() {
             dispatch(
               addAgentMessage({
                 id: generateId(),
-                agent: selectedAgentId,
+                agent: selectedAgent,
                 content: `❌ Error: ${errorMessage}`,
               }),
             );
@@ -90,14 +90,16 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col h-[600px]">
+    <div className="bg-white rounded-b-lg shadow-sm border-l border-r border-b border-gray-200 flex flex-col h-full">
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Chat</h3>
           {agents.length > 0 && (
             <select
-              value={selectedAgentId}
-              onChange={(e) => setSelectedAgentId(e.target.value)}
+              value={selectedAgent || ""}
+              onChange={(e) =>
+                dispatch(setSelectedAgent({ agentId: e.target.value || null }))
+              }
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">No agent (user only)</option>
@@ -135,7 +137,7 @@ export function ChatInterface() {
               <div className="flex justify-start mb-4">
                 <div className="max-w-[70%] rounded-lg p-4 bg-gray-100 text-gray-900">
                   <div className="text-xs font-medium mb-1 text-gray-600">
-                    {agents.find((a) => a.id === selectedAgentId)?.name ||
+                    {agents.find((a) => a.id === selectedAgent)?.name ||
                       "Agent"}
                   </div>
                   <div className="flex items-center space-x-2">
@@ -177,7 +179,7 @@ export function ChatInterface() {
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder={
-              selectedAgentId
+              selectedAgent
                 ? isLoadingResponse
                   ? "Waiting for response..."
                   : "Type a message..."
@@ -194,11 +196,10 @@ export function ChatInterface() {
             {isLoadingResponse ? "..." : "Send"}
           </button>
         </div>
-        {selectedAgentId && !isLoadingResponse && (
+        {selectedAgent && !isLoadingResponse && (
           <p className="text-xs text-gray-500 mt-2">
             Messages will be sent to{" "}
-            {agents.find((a) => a.id === selectedAgentId)?.name} using Claude
-            API
+            {agents.find((a) => a.id === selectedAgent)?.name} using Claude API
           </p>
         )}
       </form>

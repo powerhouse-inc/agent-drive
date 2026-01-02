@@ -1,7 +1,10 @@
 import { createAction } from "document-model/core";
-import { SetUsernameInputSchema } from "../schema/zod.js";
-import type { SetUsernameInput } from "../types.js";
-import type { SetUsernameAction } from "./actions.js";
+import {
+  SetUsernameInputSchema,
+  SetSelectedAgentInputSchema,
+} from "../schema/zod.js";
+import type { SetUsernameInput, SetSelectedAgentInput } from "../types.js";
+import type { SetUsernameAction, SetSelectedAgentAction } from "./actions.js";
 
 export const setUsername = (input: SetUsernameInput) =>
   createAction<SetUsernameAction>(
@@ -9,5 +12,14 @@ export const setUsername = (input: SetUsernameInput) =>
     { ...input },
     undefined,
     SetUsernameInputSchema,
+    "global",
+  );
+
+export const setSelectedAgent = (input: SetSelectedAgentInput) =>
+  createAction<SetSelectedAgentAction>(
+    "SET_SELECTED_AGENT",
+    { ...input },
+    undefined,
+    SetSelectedAgentInputSchema,
     "global",
   );

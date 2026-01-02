@@ -6,6 +6,7 @@ import type {
   Agent,
   ClaudeChatState,
   Message,
+  SetSelectedAgentInput,
   SetUsernameInput,
 } from "./types.js";
 
@@ -26,6 +27,7 @@ export function AddAgentInputSchema(): z.ZodObject<Properties<AddAgentInput>> {
   return z.object({
     apiKey: z.string(),
     id: z.string(),
+    initialPrompt: z.string().nullish(),
     model: z.string(),
     name: z.string(),
   });
@@ -55,6 +57,7 @@ export function AgentSchema(): z.ZodObject<Properties<Agent>> {
     __typename: z.literal("Agent").optional(),
     apiKey: z.string(),
     id: z.string(),
+    initialPrompt: z.string().nullable(),
     model: z.string(),
     name: z.string(),
   });
@@ -67,6 +70,7 @@ export function ClaudeChatStateSchema(): z.ZodObject<
     __typename: z.literal("ClaudeChatState").optional(),
     agents: z.array(AgentSchema()),
     messages: z.array(MessageSchema()),
+    selectedAgent: z.string().nullable(),
     username: z.string(),
   });
 }
@@ -77,6 +81,14 @@ export function MessageSchema(): z.ZodObject<Properties<Message>> {
     agent: z.string().nullable(),
     content: z.string(),
     id: z.string(),
+  });
+}
+
+export function SetSelectedAgentInputSchema(): z.ZodObject<
+  Properties<SetSelectedAgentInput>
+> {
+  return z.object({
+    agentId: z.string().nullish(),
   });
 }
 

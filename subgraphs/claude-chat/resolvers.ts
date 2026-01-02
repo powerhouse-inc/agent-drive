@@ -12,6 +12,7 @@ import type {
   AddUserMessageInput,
   AddAgentMessageInput,
   SetUsernameInput,
+  SetSelectedAgentInput,
 } from "claude-demo/document-models/claude-chat";
 
 export const getResolvers = (
@@ -184,6 +185,30 @@ export const getResolvers = (
 
         if (result.status !== "SUCCESS") {
           throw new Error(result.error?.message ?? "Failed to setUsername");
+        }
+
+        return true;
+      },
+
+      ClaudeChat_setSelectedAgent: async (
+        _: unknown,
+        args: { docId: string; input: SetSelectedAgentInput },
+      ) => {
+        const { docId, input } = args;
+        const doc = await reactor.getDocument<ClaudeChatDocument>(docId);
+        if (!doc) {
+          throw new Error("Document not found");
+        }
+
+        const result = await reactor.addAction(
+          docId,
+          actions.setSelectedAgent(input),
+        );
+
+        if (result.status !== "SUCCESS") {
+          throw new Error(
+            result.error?.message ?? "Failed to setSelectedAgent",
+          );
         }
 
         return true;

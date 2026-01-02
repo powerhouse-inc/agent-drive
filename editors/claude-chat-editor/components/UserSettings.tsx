@@ -23,7 +23,7 @@ export function UserSettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-b-lg shadow-sm border-l border-r border-b border-gray-200 p-4 h-full overflow-y-auto">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
         User Settings
       </h3>

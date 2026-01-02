@@ -16,6 +16,7 @@ export function defaultGlobalState(): ClaudeChatGlobalState {
     username: "",
     agents: [],
     messages: [],
+    selectedAgent: null,
   };
 }
 

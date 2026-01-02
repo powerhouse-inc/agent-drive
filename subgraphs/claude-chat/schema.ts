@@ -40,6 +40,11 @@ export const schema: DocumentNode = gql`
       docId: PHID
       input: ClaudeChat_SetUsernameInput
     ): Int
+    ClaudeChat_setSelectedAgent(
+      driveId: String
+      docId: PHID
+      input: ClaudeChat_SetSelectedAgentInput
+    ): Int
   }
 
   """
@@ -50,6 +55,7 @@ export const schema: DocumentNode = gql`
     name: String!
     apiKey: String!
     model: String!
+    initialPrompt: String
   }
 
   """
@@ -70,5 +76,8 @@ export const schema: DocumentNode = gql`
   """
   input ClaudeChat_SetUsernameInput {
     username: String!
+  }
+  input ClaudeChat_SetSelectedAgentInput {
+    agentId: OID
   }
 `;
