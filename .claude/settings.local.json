@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run tsc:*)",
+      "Bash(npm run lint:*)",
+      "mcp__reactor-mcp__getDocumentModelSchema",
+      "mcp__reactor-mcp__getDrives",
+      "mcp__reactor-mcp__getDocuments",
+      "mcp__reactor-mcp__getDocument",
+      "mcp__reactor-mcp__addActions",
+      "Bash(npm test:*)"
+    ],
+    "deny": [
+      "Write(./document-models/*/gen/**)",
+      "Write(./.ph/**)",
+      "Edit(./document-models/*/gen/**)",
+      "Edit(./.ph/**)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "reactor-mcp"
+  ]
+}

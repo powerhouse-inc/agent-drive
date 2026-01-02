@@ -1,0 +1,27 @@
+{
+    "name": "Claude Chat",
+    "description": "This package contains document models and editors for collaborative workflows with Claude AI.",
+    "category": "Productivity",
+    "publisher": {
+        "name": "",
+        "url": ""
+    },
+    "documentModels": [
+        {
+            "id": "powerhouse/claude-chat",
+            "name": "ClaudeChat"
+        }
+    ],
+    "editors": [
+        {
+            "id": "claude-chat-editor",
+            "name": "Claude Chat Editor",
+            "documentTypes": [
+                "powerhouse/claude-chat"
+            ]
+        }
+    ],
+    "apps": [],
+    "subgraphs": [],
+    "importScripts": []
+}
