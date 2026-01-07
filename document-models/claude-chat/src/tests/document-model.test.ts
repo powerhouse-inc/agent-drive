@@ -17,7 +17,7 @@ import {
   assertIsClaudeChatDocument,
   isClaudeChatState,
   assertIsClaudeChatState,
-} from "claude-demo/document-models/claude-chat";
+} from "powerhouse-agent/document-models/claude-chat";
 import { ZodError } from "zod";
 
 describe("ClaudeChat Document Model", () => {

@@ -12,7 +12,7 @@ import {
   isClaudeChatDocument,
   addAgent,
   AddAgentInputSchema,
-} from "claude-demo/document-models/claude-chat";
+} from "powerhouse-agent/document-models/claude-chat";
 
 describe("Agents Operations", () => {
   it("should handle addAgent operation", () => {

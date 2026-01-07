@@ -4,7 +4,7 @@ import { setName } from "document-model";
 import {
   actions,
   claudeChatDocumentType,
-} from "claude-demo/document-models/claude-chat";
+} from "powerhouse-agent/document-models/claude-chat";
 
 import type {
   ClaudeChatDocument,
@@ -13,7 +13,7 @@ import type {
   AddAgentMessageInput,
   SetUsernameInput,
   SetSelectedAgentInput,
-} from "claude-demo/document-models/claude-chat";
+} from "powerhouse-agent/document-models/claude-chat";
 
 export const getResolvers = (
   subgraph: BaseSubgraph,

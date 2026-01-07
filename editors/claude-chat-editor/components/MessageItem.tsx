@@ -1,4 +1,4 @@
-import type { Message, Agent } from "claude-demo/document-models/claude-chat";
+import type { Message, Agent } from "powerhouse-agent/document-models/claude-chat";
 
 interface MessageItemProps {
   message: Message;

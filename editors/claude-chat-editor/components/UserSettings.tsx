@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEventHandler } from "react";
-import { useSelectedClaudeChatDocument } from "claude-demo/document-models/claude-chat";
-import { setUsername } from "claude-demo/document-models/claude-chat";
+import { useSelectedClaudeChatDocument } from "powerhouse-agent/document-models/claude-chat";
+import { setUsername } from "powerhouse-agent/document-models/claude-chat";
 
 export function UserSettings() {
   const [document, dispatch] = useSelectedClaudeChatDocument();
