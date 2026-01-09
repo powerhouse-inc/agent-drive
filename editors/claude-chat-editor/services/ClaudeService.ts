@@ -1,5 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Agent, Message } from "powerhouse-agent/document-models/claude-chat";
+import type {
+  Agent,
+  Message,
+} from "powerhouse-agent/document-models/claude-chat";
 
 export interface ClaudeResponse {
   content: string;
