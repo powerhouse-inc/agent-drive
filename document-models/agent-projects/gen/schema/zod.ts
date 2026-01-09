@@ -46,11 +46,8 @@ export function AddLogEntryInputSchema(): z.ZodObject<
   Properties<AddLogEntryInput>
 > {
   return z.object({
-    id: z.string(),
-    level: z.string(),
     message: z.string(),
     projectId: z.string(),
-    source: z.string().nullish(),
     timestamp: z.string().datetime(),
   });
 }
@@ -94,7 +91,6 @@ export function DeleteProjectInputSchema(): z.ZodObject<
 export function LogEntrySchema(): z.ZodObject<Properties<LogEntry>> {
   return z.object({
     __typename: z.literal("LogEntry").optional(),
-    id: z.string(),
     message: z.string(),
     timestamp: z.string().datetime(),
   });

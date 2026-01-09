@@ -224,7 +224,7 @@ export const documentModel: DocumentModelGlobalState = {
               reducer:
                 "const project = state.projects.find(p => p.id === action.input.projectId);\nif (!project) {\n  throw new ProjectNotFoundError(`Project with ID ${action.input.projectId} not found`);\n}\nconst logEntry = {\n  id: action.input.id,\n  timestamp: action.input.timestamp,\n  message: action.input.message\n};\nproject.logs.push(logEntry);",
               schema:
-                "input AddLogEntryInput {\n  projectId: OID!\n  id: OID!\n  timestamp: DateTime!\n  level: String!\n  message: String!\n  source: String\n}",
+                "input AddLogEntryInput {\n  projectId: OID!\n  timestamp: DateTime!\n  message: String!\n}",
               scope: "global",
               template: "Append a log entry",
             },
@@ -256,7 +256,7 @@ export const documentModel: DocumentModelGlobalState = {
           examples: [],
           initialValue: '"{\\n  \\"projects\\": []\\n}"',
           schema:
-            "type AgentProjectsState {\n  projects: [Project!]!\n}\n\ntype Project {\n  id: OID!\n  name: String!\n  currentStatus: CurrentStatus!\n  targetedStatus: TargetedStatus!\n  configuration: ProjectConfig!\n  path: String\n  runtime: RuntimeInfo\n  logs: [LogEntry!]!\n}\n\nenum TargetedStatus {\n  STOPPED\n  RUNNING\n  DELETED\n}\n\nenum CurrentStatus {\n  MISSING\n  INITIALIZING\n  STOPPED\n  RUNNING\n  DELETED\n}\n\ntype ProjectConfig {\n  connectPort: Int!\n  switchboardPort: Int!\n  startupTimeout: Int!\n  autoStart: Boolean!\n}\n\ntype RuntimeInfo {\n  pid: Int!\n  startedAt: DateTime!\n  driveUrl: String\n  connectPort: Int!\n  switchboardPort: Int!\n}\n\ntype LogEntry {\n  id: OID!\n  timestamp: DateTime!\n  message: String!\n}",
+            "type AgentProjectsState {\n  projects: [Project!]!\n}\n\ntype Project {\n  id: OID!\n  name: String!\n  currentStatus: CurrentStatus!\n  targetedStatus: TargetedStatus!\n  configuration: ProjectConfig!\n  path: String\n  runtime: RuntimeInfo\n  logs: [LogEntry!]!\n}\n\nenum TargetedStatus {\n  STOPPED\n  RUNNING\n  DELETED\n}\n\nenum CurrentStatus {\n  MISSING\n  INITIALIZING\n  STOPPED\n  RUNNING\n  DELETED\n}\n\ntype ProjectConfig {\n  connectPort: Int!\n  switchboardPort: Int!\n  startupTimeout: Int!\n  autoStart: Boolean!\n}\n\ntype RuntimeInfo {\n  pid: Int!\n  startedAt: DateTime!\n  driveUrl: String\n  connectPort: Int!\n  switchboardPort: Int!\n}\n\ntype LogEntry {\n  timestamp: DateTime!\n  message: String!\n}",
         },
         local: {
           examples: [],

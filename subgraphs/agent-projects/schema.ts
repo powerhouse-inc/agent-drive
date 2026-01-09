@@ -134,11 +134,8 @@ export const schema: DocumentNode = gql`
   """
   input AgentProjects_AddLogEntryInput {
     projectId: OID!
-    id: OID!
     timestamp: DateTime!
-    level: String!
     message: String!
-    source: String
   }
   input AgentProjects_ClearProjectLogsInput {
     projectId: OID!

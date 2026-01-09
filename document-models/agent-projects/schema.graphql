@@ -60,7 +60,6 @@ type RuntimeInfo {
 }
 
 type LogEntry {
-  id: OID!
   timestamp: DateTime!
   message: String!
 }
@@ -130,11 +129,8 @@ input UpdateRuntimeInfoInput {
 
 input AddLogEntryInput {
   projectId: OID!
-  id: OID!
   timestamp: DateTime!
-  level: String!
   message: String!
-  source: String
 }
 
 input ClearProjectLogsInput {

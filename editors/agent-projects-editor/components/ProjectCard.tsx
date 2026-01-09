@@ -124,8 +124,8 @@ export function ProjectCard({
             Recent Logs ({project.logs.length})
           </h4>
           <div className="text-xs text-gray-600 max-h-20 overflow-y-auto">
-            {project.logs.slice(-3).map((log) => (
-              <div key={log.id} className="font-mono py-0.5">
+            {project.logs.slice(-3).map((log, index) => (
+              <div key={`${log.timestamp}-${index}`} className="font-mono py-0.5">
                 [{new Date(log.timestamp).toLocaleTimeString()}] {log.message}
               </div>
             ))}

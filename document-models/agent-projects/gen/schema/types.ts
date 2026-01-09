@@ -57,11 +57,8 @@ export type Scalars = {
 };
 
 export type AddLogEntryInput = {
-  id: Scalars["OID"]["input"];
-  level: Scalars["String"]["input"];
   message: Scalars["String"]["input"];
   projectId: Scalars["OID"]["input"];
-  source?: InputMaybe<Scalars["String"]["input"]>;
   timestamp: Scalars["DateTime"]["input"];
 };
 
@@ -92,7 +89,6 @@ export type DeleteProjectInput = {
 };
 
 export type LogEntry = {
-  id: Scalars["OID"]["output"];
   message: Scalars["String"]["output"];
   timestamp: Scalars["DateTime"]["output"];
 };

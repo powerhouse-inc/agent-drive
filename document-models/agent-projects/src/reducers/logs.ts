@@ -10,7 +10,6 @@ export const agentProjectsLogsOperations: AgentProjectsLogsOperations = {
       );
     }
     const logEntry = {
-      id: action.input.id,
       timestamp: action.input.timestamp,
       message: action.input.message,
     };
