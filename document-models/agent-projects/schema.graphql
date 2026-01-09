@@ -1,0 +1,142 @@
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar Amount_Percentage
+scalar EmailAddress
+scalar Date
+scalar DateTime
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+type AgentProjectsState {
+  projects: [Project!]!
+}
+
+type Project {
+  id: OID!
+  name: String!
+  currentStatus: CurrentStatus!
+  targetedStatus: TargetedStatus!
+  configuration: ProjectConfig!
+  path: String
+  runtime: RuntimeInfo
+  logs: [LogEntry!]!
+}
+
+enum TargetedStatus {
+  STOPPED
+  RUNNING
+  DELETED
+}
+
+enum CurrentStatus {
+  MISSING
+  INITIALIZING
+  STOPPED
+  RUNNING
+  DELETED
+}
+
+type ProjectConfig {
+  connectPort: Int!
+  switchboardPort: Int!
+  startupTimeout: Int!
+  autoStart: Boolean!
+}
+
+type RuntimeInfo {
+  pid: Int!
+  startedAt: DateTime!
+  driveUrl: String
+  connectPort: Int!
+  switchboardPort: Int!
+}
+
+type LogEntry {
+  id: OID!
+  timestamp: DateTime!
+  message: String!
+}
+
+
+
+# project-targeting
+
+input CreateProjectInput {
+  id: OID!
+  name: String!
+  connectPort: Int
+  switchboardPort: Int
+}
+
+input RunProjectInput {
+  projectId: OID!
+}
+
+input StopProjectInput {
+  projectId: OID!
+}
+
+input DeleteProjectInput {
+  projectId: OID!
+}
+
+# project-management
+
+input RegisterProjectInput {
+  id: OID!
+  name: String!
+  path: String!
+  connectPort: Int!
+  switchboardPort: Int!
+  startupTimeout: Int!
+  autoStart: Boolean!
+  currentStatus: CurrentStatus!
+}
+
+input UpdateProjectConfigInput {
+  projectId: OID!
+  connectPort: Int
+  switchboardPort: Int
+  startupTimeout: Int
+  autoStart: Boolean
+}
+
+input UpdateProjectStatusInput {
+  projectId: OID!
+  currentStatus: CurrentStatus!
+  path: String
+}
+
+# runtime-info
+
+input UpdateRuntimeInfoInput {
+  projectId: OID!
+  pid: Int!
+  startedAt: DateTime!
+  driveUrl: String
+  connectPort: Int!
+  switchboardPort: Int!
+}
+
+# logs
+
+input AddLogEntryInput {
+  projectId: OID!
+  id: OID!
+  timestamp: DateTime!
+  level: String!
+  message: String!
+  source: String
+}
+
+input ClearProjectLogsInput {
+  projectId: OID!
+}
