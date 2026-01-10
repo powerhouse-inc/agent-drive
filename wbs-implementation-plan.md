@@ -99,19 +99,20 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Verify**: Goal returns to correct status
 - [x] **Test**: Last blocked goal updates global flag (4 tests passing)
 
-### Phase 2: Hierarchy Module - REORDER Operation
+### Phase 2: Hierarchy Module - REORDER Operation ✅
 Critical for maintaining tree structure integrity.
 
-#### 2.1 REORDER Implementation
-- [ ] Find target goal by ID
-- [ ] Validate new parent is not a descendant (prevent cycles)
-- [ ] Remove goal from current position in parent's children
-- [ ] Update parentId field
-- [ ] Insert at new position (handle insertBefore)
-- [ ] **Verify**: No circular references created
-- [ ] **Verify**: Goal maintains all its children
-- [ ] **Test**: Move to root, move to sibling, move to different branch
-- [ ] **Test**: Attempt circular reference (should fail)
+#### 2.1 REORDER Implementation ✅
+- [x] Find target goal by ID
+- [x] Validate new parent is not a descendant (prevent cycles)
+- [x] Remove goal from current position
+- [x] Update parentId field
+- [x] Insert at new position (handle insertBefore)
+- [x] **Verify**: No circular references created
+- [x] **Verify**: Goal maintains all its children
+- [x] **Test**: Move to root, move to sibling, move to different branch
+- [x] **Test**: Attempt circular reference (should fail)
+- [x] **Test**: 6 tests passing
 
 ### Phase 3: Hierarchy Module - Dependencies
 Manage goal dependencies without creating cycles.
@@ -204,7 +205,7 @@ function isLeafGoal(goals: Goal[], id: string): boolean
 
 ### Module Completion
 - [x] Workflow Module (9/9 operations) ✅
-- [ ] Hierarchy REORDER (0/1 operations)  
+- [x] Hierarchy REORDER (1/1 operations) ✅
 - [ ] Hierarchy Dependencies (0/2 operations)
 - [ ] Documentation Module (0/8 operations)
 - [ ] Metadata Module (0/2 operations)
@@ -219,7 +220,8 @@ function isLeafGoal(goals: Goal[], id: string): boolean
 - All unit tests are passing when running `pnpm test` and they cover the new functionality
 - TypeScript compiles without typing errors
 - Linting rules are applied and passing
-- pnpm build shows no issues
+- `pnpm build` shows no issues
+- Planning document is updated with the latest status
 
 ### Comitting work
 Work will be committed for every step when the definition of done is satisfied before proceeding to the next step implementation.
