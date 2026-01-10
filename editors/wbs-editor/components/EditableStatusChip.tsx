@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 // @ts-ignore - react-dom types issue
 import * as ReactDOM from "react-dom";
-import StatusChip from "./StatusChip.js";
+import StatusChip, { STATUS_COLORS, STATUS_LABELS } from "./StatusChip.js";
 
 interface EditableStatusChipProps {
   row: {
@@ -33,8 +33,10 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   
-  const currentStatus = row.status;
+  const currentStatus = row.status as keyof typeof STATUS_COLORS;
   const currentOption = STATUS_OPTIONS.find(opt => opt.id === currentStatus) || STATUS_OPTIONS[0];
+  const currentColors = STATUS_COLORS[currentStatus] || STATUS_COLORS.TODO;
+  const currentLabel = STATUS_LABELS[currentStatus] || currentStatus;
 
   const handleOptionSelect = useCallback((selectedId: string) => {
     const selectedOption = STATUS_OPTIONS.find(opt => opt.id === selectedId);
@@ -157,7 +159,11 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
         >
           <button
             ref={buttonRef}
-            className="text-xs bg-white border border-gray-300 rounded px-2 py-0.5 min-w-[120px] text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium min-w-[120px] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all hover:brightness-110"
+            style={{
+              backgroundColor: currentColors.bg,
+              color: currentColors.text,
+            }}
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(!isOpen);
@@ -168,7 +174,11 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
             onKeyDown={handleKeyDown}
             autoFocus
           >
-            {currentOption.label}
+            <div
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: currentColors.dot }}
+            />
+            {currentLabel}
           </button>
         </div>
         
@@ -184,23 +194,32 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {STATUS_OPTIONS.map((option, index) => (
-              <div
-                key={option.id}
-                className={`block w-full text-left text-xs px-2 py-1 cursor-pointer ${
-                  option.id === currentOption.id ? 'bg-blue-50 font-semibold' : ''
-                } ${
-                  index === highlightedIndex ? 'bg-gray-100' : ''
-                } hover:bg-gray-100`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOptionSelect(option.id);
-                }}
-                onMouseEnter={() => setHighlightedIndex(index)}
-              >
-                {option.label}
-              </div>
-            ))}
+            {STATUS_OPTIONS.map((option, index) => {
+              const optionColors = STATUS_COLORS[option.id as keyof typeof STATUS_COLORS] || STATUS_COLORS.TODO;
+              return (
+                <div
+                  key={option.id}
+                  className={`flex items-center gap-1.5 w-full text-left text-xs px-3 py-2 cursor-pointer ${
+                    index === highlightedIndex ? 'brightness-110' : ''
+                  } hover:brightness-110 transition-all`}
+                  style={{
+                    backgroundColor: optionColors.bg,
+                    color: optionColors.text,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOptionSelect(option.id);
+                  }}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                >
+                  <div
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ backgroundColor: optionColors.dot }}
+                  />
+                  {option.label}
+                </div>
+              );
+            })}
           </div>,
           document.body
         )}

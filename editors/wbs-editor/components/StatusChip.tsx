@@ -6,7 +6,7 @@ interface StatusChipProps {
   };
 }
 
-const STATUS_COLORS = {
+export const STATUS_COLORS = {
   TODO: {
     bg: "#f3f4f6", // gray-100
     text: "#6b7280", // gray-500
@@ -44,7 +44,7 @@ const STATUS_COLORS = {
   },
 };
 
-const STATUS_LABELS = {
+export const STATUS_LABELS = {
   TODO: "To Do",
   IN_PROGRESS: "In Progress",
   IN_REVIEW: "In Review",
@@ -62,7 +62,7 @@ export default function StatusChip({ row }: StatusChipProps) {
   return (
     <div className="flex items-center justify-center h-full">
       <div
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium"
+        className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium min-w-[120px]"
         style={{
           backgroundColor: colors.bg,
           color: colors.text,
