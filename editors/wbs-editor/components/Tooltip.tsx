@@ -23,7 +23,7 @@ export function Tooltip({ children, content, className = "" }: TooltipProps) {
 
   return (
     <>
-      <div 
+      <div
         ref={triggerRef}
         className={`relative inline-block ${className}`}
         onMouseEnter={() => setIsVisible(true)}
@@ -32,9 +32,9 @@ export function Tooltip({ children, content, className = "" }: TooltipProps) {
         {children}
       </div>
       {isVisible && (
-        <div 
+        <div
           className="fixed transform -translate-x-1/2 -translate-y-full px-3 py-2 text-xs text-white bg-gray-900 rounded shadow-lg whitespace-nowrap animate-in fade-in-0 duration-150"
-          style={{ 
+          style={{
             zIndex: 9999,
             top: position.top,
             left: position.left,

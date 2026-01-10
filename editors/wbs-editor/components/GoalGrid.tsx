@@ -3,6 +3,7 @@ import { Grid, Willow } from "@svar-ui/react-grid";
 import "@svar-ui/react-grid/all.css";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { flatToTree, countGoalsInTree } from "../utils/treeTransform.js";
+import StatusChip from "./StatusChip.js";
 
 interface GoalGridProps {
   onGoalSelect?: (goalId: string) => void;
@@ -31,7 +32,8 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
       {
         id: "status",
         header: "Status",
-        width: 120,
+        width: 140,
+        cell: StatusChip,
       },
       {
         id: "assignee",
@@ -53,7 +55,7 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   const totalGoals = useMemo(() => countGoalsInTree(treeData), [treeData]);
 
   const handleRowClick = (event: any) => {
-    console.log('Row selected:', event); // Debug log
+    console.log("Row selected:", event); // Debug log
     if (onGoalSelect && event?.id) {
       onGoalSelect(event.id);
     }

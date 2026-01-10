@@ -10,7 +10,7 @@ export default function Editor() {
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
 
   const handleGoalSelect = (goalId: string) => {
-    console.log('Goal selected:', goalId); // Debug log
+    console.log("Goal selected:", goalId); // Debug log
     setSelectedGoalId(goalId);
   };
 
@@ -21,7 +21,11 @@ export default function Editor() {
   return (
     <div className="flex flex-col h-full">
       <div
-        style={{ maxWidth: "1600px", margin: "0 auto 1.5rem auto", width: "100%" }}
+        style={{
+          maxWidth: "1600px",
+          margin: "0 auto 1.5rem auto",
+          width: "100%",
+        }}
       >
         <DocumentToolbar />
       </div>

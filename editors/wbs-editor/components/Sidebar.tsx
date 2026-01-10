@@ -127,7 +127,9 @@ export function WBSSidebar() {
 
       {/* References */}
       <div>
-        <h3 className="text-base font-semibold text-gray-700 mb-2">References</h3>
+        <h3 className="text-base font-semibold text-gray-700 mb-2">
+          References
+        </h3>
         <div className="space-y-2">
           {references.length > 0 &&
             references.map((ref, index) => (
