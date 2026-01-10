@@ -719,7 +719,7 @@ describe("Workflow Operations", () => {
       expect(lastOperation).toBeDefined();
       expect(lastOperation.error).toBeDefined();
       if (lastOperation.error && typeof lastOperation.error === 'object' && 'message' in lastOperation.error) {
-        expect(lastOperation.error.message).toBe("Goal with ID non-existent not found");
+        expect((lastOperation.error as any).message).toBe("Goal with ID non-existent not found");
       }
     });
   });

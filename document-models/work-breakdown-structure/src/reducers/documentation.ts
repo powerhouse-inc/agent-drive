@@ -93,4 +93,8 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
       // Set isDraft to false
       goal.isDraft = false;
     },
-  };
+    setOwnerOperation(state, action) {
+        // Set the owner field in the global state
+        state.owner = action.input.owner;
+    }
+};
