@@ -1342,6 +1342,255 @@ describe("Workflow Operations", () => {
     });
   });
 
+  describe("MARK_WONT_DO", () => {
+    it("should mark a goal as WONT_DO", () => {
+      const document = utils.createDocument();
+
+      // Create a goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark it as WONT_DO
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "goal-1",
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("WONT_DO");
+    });
+
+    it("should mark all child goals as WONT_DO", () => {
+      const document = utils.createDocument();
+
+      // Create hierarchy
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal 1",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Child goal 2",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark parent as WONT_DO
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "parent-1",
+        }),
+      );
+
+      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const child1 = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      const child2 = updatedDocument.state.global.goals.find((g) => g.id === "child-2");
+      
+      expect(parent?.status).toBe("WONT_DO");
+      expect(child1?.status).toBe("WONT_DO");
+      expect(child2?.status).toBe("WONT_DO");
+    });
+
+    it("should not change already COMPLETED children", () => {
+      const document = utils.createDocument();
+
+      // Create parent and children
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Completed child",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Unfinished child",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark child-1 as COMPLETED first
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-1",
+        }),
+      );
+
+      // Now mark parent as WONT_DO
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "parent-1",
+        }),
+      );
+
+      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const child1 = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      const child2 = updatedDocument.state.global.goals.find((g) => g.id === "child-2");
+      
+      expect(parent?.status).toBe("WONT_DO");
+      expect(child1?.status).toBe("COMPLETED"); // Should stay COMPLETED
+      expect(child2?.status).toBe("WONT_DO");
+    });
+
+    it("should mark all descendants recursively", () => {
+      const document = utils.createDocument();
+
+      // Create deeper hierarchy
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "root-1",
+          description: "Root goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: null,
+          draft: false,
+          parentId: "root-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "grandchild-1",
+          description: "Grandchild goal",
+          instructions: null,
+          draft: false,
+          parentId: "child-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark root as WONT_DO
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "root-1",
+        }),
+      );
+
+      const root = updatedDocument.state.global.goals.find((g) => g.id === "root-1");
+      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      const grandchild = updatedDocument.state.global.goals.find((g) => g.id === "grandchild-1");
+      
+      expect(root?.status).toBe("WONT_DO");
+      expect(child?.status).toBe("WONT_DO");
+      expect(grandchild?.status).toBe("WONT_DO");
+    });
+  });
+
   it.skip("should handle delegateGoal operation", () => {
     const document = utils.createDocument();
     const input = generateMock(DelegateGoalInputSchema());

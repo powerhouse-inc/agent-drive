@@ -55,13 +55,13 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Verify**: Parent chain consistency maintained
 - [x] **Test**: Deep hierarchy with mixed statuses (5 tests passing)
 
-##### MARK_WONT_DO
-- [ ] Find target goal by ID
-- [ ] Update goal status to WONT_DO
-- [ ] Find all child goals (recursive)
-- [ ] Mark unfinished children as WONT_DO (skip COMPLETED/WONT_DO)
-- [ ] **Verify**: Subtree marked correctly
-- [ ] **Test**: Mixed subtree scenarios
+##### MARK_WONT_DO ✅
+- [x] Find target goal by ID
+- [x] Update goal status to WONT_DO
+- [x] Find all child goals (recursive)
+- [x] Mark unfinished children as WONT_DO (skip COMPLETED/WONT_DO)
+- [x] **Verify**: Subtree marked correctly
+- [x] **Test**: Mixed subtree scenarios (4 tests passing)
 
 #### 1.3 Delegation Operations
 ##### DELEGATE_GOAL

@@ -143,7 +143,22 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       throw new Error('Reducer "unblockGoalOperation" not yet implemented');
     },
     markWontDoOperation(state, action) {
-      // TODO: Implement "markWontDoOperation" reducer
-      throw new Error('Reducer "markWontDoOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to WONT_DO
+      goal.status = "WONT_DO";
+
+      // Mark all unfinished child goals as WONT_DO
+      const descendants = getDescendants(state.goals, action.input.id);
+      for (const descendant of descendants) {
+        // Only mark as WONT_DO if not already finished (COMPLETED or WONT_DO)
+        if (descendant.status !== "COMPLETED" && descendant.status !== "WONT_DO") {
+          descendant.status = "WONT_DO";
+        }
+      }
     },
   };
