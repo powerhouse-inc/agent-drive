@@ -18,9 +18,8 @@ import {
 import { generateId } from "document-model/core";
 import { findGoalInTree } from "../utils/treeTransform.js";
 import { Tooltip } from "./Tooltip.js";
-import EditableStatusChip from "./EditableStatusChip.js";
+import { SingleClickStatusChip } from "./SingleClickStatusChip.js";
 import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
-import StatusChip from "./StatusChip.js";
 
 interface GoalEditSidebarProps {
   goalId: string;
@@ -338,14 +337,13 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           </h4>
           <div className="bg-gray-50 rounded p-2">
             <div className="inline-block">
-              <EditableStatusChip 
-                row={goal} 
-                column={{ id: "status" }}
+              <SingleClickStatusChip 
+                goal={goal}
                 onStatusChange={handleStatusChange}
               />
             </div>
             <div className="mt-2 text-xs text-gray-500">
-              Double-click to change status
+              Click to change status
             </div>
           </div>
         </div>
