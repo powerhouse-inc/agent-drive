@@ -664,7 +664,7 @@ describe("Workflow Operations", () => {
       expect(parentAfterSecond?.status).toBe("IN_PROGRESS");
     });
 
-    it("should not change parent status if already COMPLETED", () => {
+    it("should change parent status from COMPLETED to IN_PROGRESS when child becomes active", () => {
       const document = utils.createDocument();
 
       // Create parent and child
@@ -700,10 +700,26 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      // Manually set parent to COMPLETED (simulating it was completed before)
-      updatedDocument.state.global.goals[0].status = "COMPLETED";
+      // Mark parent as COMPLETED first
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "parent-1",
+          note: null,
+        }),
+      );
 
-      // Mark child as in progress
+      // Verify both are COMPLETED
+      let parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      let child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      expect(parent?.status).toBe("COMPLETED");
+      expect(child?.status).toBe("COMPLETED");
+
+      // Now mark child as in progress
       updatedDocument = reducer(
         updatedDocument,
         markInProgress({
@@ -712,15 +728,89 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find(
+      parent = updatedDocument.state.global.goals.find(
         (g) => g.id === "parent-1",
       );
-      const child = updatedDocument.state.global.goals.find(
+      child = updatedDocument.state.global.goals.find(
         (g) => g.id === "child-1",
       );
 
       expect(child?.status).toBe("IN_PROGRESS");
-      expect(parent?.status).toBe("COMPLETED"); // Should stay COMPLETED
+      expect(parent?.status).toBe("IN_PROGRESS"); // Should change to IN_PROGRESS
+    });
+
+    it("should change parent status from WONT_DO to IN_PROGRESS when child becomes active", () => {
+      const document = utils.createDocument();
+
+      // Create parent and child
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark parent as WONT_DO first
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "parent-1",
+        }),
+      );
+
+      // Verify both are WONT_DO
+      let parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      let child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      expect(parent?.status).toBe("WONT_DO");
+      expect(child?.status).toBe("WONT_DO");
+
+      // Now mark child as in progress
+      updatedDocument = reducer(
+        updatedDocument,
+        markInProgress({
+          id: "child-1",
+          note: null,
+        }),
+      );
+
+      parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
+      expect(child?.status).toBe("IN_PROGRESS");
+      expect(parent?.status).toBe("IN_PROGRESS"); // Should change to IN_PROGRESS
     });
 
     it("should handle error for non-existent goal", () => {

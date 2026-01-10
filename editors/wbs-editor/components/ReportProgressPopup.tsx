@@ -8,34 +8,37 @@ interface ReportProgressPopupProps {
   goalDescription: string;
 }
 
-export function ReportProgressPopup({ 
-  isOpen, 
-  onClose, 
-  onSubmit, 
-  goalId, 
-  goalDescription 
+export function ReportProgressPopup({
+  isOpen,
+  onClose,
+  onSubmit,
+  goalId,
+  goalDescription,
 }: ReportProgressPopupProps) {
   const [note, setNote] = useState("");
   const [author, setAuthor] = useState("");
-  const [moveToReview, setMoveToReview] = useState(false);
+  const [moveToReview, setMoveToReview] = useState(true);
 
   const handleSubmit = useCallback(() => {
     if (note.trim()) {
       onSubmit(note.trim(), moveToReview, author.trim() || undefined);
       setNote("");
       setAuthor("");
-      setMoveToReview(false);
+      setMoveToReview(true);
       onClose();
     }
   }, [note, author, moveToReview, onSubmit, onClose]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-      handleSubmit();
-    } else if (e.key === 'Escape') {
-      onClose();
-    }
-  }, [handleSubmit, onClose]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && e.ctrlKey) {
+        handleSubmit();
+      } else if (e.key === "Escape") {
+        onClose();
+      }
+    },
+    [handleSubmit, onClose],
+  );
 
   if (!isOpen) return null;
 
@@ -43,7 +46,9 @@ export function ReportProgressPopup({
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[450px] max-w-[90vw] shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">Report Progress</h3>
+          <h3 className="text-lg font-semibold text-gray-800">
+            Report Progress
+          </h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 text-xl font-bold"
@@ -51,9 +56,10 @@ export function ReportProgressPopup({
             ×
           </button>
         </div>
-        
+
         <p className="text-sm text-gray-600 mb-4">
-          Report progress on: <span className="font-medium">{goalDescription}</span>
+          Report progress on:{" "}
+          <span className="font-medium">{goalDescription}</span>
         </p>
 
         <div className="space-y-4">

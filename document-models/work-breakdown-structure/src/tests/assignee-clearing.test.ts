@@ -33,7 +33,9 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       expect(updatedDocument.state.global.goals[0].status).toBe("DELEGATED");
-      expect(updatedDocument.state.global.goals[0].assignee).toBe("john.doe@example.com");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe(
+        "john.doe@example.com",
+      );
 
       // Mark as IN_PROGRESS
       updatedDocument = reducer(
@@ -58,7 +60,9 @@ describe("Assignee Clearing on Status Changes", () => {
         }),
       );
 
-      expect(updatedDocument.state.global.goals[0].assignee).toBe("jane.smith@example.com");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe(
+        "jane.smith@example.com",
+      );
 
       // Mark as COMPLETED
       updatedDocument = reducer(
@@ -168,7 +172,9 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       expect(updatedDocument.state.global.goals[0].status).toBe("IN_REVIEW");
-      expect(updatedDocument.state.global.goals[0].assignee).toBe("reviewer@example.com");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe(
+        "reviewer@example.com",
+      );
     });
 
     it("should clear assignee when marking IN_REVIEW goal as COMPLETED", () => {
@@ -194,7 +200,9 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       expect(updatedDocument.state.global.goals[0].status).toBe("IN_REVIEW");
-      expect(updatedDocument.state.global.goals[0].assignee).toBe("reviewer@example.com");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe(
+        "reviewer@example.com",
+      );
 
       // Mark as COMPLETED
       updatedDocument = reducer(
@@ -301,7 +309,9 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       expect(updatedDocument.state.global.goals[0].status).toBe("DELEGATED");
-      expect(updatedDocument.state.global.goals[0].assignee).toBe("manager@example.com");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe(
+        "manager@example.com",
+      );
 
       // Mark child as IN_PROGRESS
       updatedDocument = reducer(
@@ -310,7 +320,9 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       // Parent should be IN_PROGRESS with no assignee
-      const parent = updatedDocument.state.global.goals.find(g => g.id === "parent-1");
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
       expect(parent?.status).toBe("IN_PROGRESS");
       expect(parent?.assignee).toBeNull();
     });
@@ -349,8 +361,12 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       // Verify children are delegated with assignees
-      const child1Before = updatedDocument.state.global.goals.find(g => g.id === "child-1");
-      const child2Before = updatedDocument.state.global.goals.find(g => g.id === "child-2");
+      const child1Before = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const child2Before = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-2",
+      );
       expect(child1Before?.status).toBe("DELEGATED");
       expect(child1Before?.assignee).toBe("worker1@example.com");
       expect(child2Before?.status).toBe("DELEGATED");
@@ -363,10 +379,16 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       // All goals should be COMPLETED with no assignees
-      const parent = updatedDocument.state.global.goals.find(g => g.id === "parent-1");
-      const child1 = updatedDocument.state.global.goals.find(g => g.id === "child-1");
-      const child2 = updatedDocument.state.global.goals.find(g => g.id === "child-2");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child1 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const child2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-2",
+      );
+
       expect(parent?.status).toBe("COMPLETED");
       expect(parent?.assignee).toBeNull();
       expect(child1?.status).toBe("COMPLETED");
@@ -405,9 +427,13 @@ describe("Assignee Clearing on Status Changes", () => {
       );
 
       // Both should be WONT_DO with no assignees
-      const parent = updatedDocument.state.global.goals.find(g => g.id === "parent-1");
-      const child = updatedDocument.state.global.goals.find(g => g.id === "child-1");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
       expect(parent?.status).toBe("WONT_DO");
       expect(parent?.assignee).toBeNull();
       expect(child?.status).toBe("WONT_DO");

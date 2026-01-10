@@ -1,9 +1,11 @@
-import { useMemo, useCallback, useState, useRef } from "react";
+import React, { useMemo, useCallback, useState, useRef } from "react";
 import { Grid, Willow } from "@svar-ui/react-grid";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { flatToTree, countGoalsInTree } from "../utils/treeTransform.js";
 import EditableStatusChip from "./EditableStatusChip.js";
 import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
+import { DelegationPopup } from "./DelegationPopup.js";
+import { ReportProgressPopup } from "./ReportProgressPopup.js";
 import {
   updateDescription,
   delegateGoal,
@@ -11,6 +13,7 @@ import {
   markInProgress,
   markCompleted,
   reportBlocked,
+  reportOnGoal,
   markWontDo,
 } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { generateId } from "document-model/core";
@@ -22,7 +25,24 @@ interface GoalGridProps {
 export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();
   const apiRef = useRef<any>(null);
-  const [blockedPopup, setBlockedPopup] = useState<{ isOpen: boolean; goalId: string }>({
+  const [blockedPopup, setBlockedPopup] = useState<{
+    isOpen: boolean;
+    goalId: string;
+  }>({
+    isOpen: false,
+    goalId: "",
+  });
+  const [delegationPopup, setDelegationPopup] = useState<{
+    isOpen: boolean;
+    goalId: string;
+  }>({
+    isOpen: false,
+    goalId: "",
+  });
+  const [reportProgressPopup, setReportProgressPopup] = useState<{
+    isOpen: boolean;
+    goalId: string;
+  }>({
     isOpen: false,
     goalId: "",
   });
@@ -36,42 +56,46 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   }, [document?.state.global.goals]);
 
   // Handle custom status change actions
-  const handleStatusChange = useCallback((actionData: any) => {
-    if (!dispatch) return;
-    
-    console.log("Status change received:", actionData);
-    const { value, row: goalId } = actionData.data || actionData;
-    console.log("Status change:", { value, goalId });
-    
-    if (value === "BLOCKED") {
-      // Show popup for blocked status
-      console.log("Blocked status selected - showing popup");
-      setBlockedPopup({ isOpen: true, goalId });
-    } else {
-      // Handle other status changes directly
-      switch (value) {
-        case "TODO":
-          dispatch(markTodo({ id: goalId }));
-          break;
-        case "IN_PROGRESS":
-          dispatch(markInProgress({ id: goalId }));
-          break;
-        case "COMPLETED":
-          dispatch(markCompleted({ id: goalId }));
-          break;
-        case "WONT_DO":
-          dispatch(markWontDo({ id: goalId }));
-          break;
-        case "DELEGATED":
-        case "IN_REVIEW":
-          // These might need special handling
-          console.log(`${value} status not yet implemented`);
-          break;
-        default:
-          console.warn("Unknown status:", value);
+  const handleStatusChange = useCallback(
+    (actionData: any) => {
+      if (!dispatch) return;
+
+      console.log("Status change received:", actionData);
+      const { value, row: goalId } = actionData.data || actionData;
+      console.log("Status change:", { value, goalId });
+
+      if (value === "BLOCKED") {
+        // Show popup for blocked status
+        console.log("Blocked status selected - showing popup");
+        setBlockedPopup({ isOpen: true, goalId });
+      } else if (value === "IN_REVIEW") {
+        // Show report progress popup for IN_REVIEW transition
+        setReportProgressPopup({ isOpen: true, goalId });
+      } else if (value === "DELEGATED") {
+        // Show delegation popup for DELEGATED status
+        setDelegationPopup({ isOpen: true, goalId });
+      } else {
+        // Handle other status changes directly
+        switch (value) {
+          case "TODO":
+            dispatch(markTodo({ id: goalId }));
+            break;
+          case "IN_PROGRESS":
+            dispatch(markInProgress({ id: goalId }));
+            break;
+          case "COMPLETED":
+            dispatch(markCompleted({ id: goalId }));
+            break;
+          case "WONT_DO":
+            dispatch(markWontDo({ id: goalId }));
+            break;
+          default:
+            console.warn("Unknown status:", value);
+        }
       }
-    }
-  }, [dispatch]);
+    },
+    [dispatch],
+  );
 
   // Column configuration for the grid
   const columns = useMemo(
@@ -82,16 +106,18 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         flexgrow: 1,
         treetoggle: true, // This column will show the expand/collapse toggle
         editor: "text", // Enable text editing
+        template: (value: string, row: any) => {
+          const description = value || row.description || "";
+          // Add pencil emoji for draft goals
+          return row.isDraft ? `✏️ ${description}` : description;
+        },
       },
       {
         id: "status",
-        header: "Status", 
+        header: "Status",
         width: 140,
         cell: (props: any) => (
-          <EditableStatusChip 
-            {...props} 
-            onStatusChange={handleStatusChange}
-          />
+          <EditableStatusChip {...props} onStatusChange={handleStatusChange} />
         ),
       },
       {
@@ -100,12 +126,6 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         width: 150,
         editor: "text", // Enable text editing
         template: (v: string | null) => v || "", // Show empty string instead of null
-      },
-      {
-        id: "isDraft",
-        header: "Draft",
-        width: 60,
-        template: (v: boolean) => (v ? "📝" : ""),
       },
     ],
     [handleStatusChange],
@@ -123,53 +143,102 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   };
 
   // Handle blocked status popup
-  const handleBlockedSubmit = useCallback((note: string, author?: string) => {
-    if (!dispatch) return;
-    dispatch(reportBlocked({ 
-      id: blockedPopup.goalId, 
-      question: {
-        id: generateId(),
-        note,
-        author: author || undefined
-      }
-    }));
-  }, [dispatch, blockedPopup.goalId]);
+  const handleBlockedSubmit = useCallback(
+    (note: string, author?: string) => {
+      if (!dispatch) return;
+      dispatch(
+        reportBlocked({
+          id: blockedPopup.goalId,
+          question: {
+            id: generateId(),
+            note,
+            author: author || undefined,
+          },
+        }),
+      );
+    },
+    [dispatch, blockedPopup.goalId],
+  );
 
   const handleBlockedClose = useCallback(() => {
     setBlockedPopup({ isOpen: false, goalId: "" });
   }, []);
 
-  // Initialize Grid API and set up event handlers
-  const init = useCallback((api: any) => {
-    apiRef.current = api;
-    
-    // Handle cell updates from inline editing
-    api.on('update-cell', (event: any) => {
+  // Handle delegation popup
+  const handleDelegationSubmit = useCallback(
+    (assignee: string) => {
       if (!dispatch) return;
-      
-      const { id, column, value } = event;
-      console.log("update-cell event:", { id, column, value });
-      
-      if (column === "description") {
-        dispatch(
-          updateDescription({
-            goalId: id,
-            description: value,
-          }),
-        );
-      } else if (column === "assignee") {
-        // Use delegateGoal to set assignee
-        if (value && value.trim()) {
+      dispatch(
+        delegateGoal({
+          id: delegationPopup.goalId,
+          assignee,
+        }),
+      );
+    },
+    [dispatch, delegationPopup.goalId],
+  );
+
+  const handleDelegationClose = useCallback(() => {
+    setDelegationPopup({ isOpen: false, goalId: "" });
+  }, []);
+
+  // Handle report progress popup
+  const handleReportProgressSubmit = useCallback(
+    (note: string, moveToReview: boolean, author?: string) => {
+      if (!dispatch) return;
+      dispatch(
+        reportOnGoal({
+          id: reportProgressPopup.goalId,
+          note: {
+            id: generateId(),
+            note,
+            author: author || undefined,
+          },
+          moveInReview: moveToReview,
+        }),
+      );
+    },
+    [dispatch, reportProgressPopup.goalId],
+  );
+
+  const handleReportProgressClose = useCallback(() => {
+    setReportProgressPopup({ isOpen: false, goalId: "" });
+  }, []);
+
+  // Initialize Grid API and set up event handlers
+  const init = useCallback(
+    (api: any) => {
+      apiRef.current = api;
+
+      // Handle cell updates from inline editing
+      api.on("update-cell", (event: any) => {
+        if (!dispatch) return;
+
+        const { id, column, value } = event;
+        console.log("update-cell event:", { id, column, value });
+
+        if (column === "description") {
           dispatch(
-            delegateGoal({
-              id: id,
-              assignee: value.trim(),
+            updateDescription({
+              goalId: id,
+              description: value,
             }),
           );
+        } else if (column === "assignee") {
+          // Use delegateGoal to set assignee
+          if (value && value.trim()) {
+            dispatch(
+              delegateGoal({
+                id: id,
+                assignee: value.trim(),
+              }),
+            );
+          }
         }
-      }
-    });
-  }, [dispatch]);
+      });
+    },
+    [dispatch],
+  );
 
   return (
     <div className="h-full flex flex-col">
@@ -212,6 +281,23 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         onClose={handleBlockedClose}
         onSubmit={handleBlockedSubmit}
         goalId={blockedPopup.goalId}
+      />
+
+      <DelegationPopup
+        isOpen={delegationPopup.isOpen}
+        onClose={handleDelegationClose}
+        onSubmit={handleDelegationSubmit}
+        goalId={delegationPopup.goalId}
+      />
+
+      <ReportProgressPopup
+        isOpen={reportProgressPopup.isOpen}
+        onClose={handleReportProgressClose}
+        onSubmit={handleReportProgressSubmit}
+        goalId={reportProgressPopup.goalId}
+        goalDescription={
+          document?.state.global.goals.find((g) => g.id === reportProgressPopup.goalId)?.description || ""
+        }
       />
     </div>
   );

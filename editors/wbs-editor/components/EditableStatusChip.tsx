@@ -20,7 +20,7 @@ const STATUS_OPTIONS = [
   // Waiting statuses
   { id: "TODO", label: "To Do" },
   { id: "BLOCKED", label: "Blocked" },
-  // Active statuses  
+  // Active statuses
   { id: "IN_PROGRESS", label: "In Progress" },
   { id: "DELEGATED", label: "Delegated" },
   { id: "IN_REVIEW", label: "In Review" },
@@ -29,51 +29,66 @@ const STATUS_OPTIONS = [
   { id: "WONT_DO", label: "Won't Do" },
 ];
 
-export default function EditableStatusChip({ row, column, onAction, onStatusChange }: EditableStatusChipProps) {
+export default function EditableStatusChip({
+  row,
+  column,
+  onAction,
+  onStatusChange,
+}: EditableStatusChipProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  
+
   const currentStatus = row.status as keyof typeof STATUS_COLORS;
-  const currentOption = STATUS_OPTIONS.find(opt => opt.id === currentStatus) || STATUS_OPTIONS[0];
+  const currentOption =
+    STATUS_OPTIONS.find((opt) => opt.id === currentStatus) || STATUS_OPTIONS[0];
   const currentColors = STATUS_COLORS[currentStatus] || STATUS_COLORS.TODO;
   const currentLabel = STATUS_LABELS[currentStatus] || currentStatus;
 
-  const handleOptionSelect = useCallback((selectedId: string) => {
-    const selectedOption = STATUS_OPTIONS.find(opt => opt.id === selectedId);
-    
-    if (selectedOption) {
-      // Try both approaches for maximum compatibility
-      if (onAction) {
-        onAction({
-          action: 'status-change',
-          data: {
-            value: selectedOption.id,
-            label: selectedOption.label,
-            column: column.id,
-            row: row.id,
-          },
-        });
+  const handleOptionSelect = useCallback(
+    (selectedId: string) => {
+      const selectedOption = STATUS_OPTIONS.find(
+        (opt) => opt.id === selectedId,
+      );
+
+      if (selectedOption) {
+        // Try both approaches for maximum compatibility
+        if (onAction) {
+          onAction({
+            action: "status-change",
+            data: {
+              value: selectedOption.id,
+              label: selectedOption.label,
+              column: column.id,
+              row: row.id,
+            },
+          });
+        }
+
+        if (onStatusChange) {
+          onStatusChange({
+            data: {
+              value: selectedOption.id,
+              label: selectedOption.label,
+              column: column.id,
+              row: row.id,
+            },
+          });
+        }
       }
-      
-      if (onStatusChange) {
-        onStatusChange({
-          data: {
-            value: selectedOption.id,
-            label: selectedOption.label,
-            column: column.id,
-            row: row.id,
-          },
-        });
-      }
-    }
-    
-    setIsEditing(false);
-    setIsOpen(false);
-  }, [onAction, column, row, onStatusChange]);
+
+      setIsEditing(false);
+      setIsOpen(false);
+    },
+    [onAction, column, row, onStatusChange],
+  );
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -104,10 +119,15 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
     const handleClickOutside = (event: MouseEvent) => {
       // Check if click is outside both the container and the portal dropdown
       const target = event.target as Node;
-      const dropdown = document.getElementById(`dropdown-${row.id}-${column.id}`);
-      
-      if (containerRef.current && !containerRef.current.contains(target) &&
-          (!dropdown || !dropdown.contains(target))) {
+      const dropdown = document.getElementById(
+        `dropdown-${row.id}-${column.id}`,
+      );
+
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(target) &&
+        (!dropdown || !dropdown.contains(target))
+      ) {
         setIsEditing(false);
         setIsOpen(false);
       }
@@ -115,48 +135,55 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
 
     // Delay to prevent immediate close
     const timer = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside, true);
+      document.addEventListener("click", handleClickOutside, true);
     }, 100);
 
     return () => {
       clearTimeout(timer);
-      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener("click", handleClickOutside, true);
     };
   }, [isEditing, row.id, column.id]);
 
   // Handle keyboard navigation
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      setIsEditing(false);
-      setIsOpen(false);
-    } else if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-        setHighlightedIndex(STATUS_OPTIONS.findIndex(opt => opt.id === currentOption.id));
-      } else if (highlightedIndex >= 0) {
-        handleOptionSelect(STATUS_OPTIONS[highlightedIndex].id);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setIsEditing(false);
+        setIsOpen(false);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (!isOpen) {
+          setIsOpen(true);
+          setHighlightedIndex(
+            STATUS_OPTIONS.findIndex((opt) => opt.id === currentOption.id),
+          );
+        } else if (highlightedIndex >= 0) {
+          handleOptionSelect(STATUS_OPTIONS[highlightedIndex].id);
+        }
+      } else if (isOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+        e.preventDefault();
+        setHighlightedIndex((prev) => {
+          if (prev === -1) {
+            return STATUS_OPTIONS.findIndex(
+              (opt) => opt.id === currentOption.id,
+            );
+          }
+          if (e.key === "ArrowDown") {
+            return (prev + 1) % STATUS_OPTIONS.length;
+          } else {
+            return (prev - 1 + STATUS_OPTIONS.length) % STATUS_OPTIONS.length;
+          }
+        });
       }
-    } else if (isOpen && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-      e.preventDefault();
-      setHighlightedIndex(prev => {
-        if (prev === -1) {
-          return STATUS_OPTIONS.findIndex(opt => opt.id === currentOption.id);
-        }
-        if (e.key === 'ArrowDown') {
-          return (prev + 1) % STATUS_OPTIONS.length;
-        } else {
-          return (prev - 1 + STATUS_OPTIONS.length) % STATUS_OPTIONS.length;
-        }
-      });
-    }
-  }, [isOpen, highlightedIndex, currentOption.id, handleOptionSelect]);
+    },
+    [isOpen, highlightedIndex, currentOption.id, handleOptionSelect],
+  );
 
   if (isEditing) {
     return (
       <>
-        <div 
+        <div
           ref={containerRef}
           className="flex items-center justify-center h-full"
           onClick={(e) => e.stopPropagation()}
@@ -167,13 +194,19 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
             style={{
               backgroundColor: currentColors.bg,
               color: currentColors.text,
-              boxShadow: isOpen ? `0 0 0 2px ${currentColors.text}40` : undefined,
+              boxShadow: isOpen
+                ? `0 0 0 2px ${currentColors.text}40`
+                : undefined,
             }}
             onClick={(e) => {
               e.stopPropagation();
               setIsOpen(!isOpen);
               if (!isOpen) {
-                setHighlightedIndex(STATUS_OPTIONS.findIndex(opt => opt.id === currentOption.id));
+                setHighlightedIndex(
+                  STATUS_OPTIONS.findIndex(
+                    (opt) => opt.id === currentOption.id,
+                  ),
+                );
               }
             }}
             onKeyDown={handleKeyDown}
@@ -186,57 +219,60 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
             {currentLabel}
           </button>
         </div>
-        
-        {isOpen && ReactDOM.createPortal(
-          <div 
-            id={`dropdown-${row.id}-${column.id}`}
-            className="fixed bg-white border border-gray-300 rounded shadow-lg min-w-[120px]"
-            style={{
-              top: `${dropdownPosition.top}px`,
-              left: `${dropdownPosition.left}px`,
-              width: `${Math.max(dropdownPosition.width, 120)}px`,
-              zIndex: 9999,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {STATUS_OPTIONS.map((option, index) => {
-              const optionColors = STATUS_COLORS[option.id as keyof typeof STATUS_COLORS] || STATUS_COLORS.TODO;
-              return (
-                <div
-                  key={option.id}
-                  className={`flex items-center gap-1.5 w-full text-left text-xs px-3 py-2 cursor-pointer ${
-                    index === highlightedIndex ? 'brightness-110' : ''
-                  } hover:brightness-110 transition-all`}
-                  style={{
-                    backgroundColor: optionColors.bg,
-                    color: optionColors.text,
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOptionSelect(option.id);
-                  }}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                >
+
+        {isOpen &&
+          ReactDOM.createPortal(
+            <div
+              id={`dropdown-${row.id}-${column.id}`}
+              className="fixed bg-white border border-gray-300 rounded shadow-lg min-w-[120px]"
+              style={{
+                top: `${dropdownPosition.top}px`,
+                left: `${dropdownPosition.left}px`,
+                width: `${Math.max(dropdownPosition.width, 120)}px`,
+                zIndex: 9999,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {STATUS_OPTIONS.map((option, index) => {
+                const optionColors =
+                  STATUS_COLORS[option.id as keyof typeof STATUS_COLORS] ||
+                  STATUS_COLORS.TODO;
+                return (
                   <div
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ backgroundColor: optionColors.dot }}
-                  />
-                  {option.label}
-                </div>
-              );
-            })}
-          </div>,
-          document.body
-        )}
+                    key={option.id}
+                    className={`flex items-center gap-1.5 w-full text-left text-xs px-3 py-2 cursor-pointer ${
+                      index === highlightedIndex ? "brightness-110" : ""
+                    } hover:brightness-110 transition-all`}
+                    style={{
+                      backgroundColor: optionColors.bg,
+                      color: optionColors.text,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOptionSelect(option.id);
+                    }}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: optionColors.dot }}
+                    />
+                    {option.label}
+                  </div>
+                );
+              })}
+            </div>,
+            document.body,
+          )}
       </>
     );
   }
 
   return (
-    <div 
+    <div
       onDoubleClick={handleDoubleClick}
       className="h-full"
-      style={{ userSelect: 'none' }}
+      style={{ userSelect: "none" }}
     >
       <StatusChip row={row} />
     </div>

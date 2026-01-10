@@ -201,7 +201,7 @@
                             "examples": [],
                             "id": "b29c3d71-3864-4df9-845e-8e976d47d84f",
                             "name": "MARK_IN_PROGRESS",
-                            "reducer": "",
+                            "reducer": "// Find the target goal\nconst goal = findGoal(state.goals, action.input.id);\nif (!goal) {\n  throw new Error(`Goal with ID ${action.input.id} not found`);\n}\n\n// Update goal status to IN_PROGRESS\ngoal.status = \"IN_PROGRESS\";\n\n// Clear assignee since status is not DELEGATED or IN_REVIEW\ngoal.assignee = null;\n\n// Add optional note if provided\nif (action.input.note) {\n  const note = {\n    id: action.input.note.id,\n    note: action.input.note.note,\n    author: action.input.note.author || null,\n  };\n  goal.notes.push(note);\n}\n\n// Propagate IN_PROGRESS up to all ancestors\nconst ancestors = getAncestors(state.goals, action.input.id);\nfor (const ancestor of ancestors) {\n  // Update ancestors that are TODO, DELEGATED, COMPLETED, or WONT_DO\n  // This allows resuming work on previously finished goals\n  if (ancestor.status === \"TODO\" || \n      ancestor.status === \"DELEGATED\" || \n      ancestor.status === \"COMPLETED\" || \n      ancestor.status === \"WONT_DO\") {\n    ancestor.status = \"IN_PROGRESS\";\n    ancestor.assignee = null;\n  }\n}",
                             "schema": "input MarkInProgressInput {\n  id: OID!\n  note: InProgressNoteInput\n}\n\ninput InProgressNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
                             "scope": "global",
                             "template": "Mark goal in progress"

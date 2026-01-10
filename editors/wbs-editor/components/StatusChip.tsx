@@ -29,12 +29,12 @@ export const STATUS_COLORS = {
   // Waiting statuses
   TODO: WAITING_COLOR,
   BLOCKED: WAITING_COLOR,
-  
+
   // Active statuses
   IN_PROGRESS: ACTIVE_COLOR,
   DELEGATED: ACTIVE_COLOR,
   IN_REVIEW: ACTIVE_COLOR,
-  
+
   // Finished statuses
   COMPLETED: FINISHED_COLOR,
   WONT_DO: FINISHED_COLOR,

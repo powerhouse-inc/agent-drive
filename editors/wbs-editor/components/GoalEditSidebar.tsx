@@ -38,15 +38,24 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const [descriptionValue, setDescriptionValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState("");
   const [newNoteValue, setNewNoteValue] = useState("");
-  const [blockedPopup, setBlockedPopup] = useState<{ isOpen: boolean; goalId: string }>({
+  const [blockedPopup, setBlockedPopup] = useState<{
+    isOpen: boolean;
+    goalId: string;
+  }>({
     isOpen: false,
     goalId: "",
   });
-  const [delegationPopup, setDelegationPopup] = useState<{ isOpen: boolean; goalId: string }>({
+  const [delegationPopup, setDelegationPopup] = useState<{
+    isOpen: boolean;
+    goalId: string;
+  }>({
     isOpen: false,
     goalId: "",
   });
-  const [reportProgressPopup, setReportProgressPopup] = useState<{ isOpen: boolean; goalId: string }>({
+  const [reportProgressPopup, setReportProgressPopup] = useState<{
+    isOpen: boolean;
+    goalId: string;
+  }>({
     isOpen: false,
     goalId: "",
   });
@@ -144,93 +153,109 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   };
 
   // Handle status changes from the dropdown
-  const handleStatusChange = useCallback((actionData: any) => {
-    if (!dispatch) return;
-    
-    const { value } = actionData.data || actionData;
-    
-    if (value === "BLOCKED") {
-      // Show popup for blocked status
-      setBlockedPopup({ isOpen: true, goalId: goal.id });
-    } else {
-      // Handle other status changes directly
-      switch (value) {
-        case "TODO":
-          dispatch(markTodo({ id: goal.id }));
-          break;
-        case "IN_PROGRESS":
-          dispatch(markInProgress({ id: goal.id }));
-          break;
-        case "COMPLETED":
-          dispatch(markCompleted({ id: goal.id }));
-          break;
-        case "WONT_DO":
-          dispatch(markWontDo({ id: goal.id }));
-          break;
-        case "DELEGATED":
-          // Show delegation popup (pre-fill assignee if currently IN_REVIEW)
-          setDelegationPopup({ isOpen: true, goalId: goal.id });
-          break;
-        case "IN_REVIEW":
-          console.log("In Review status not yet implemented");
-          break;
-        default:
-          console.warn("Unknown status:", value);
+  const handleStatusChange = useCallback(
+    (actionData: any) => {
+      if (!dispatch) return;
+
+      const { value } = actionData.data || actionData;
+
+      if (value === "BLOCKED") {
+        // Show popup for blocked status
+        setBlockedPopup({ isOpen: true, goalId: goal.id });
+      } else {
+        // Handle other status changes directly
+        switch (value) {
+          case "TODO":
+            dispatch(markTodo({ id: goal.id }));
+            break;
+          case "IN_PROGRESS":
+            dispatch(markInProgress({ id: goal.id }));
+            break;
+          case "COMPLETED":
+            dispatch(markCompleted({ id: goal.id }));
+            break;
+          case "WONT_DO":
+            dispatch(markWontDo({ id: goal.id }));
+            break;
+          case "DELEGATED":
+            // Show delegation popup (pre-fill assignee if currently IN_REVIEW)
+            setDelegationPopup({ isOpen: true, goalId: goal.id });
+            break;
+          case "IN_REVIEW":
+            // Transition to IN_REVIEW requires a report
+            // Show the report progress popup with the move to review option pre-selected
+            setReportProgressPopup({ isOpen: true, goalId: goal.id });
+            break;
+          default:
+            console.warn("Unknown status:", value);
+        }
       }
-    }
-  }, [dispatch, goal?.id]);
+    },
+    [dispatch, goal?.id],
+  );
 
   // Handle blocked status popup
-  const handleBlockedSubmit = useCallback((note: string, author?: string) => {
-    if (!dispatch) return;
-    dispatch(reportBlocked({ 
-      id: blockedPopup.goalId, 
-      question: {
-        id: generateId(),
-        note,
-        author: author || undefined
-      }
-    }));
-  }, [dispatch, blockedPopup.goalId]);
+  const handleBlockedSubmit = useCallback(
+    (note: string, author?: string) => {
+      if (!dispatch) return;
+      dispatch(
+        reportBlocked({
+          id: blockedPopup.goalId,
+          question: {
+            id: generateId(),
+            note,
+            author: author || undefined,
+          },
+        }),
+      );
+    },
+    [dispatch, blockedPopup.goalId],
+  );
 
   const handleBlockedClose = useCallback(() => {
     setBlockedPopup({ isOpen: false, goalId: "" });
   }, []);
 
   // Handle delegation popup
-  const handleDelegationSubmit = useCallback((assignee: string) => {
-    if (!dispatch) return;
-    dispatch(delegateGoal({ 
-      id: delegationPopup.goalId, 
-      assignee
-    }));
-  }, [dispatch, delegationPopup.goalId]);
+  const handleDelegationSubmit = useCallback(
+    (assignee: string) => {
+      if (!dispatch) return;
+      dispatch(
+        delegateGoal({
+          id: delegationPopup.goalId,
+          assignee,
+        }),
+      );
+    },
+    [dispatch, delegationPopup.goalId],
+  );
 
   const handleDelegationClose = useCallback(() => {
     setDelegationPopup({ isOpen: false, goalId: "" });
   }, []);
 
   // Handle report progress popup
-  const handleReportProgressSubmit = useCallback((note: string, moveToReview: boolean, author?: string) => {
-    if (!dispatch) return;
-    dispatch(reportOnGoal({ 
-      id: reportProgressPopup.goalId,
-      note: {
-        id: generateId(),
-        note,
-        author: author || undefined
-      },
-      moveInReview: moveToReview
-    }));
-  }, [dispatch, reportProgressPopup.goalId]);
+  const handleReportProgressSubmit = useCallback(
+    (note: string, moveToReview: boolean, author?: string) => {
+      if (!dispatch) return;
+      dispatch(
+        reportOnGoal({
+          id: reportProgressPopup.goalId,
+          note: {
+            id: generateId(),
+            note,
+            author: author || undefined,
+          },
+          moveInReview: moveToReview,
+        }),
+      );
+    },
+    [dispatch, reportProgressPopup.goalId],
+  );
 
   const handleReportProgressClose = useCallback(() => {
     setReportProgressPopup({ isOpen: false, goalId: "" });
   }, []);
-
-  const handleReportProgress = useCallback(() => {
-    setReportProgressPopup({ isOpen: true, goalId: goal.id });
-  }, [goal?.id]);
 
   const handleCopyId = async () => {
     try {
@@ -334,29 +359,20 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
 
       {/* Status and Assignee Row */}
       <div className="flex items-center gap-2">
-        <SingleClickStatusChip 
+        <SingleClickStatusChip
           goal={goal}
           onStatusChange={handleStatusChange}
         />
-        {(goal.status === "DELEGATED" || goal.status === "IN_REVIEW") && goal.assignee && (
-          <>
-            <span className="text-gray-400">→</span>
-            <span className="text-sm font-medium text-gray-700">{goal.assignee}</span>
-          </>
-        )}
+        {(goal.status === "DELEGATED" || goal.status === "IN_REVIEW") &&
+          goal.assignee && (
+            <>
+              <span className="text-gray-400">→</span>
+              <span className="text-sm font-medium text-gray-700">
+                {goal.assignee}
+              </span>
+            </>
+          )}
       </div>
-
-      {/* Report Progress Button for Delegated Goals */}
-      {goal.status === "DELEGATED" && (
-        <div className="flex justify-start">
-          <button
-            onClick={handleReportProgress}
-            className="px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 border border-blue-200 transition-colors duration-200"
-          >
-            Report Progress
-          </button>
-        </div>
-      )}
 
       {/* Draft Status */}
       <div>
@@ -378,7 +394,6 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
 
       {/* Other information */}
       <div className="space-y-4">
-
         {/* Instructions Section */}
         <div>
           <h4 className="text-base font-semibold text-gray-700 mb-2">
@@ -497,7 +512,7 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           </div>
         </div>
       </div>
-      
+
       <BlockedStatusPopup
         isOpen={blockedPopup.isOpen}
         onClose={handleBlockedClose}
@@ -510,7 +525,11 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         onClose={handleDelegationClose}
         onSubmit={handleDelegationSubmit}
         goalId={delegationPopup.goalId}
-        defaultAssignee={goal.status === "IN_REVIEW" && goal.assignee ? goal.assignee : undefined}
+        defaultAssignee={
+          goal.status === "IN_REVIEW" && goal.assignee
+            ? goal.assignee
+            : undefined
+        }
       />
 
       <ReportProgressPopup

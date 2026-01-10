@@ -98,7 +98,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to IN_PROGRESS
       goal.status = "IN_PROGRESS";
-      
+
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 
@@ -115,8 +115,14 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       // Propagate IN_PROGRESS up to all ancestors
       const ancestors = getAncestors(state.goals, action.input.id);
       for (const ancestor of ancestors) {
-        // Only update ancestors that are TODO or DELEGATED
-        if (ancestor.status === "TODO" || ancestor.status === "DELEGATED") {
+        // Update ancestors that are TODO, DELEGATED, COMPLETED, or WONT_DO
+        // This allows resuming work on previously finished goals
+        if (
+          ancestor.status === "TODO" ||
+          ancestor.status === "DELEGATED" ||
+          ancestor.status === "COMPLETED" ||
+          ancestor.status === "WONT_DO"
+        ) {
           ancestor.status = "IN_PROGRESS";
           ancestor.assignee = null;
         }
@@ -131,7 +137,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to COMPLETED
       goal.status = "COMPLETED";
-      
+
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 
@@ -167,7 +173,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to TODO
       goal.status = "TODO";
-      
+
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 
@@ -199,7 +205,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to BLOCKED
       goal.status = "BLOCKED";
-      
+
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 
@@ -238,7 +244,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Change status back to TODO (since we don't track previous status)
       goal.status = "TODO";
-      
+
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 
@@ -254,7 +260,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to WONT_DO
       goal.status = "WONT_DO";
-      
+
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 

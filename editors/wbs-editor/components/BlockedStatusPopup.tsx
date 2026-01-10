@@ -7,7 +7,12 @@ interface BlockedStatusPopupProps {
   goalId: string;
 }
 
-export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: BlockedStatusPopupProps) {
+export function BlockedStatusPopup({
+  isOpen,
+  onClose,
+  onSubmit,
+  goalId,
+}: BlockedStatusPopupProps) {
   const [note, setNote] = useState("");
   const [author, setAuthor] = useState("");
 
@@ -20,13 +25,16 @@ export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: Blocke
     }
   }, [note, author, onSubmit, onClose]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-      handleSubmit();
-    } else if (e.key === 'Escape') {
-      onClose();
-    }
-  }, [handleSubmit, onClose]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && e.ctrlKey) {
+        handleSubmit();
+      } else if (e.key === "Escape") {
+        onClose();
+      }
+    },
+    [handleSubmit, onClose],
+  );
 
   if (!isOpen) return null;
 
@@ -42,9 +50,10 @@ export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: Blocke
             ×
           </button>
         </div>
-        
+
         <p className="text-sm text-gray-600 mb-4">
-          This goal is being marked as blocked. Please provide details about what's blocking progress.
+          This goal is being marked as blocked. Please provide details about
+          what's blocking progress.
         </p>
 
         <div className="space-y-4">

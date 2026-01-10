@@ -8,7 +8,13 @@ interface DelegationPopupProps {
   defaultAssignee?: string;
 }
 
-export function DelegationPopup({ isOpen, onClose, onSubmit, goalId, defaultAssignee }: DelegationPopupProps) {
+export function DelegationPopup({
+  isOpen,
+  onClose,
+  onSubmit,
+  goalId,
+  defaultAssignee,
+}: DelegationPopupProps) {
   const [assignee, setAssignee] = useState(defaultAssignee || "");
 
   // Update assignee when defaultAssignee changes
@@ -26,13 +32,16 @@ export function DelegationPopup({ isOpen, onClose, onSubmit, goalId, defaultAssi
     }
   }, [assignee, onSubmit, onClose]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-      handleSubmit();
-    } else if (e.key === 'Escape') {
-      onClose();
-    }
-  }, [handleSubmit, onClose]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && e.ctrlKey) {
+        handleSubmit();
+      } else if (e.key === "Escape") {
+        onClose();
+      }
+    },
+    [handleSubmit, onClose],
+  );
 
   if (!isOpen) return null;
 
@@ -48,7 +57,7 @@ export function DelegationPopup({ isOpen, onClose, onSubmit, goalId, defaultAssi
             ×
           </button>
         </div>
-        
+
         <p className="text-sm text-gray-600 mb-4">
           Assign this goal to someone who will work on it and report progress.
         </p>
