@@ -3,11 +3,20 @@ import type { WorkBreakdownStructureMetadataOperations } from "powerhouse-agent/
 export const workBreakdownStructureMetadataOperations: WorkBreakdownStructureMetadataOperations =
   {
     setReferencesOperation(state, action) {
-      // TODO: Implement "setReferencesOperation" reducer
-      throw new Error('Reducer "setReferencesOperation" not yet implemented');
+      // Update state.references array
+      state.references = action.input.references;
     },
     setMetaDataOperation(state, action) {
-      // TODO: Implement "setMetaDataOperation" reducer
-      throw new Error('Reducer "setMetaDataOperation" not yet implemented');
+      // Create/update state.metaData object
+      if (!state.metaData) {
+        state.metaData = {
+          format: action.input.format,
+          data: action.input.data,
+        };
+      } else {
+        // Update existing metadata
+        state.metaData.format = action.input.format;
+        state.metaData.data = action.input.data;
+      }
     },
   };
