@@ -20,6 +20,7 @@ import { findGoalInTree } from "../utils/treeTransform.js";
 import { Tooltip } from "./Tooltip.js";
 import { SingleClickStatusChip } from "./SingleClickStatusChip.js";
 import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
+import { DelegationPopup } from "./DelegationPopup.js";
 
 interface GoalEditSidebarProps {
   goalId: string;
@@ -35,9 +36,11 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const [descriptionValue, setDescriptionValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState("");
   const [newNoteValue, setNewNoteValue] = useState("");
-  const [editingAssignee, setEditingAssignee] = useState(false);
-  const [assigneeValue, setAssigneeValue] = useState("");
   const [blockedPopup, setBlockedPopup] = useState<{ isOpen: boolean; goalId: string }>({
+    isOpen: false,
+    goalId: "",
+  });
+  const [delegationPopup, setDelegationPopup] = useState<{ isOpen: boolean; goalId: string }>({
     isOpen: false,
     goalId: "",
   });
@@ -53,9 +56,8 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     if (goal) {
       setDescriptionValue(goal.description);
       setInstructionsValue(goal.instructions || "");
-      setAssigneeValue(goal.assignee || "");
     }
-  }, [goal?.description, goal?.instructions, goal?.assignee]);
+  }, [goal?.description, goal?.instructions]);
 
   if (!goal) {
     return (
@@ -127,28 +129,6 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     }
   };
 
-  const handleAssigneeBlur = () => {
-    const newAssignee = assigneeValue.trim();
-    if (newAssignee !== goal.assignee) {
-      if (newAssignee) {
-        dispatch(delegateGoal({ id: goal.id, assignee: newAssignee }));
-      } else {
-        // Clear assignee if empty
-        dispatch(delegateGoal({ id: goal.id, assignee: "" }));
-      }
-    }
-    setEditingAssignee(false);
-  };
-
-  const handleAssigneeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.currentTarget.blur(); // Trigger onBlur to save
-    } else if (e.key === "Escape") {
-      setAssigneeValue(goal.assignee || ""); // Reset to original
-      setEditingAssignee(false);
-    }
-  };
-
   const handleToggleDraft = () => {
     if (goal.isDraft) {
       dispatch(markAsReady({ goalId: goal.id }));
@@ -182,8 +162,8 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           dispatch(markWontDo({ id: goal.id }));
           break;
         case "DELEGATED":
-          // Handle delegation - would need additional UI for assignee
-          console.log("Delegation not yet implemented in sidebar");
+          // Show delegation popup (pre-fill assignee if currently IN_REVIEW)
+          setDelegationPopup({ isOpen: true, goalId: goal.id });
           break;
         case "IN_REVIEW":
           console.log("In Review status not yet implemented");
@@ -209,6 +189,19 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
 
   const handleBlockedClose = useCallback(() => {
     setBlockedPopup({ isOpen: false, goalId: "" });
+  }, []);
+
+  // Handle delegation popup
+  const handleDelegationSubmit = useCallback((assignee: string) => {
+    if (!dispatch) return;
+    dispatch(delegateGoal({ 
+      id: delegationPopup.goalId, 
+      assignee
+    }));
+  }, [dispatch, delegationPopup.goalId]);
+
+  const handleDelegationClose = useCallback(() => {
+    setDelegationPopup({ isOpen: false, goalId: "" });
   }, []);
 
   const handleCopyId = async () => {
@@ -311,6 +304,20 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         )}
       </div>
 
+      {/* Status and Assignee Row */}
+      <div className="flex items-center gap-2">
+        <SingleClickStatusChip 
+          goal={goal}
+          onStatusChange={handleStatusChange}
+        />
+        {(goal.status === "DELEGATED" || goal.status === "IN_REVIEW") && goal.assignee && (
+          <>
+            <span className="text-gray-400">→</span>
+            <span className="text-sm font-medium text-gray-700">{goal.assignee}</span>
+          </>
+        )}
+      </div>
+
       {/* Draft Status */}
       <div>
         <h4 className="text-base font-semibold text-gray-700 mb-2">Status</h4>
@@ -329,48 +336,8 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         </div>
       </div>
 
-      {/* Read-only information */}
+      {/* Other information */}
       <div className="space-y-4">
-        <div>
-          <h4 className="text-base font-semibold text-gray-700 mb-2">
-            Current Status
-          </h4>
-          <div className="bg-gray-50 rounded p-2">
-            <div className="inline-block">
-              <SingleClickStatusChip 
-                goal={goal}
-                onStatusChange={handleStatusChange}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="text-base font-semibold text-gray-700 mb-2">
-            Assignee
-          </h4>
-          {editingAssignee ? (
-            <input
-              type="text"
-              value={assigneeValue}
-              onChange={(e) => setAssigneeValue(e.target.value)}
-              onBlur={handleAssigneeBlur}
-              onKeyDown={handleAssigneeKeyDown}
-              onFocus={(e) => e.target.select()}
-              className="w-full text-base text-gray-600 bg-white border-2 border-blue-500 focus:outline-none focus:border-blue-600 p-2 rounded"
-              placeholder="Enter assignee name"
-              autoFocus
-            />
-          ) : (
-            <div
-              className="text-base text-gray-600 p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-2 border-transparent hover:border-gray-300"
-              onClick={() => setEditingAssignee(true)}
-              title="Click to edit assignee"
-            >
-              {goal.assignee || "Unassigned - Click to assign"}
-            </div>
-          )}
-        </div>
 
         {/* Instructions Section */}
         <div>
@@ -496,6 +463,14 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         onClose={handleBlockedClose}
         onSubmit={handleBlockedSubmit}
         goalId={blockedPopup.goalId}
+      />
+
+      <DelegationPopup
+        isOpen={delegationPopup.isOpen}
+        onClose={handleDelegationClose}
+        onSubmit={handleDelegationSubmit}
+        goalId={delegationPopup.goalId}
+        defaultAssignee={goal.status === "IN_REVIEW" && goal.assignee ? goal.assignee : undefined}
       />
     </div>
   );

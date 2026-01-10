@@ -1,24 +1,30 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
-interface BlockedStatusPopupProps {
+interface DelegationPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (note: string, author?: string) => void;
+  onSubmit: (assignee: string) => void;
   goalId: string;
+  defaultAssignee?: string;
 }
 
-export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: BlockedStatusPopupProps) {
-  const [note, setNote] = useState("");
-  const [author, setAuthor] = useState("");
+export function DelegationPopup({ isOpen, onClose, onSubmit, goalId, defaultAssignee }: DelegationPopupProps) {
+  const [assignee, setAssignee] = useState(defaultAssignee || "");
+
+  // Update assignee when defaultAssignee changes
+  useEffect(() => {
+    if (isOpen && defaultAssignee) {
+      setAssignee(defaultAssignee);
+    }
+  }, [isOpen, defaultAssignee]);
 
   const handleSubmit = useCallback(() => {
-    if (note.trim()) {
-      onSubmit(note.trim(), author.trim() || undefined);
-      setNote("");
-      setAuthor("");
+    if (assignee.trim()) {
+      onSubmit(assignee.trim());
+      setAssignee("");
       onClose();
     }
-  }, [note, author, onSubmit, onClose]);
+  }, [assignee, onSubmit, onClose]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && e.ctrlKey) {
@@ -34,7 +40,7 @@ export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: Blocke
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 max-w-[90vw] shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">Goal Blocked</h3>
+          <h3 className="text-lg font-semibold text-gray-800">Delegate Goal</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 text-xl font-bold"
@@ -44,35 +50,22 @@ export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: Blocke
         </div>
         
         <p className="text-sm text-gray-600 mb-4">
-          This goal is being marked as blocked. Please provide details about what's blocking progress.
+          Assign this goal to someone who will work on it and report progress.
         </p>
 
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              What's blocking this goal? *
-            </label>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical min-h-[80px]"
-              placeholder="Describe what's preventing progress on this goal..."
-              autoFocus
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Your name (optional)
+              Assignee *
             </label>
             <input
               type="text"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
+              value={assignee}
+              onChange={(e) => setAssignee(e.target.value)}
               onKeyDown={handleKeyDown}
               className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Your name"
+              placeholder="Enter the name or identifier of the assignee"
+              autoFocus
             />
           </div>
         </div>
@@ -90,10 +83,10 @@ export function BlockedStatusPopup({ isOpen, onClose, onSubmit, goalId }: Blocke
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!note.trim()}
-              className="px-3 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200"
+              disabled={!assignee.trim()}
+              className="px-3 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200"
             >
-              Mark as Blocked
+              Delegate
             </button>
           </div>
         </div>

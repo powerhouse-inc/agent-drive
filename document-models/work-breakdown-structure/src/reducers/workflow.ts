@@ -98,6 +98,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to IN_PROGRESS
       goal.status = "IN_PROGRESS";
+      
+      // Clear assignee since status is not DELEGATED or IN_REVIEW
+      goal.assignee = null;
 
       // Add optional note if provided
       if (action.input.note) {
@@ -115,6 +118,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         // Only update ancestors that are TODO or DELEGATED
         if (ancestor.status === "TODO" || ancestor.status === "DELEGATED") {
           ancestor.status = "IN_PROGRESS";
+          ancestor.assignee = null;
         }
       }
     },
@@ -127,6 +131,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to COMPLETED
       goal.status = "COMPLETED";
+      
+      // Clear assignee since status is not DELEGATED or IN_REVIEW
+      goal.assignee = null;
 
       // Add optional note if provided
       if (action.input.note) {
@@ -147,6 +154,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
           descendant.status !== "WONT_DO"
         ) {
           descendant.status = "COMPLETED";
+          descendant.assignee = null;
         }
       }
     },
@@ -159,6 +167,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to TODO
       goal.status = "TODO";
+      
+      // Clear assignee since status is not DELEGATED or IN_REVIEW
+      goal.assignee = null;
 
       // Add optional note if provided
       if (action.input.note) {
@@ -175,6 +186,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       for (const ancestor of ancestors) {
         if (ancestor.status === "COMPLETED" || ancestor.status === "WONT_DO") {
           ancestor.status = "TODO";
+          ancestor.assignee = null;
         }
       }
     },
@@ -187,6 +199,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to BLOCKED
       goal.status = "BLOCKED";
+      
+      // Clear assignee since status is not DELEGATED or IN_REVIEW
+      goal.assignee = null;
 
       // Store blocking question as a note
       const note: Note = {
@@ -223,6 +238,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Change status back to TODO (since we don't track previous status)
       goal.status = "TODO";
+      
+      // Clear assignee since status is not DELEGATED or IN_REVIEW
+      goal.assignee = null;
 
       // Check if any goals remain blocked and update global isBlocked flag
       state.isBlocked = hasBlockedGoals(state.goals);
@@ -236,6 +254,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Update goal status to WONT_DO
       goal.status = "WONT_DO";
+      
+      // Clear assignee since status is not DELEGATED or IN_REVIEW
+      goal.assignee = null;
 
       // Mark all unfinished child goals as WONT_DO
       const descendants = getDescendants(state.goals, action.input.id);
@@ -246,6 +267,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
           descendant.status !== "WONT_DO"
         ) {
           descendant.status = "WONT_DO";
+          descendant.assignee = null;
         }
       }
     },
