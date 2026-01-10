@@ -73,13 +73,13 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Test**: Attempt to delegate parent goal (should fail)
 - [x] **Test**: 4 tests passing
 
-##### REPORT_ON_GOAL  
-- [ ] Find target goal by ID
-- [ ] Validate goal status is DELEGATED
-- [ ] Add note to goal
-- [ ] If moveInReview is true, change status to IN_REVIEW
-- [ ] **Verify**: Only DELEGATED goals can be reported on
-- [ ] **Test**: Various status scenarios
+##### REPORT_ON_GOAL ✅
+- [x] Find target goal by ID
+- [x] Validate goal status is DELEGATED
+- [x] Add note to goal
+- [x] If moveInReview is true, change status to IN_REVIEW
+- [x] **Verify**: Only DELEGATED goals can be reported on
+- [x] **Test**: Various status scenarios (4 tests passing)
 
 #### 1.4 Blocking Operations
 ##### REPORT_BLOCKED

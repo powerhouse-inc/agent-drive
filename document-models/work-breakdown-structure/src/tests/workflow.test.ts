@@ -1865,4 +1865,155 @@ describe("Workflow Operations", () => {
       expect(goal.assignee).toBe("charlie@example.com");
     });
   });
+
+  describe("REPORT_ON_GOAL", () => {
+    it("should add a report note to a delegated goal", () => {
+      const document = utils.createDocument();
+      
+      // Create a delegated goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: "alice@example.com",
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Report on the goal
+      updatedDocument = reducer(
+        updatedDocument,
+        reportOnGoal({
+          id: "goal-1",
+          moveInReview: false,
+          note: {
+            id: "note-1",
+            note: "Progress update: 50% complete",
+            author: "Alice",
+          },
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("DELEGATED"); // Status should remain DELEGATED
+      expect(goal.notes).toHaveLength(1);
+      expect(goal.notes[0].note).toBe("Progress update: 50% complete");
+      expect(goal.notes[0].author).toBe("Alice");
+    });
+
+    it("should move goal to IN_REVIEW when moveInReview is true", () => {
+      const document = utils.createDocument();
+      
+      // Create a delegated goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: "alice@example.com",
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Report on the goal and move to review
+      updatedDocument = reducer(
+        updatedDocument,
+        reportOnGoal({
+          id: "goal-1",
+          moveInReview: true,
+          note: {
+            id: "note-1",
+            note: "Ready for review",
+            author: "Alice",
+          },
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("IN_REVIEW");
+      expect(goal.notes).toHaveLength(1);
+      expect(goal.notes[0].note).toBe("Ready for review");
+    });
+
+    it("should fail when goal is not delegated", () => {
+      const document = utils.createDocument();
+      
+      // Create a non-delegated goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null, // No assignee, so status is TODO
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Try to report on the non-delegated goal
+      const result = reducer(
+        updatedDocument,
+        reportOnGoal({
+          id: "goal-1",
+          moveInReview: false,
+          note: {
+            id: "note-1",
+            note: "Progress update",
+            author: "Alice",
+          },
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("is not delegated and cannot be reported on");
+    });
+
+    it("should fail when goal does not exist", () => {
+      const document = utils.createDocument();
+      
+      const result = reducer(
+        document,
+        reportOnGoal({
+          id: "nonexistent",
+          moveInReview: false,
+          note: {
+            id: "note-1",
+            note: "Progress update",
+            author: "Alice",
+          },
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("not found");
+    });
+  });
 });

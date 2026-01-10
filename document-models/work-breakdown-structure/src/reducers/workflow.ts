@@ -60,8 +60,29 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       goal.status = "DELEGATED";
     },
     reportOnGoalOperation(state, action) {
-      // TODO: Implement "reportOnGoalOperation" reducer
-      throw new Error('Reducer "reportOnGoalOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Validate goal status is DELEGATED
+      if (goal.status !== "DELEGATED") {
+        throw new Error(`Goal with ID ${action.input.id} is not delegated and cannot be reported on`);
+      }
+
+      // Add note to goal
+      const note: Note = {
+        id: action.input.note.id,
+        note: action.input.note.note,
+        author: action.input.note.author || null,
+      };
+      goal.notes.push(note);
+
+      // If moveInReview is true, change status to IN_REVIEW
+      if (action.input.moveInReview) {
+        goal.status = "IN_REVIEW";
+      }
     },
     markInProgressOperation(state, action) {
       // Find the target goal
