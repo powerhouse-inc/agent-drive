@@ -14,6 +14,7 @@ import {
   markWontDo,
   reportBlocked,
   delegateGoal,
+  reportOnGoal,
 } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { generateId } from "document-model/core";
 import { findGoalInTree } from "../utils/treeTransform.js";
@@ -21,6 +22,7 @@ import { Tooltip } from "./Tooltip.js";
 import { SingleClickStatusChip } from "./SingleClickStatusChip.js";
 import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
 import { DelegationPopup } from "./DelegationPopup.js";
+import { ReportProgressPopup } from "./ReportProgressPopup.js";
 
 interface GoalEditSidebarProps {
   goalId: string;
@@ -41,6 +43,10 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     goalId: "",
   });
   const [delegationPopup, setDelegationPopup] = useState<{ isOpen: boolean; goalId: string }>({
+    isOpen: false,
+    goalId: "",
+  });
+  const [reportProgressPopup, setReportProgressPopup] = useState<{ isOpen: boolean; goalId: string }>({
     isOpen: false,
     goalId: "",
   });
@@ -204,6 +210,28 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     setDelegationPopup({ isOpen: false, goalId: "" });
   }, []);
 
+  // Handle report progress popup
+  const handleReportProgressSubmit = useCallback((note: string, moveToReview: boolean, author?: string) => {
+    if (!dispatch) return;
+    dispatch(reportOnGoal({ 
+      id: reportProgressPopup.goalId,
+      note: {
+        id: generateId(),
+        note,
+        author: author || undefined
+      },
+      moveInReview: moveToReview
+    }));
+  }, [dispatch, reportProgressPopup.goalId]);
+
+  const handleReportProgressClose = useCallback(() => {
+    setReportProgressPopup({ isOpen: false, goalId: "" });
+  }, []);
+
+  const handleReportProgress = useCallback(() => {
+    setReportProgressPopup({ isOpen: true, goalId: goal.id });
+  }, [goal?.id]);
+
   const handleCopyId = async () => {
     try {
       await navigator.clipboard.writeText(goal.id);
@@ -317,6 +345,18 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           </>
         )}
       </div>
+
+      {/* Report Progress Button for Delegated Goals */}
+      {goal.status === "DELEGATED" && (
+        <div className="flex justify-start">
+          <button
+            onClick={handleReportProgress}
+            className="px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 border border-blue-200 transition-colors duration-200"
+          >
+            Report Progress
+          </button>
+        </div>
+      )}
 
       {/* Draft Status */}
       <div>
@@ -471,6 +511,14 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         onSubmit={handleDelegationSubmit}
         goalId={delegationPopup.goalId}
         defaultAssignee={goal.status === "IN_REVIEW" && goal.assignee ? goal.assignee : undefined}
+      />
+
+      <ReportProgressPopup
+        isOpen={reportProgressPopup.isOpen}
+        onClose={handleReportProgressClose}
+        onSubmit={handleReportProgressSubmit}
+        goalId={reportProgressPopup.goalId}
+        goalDescription={goal.description}
       />
     </div>
   );
