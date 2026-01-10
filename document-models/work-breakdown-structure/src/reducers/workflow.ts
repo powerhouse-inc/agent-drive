@@ -7,11 +7,20 @@ import {
   isLeafGoal,
   hasBlockedGoals,
 } from "../utils.js";
+import { DuplicateGoalIdError } from "../../gen/workflow/error.js";
 import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWorkflowOperations =
   {
     createGoalOperation(state, action) {
+      // Check if a goal with this ID already exists
+      const existingGoal = findGoal(state.goals, action.input.id);
+      if (existingGoal) {
+        throw new DuplicateGoalIdError(
+          `Goal with ID ${action.input.id} already exists`,
+        );
+      }
+
       // Create the new goal with required fields
       const newGoal: Goal = {
         id: action.input.id,

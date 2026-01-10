@@ -6,6 +6,7 @@ interface ReportProgressPopupProps {
   onSubmit: (note: string, moveToReview: boolean, author?: string) => void;
   goalId: string;
   goalDescription: string;
+  currentAssignee?: string;
 }
 
 export function ReportProgressPopup({
@@ -14,10 +15,18 @@ export function ReportProgressPopup({
   onSubmit,
   goalId,
   goalDescription,
+  currentAssignee,
 }: ReportProgressPopupProps) {
   const [note, setNote] = useState("");
   const [author, setAuthor] = useState("");
   const [moveToReview, setMoveToReview] = useState(true);
+
+  // Set author to current assignee when popup opens
+  React.useEffect(() => {
+    if (isOpen && currentAssignee) {
+      setAuthor(currentAssignee);
+    }
+  }, [isOpen, currentAssignee]);
 
   const handleSubmit = useCallback(() => {
     if (note.trim()) {
@@ -79,7 +88,7 @@ export function ReportProgressPopup({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Your name (optional)
+              Author (optional)
             </label>
             <input
               type="text"
@@ -87,7 +96,7 @@ export function ReportProgressPopup({
               onChange={(e) => setAuthor(e.target.value)}
               onKeyDown={handleKeyDown}
               className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Your name"
+              placeholder="Report author"
             />
           </div>
 

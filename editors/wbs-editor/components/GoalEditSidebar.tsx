@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import {
   updateDescription,
@@ -34,10 +34,18 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const [editingDescription, setEditingDescription] = useState(false);
   const [editingInstructions, setEditingInstructions] = useState(false);
   const [addingNote, setAddingNote] = useState(false);
+  const notesListRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState("");
   const [newNoteValue, setNewNoteValue] = useState("");
+
+  // Scroll to bottom of notes list when adding a note
+  useEffect(() => {
+    if (addingNote && notesListRef.current) {
+      notesListRef.current.scrollTop = notesListRef.current.scrollHeight;
+    }
+  }, [addingNote]);
   const [blockedPopup, setBlockedPopup] = useState<{
     isOpen: boolean;
     goalId: string;
@@ -274,7 +282,7 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           goalId: goal.id,
           noteId: generateId(),
           note: noteText.trim(),
-          author: undefined, // Let the system handle author if needed
+          author: document?.state.global.owner || undefined,
         }),
       );
       setNewNoteValue("");
@@ -412,7 +420,7 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
             />
           ) : (
             <div
-              className="text-sm text-gray-600 p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200 min-h-[80px] border-2 border-transparent hover:border-gray-300"
+              className="text-sm text-gray-600 p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200 min-h-[80px] border-2 border-transparent hover:border-gray-300 whitespace-pre-wrap"
               onClick={() => setEditingInstructions(true)}
               title="Click to edit instructions"
             >
@@ -443,7 +451,7 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         {/* Notes Section */}
         <div>
           <h4 className="text-base font-semibold text-gray-700 mb-2">Notes</h4>
-          <div className="space-y-2 max-h-60 overflow-y-auto mb-3">
+          <div ref={notesListRef} className="space-y-2 max-h-[480px] overflow-y-auto mb-3">
             {goal.notes.length === 0 ? (
               <div className="text-sm text-gray-400 p-3 bg-gray-50 rounded text-center">
                 No notes yet. Add your first note below.
@@ -538,6 +546,7 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         onSubmit={handleReportProgressSubmit}
         goalId={reportProgressPopup.goalId}
         goalDescription={goal.description}
+        currentAssignee={goal.assignee || undefined}
       />
     </div>
   );

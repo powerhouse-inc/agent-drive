@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { generateId } from "document-model/core";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import {
@@ -191,7 +191,37 @@ export function WBSSidebar() {
 
       {/* Metadata */}
       <div>
-        <h3 className="text-base font-semibold text-gray-700 mb-2">Metadata</h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-base font-semibold text-gray-700">Metadata</h3>
+          {metadata && (
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(metadata.data);
+                } catch (error) {
+                  console.error("Failed to copy metadata:", error);
+                }
+              }}
+              className="text-gray-400 hover:text-gray-600 p-1"
+              title="Copy metadata"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
         {editingMetadata ? (
           <form onSubmit={handleSetMetadata} className="space-y-2">
             <select
@@ -236,7 +266,13 @@ export function WBSSidebar() {
                 </div>
                 <div className="p-2 bg-white border border-gray-200 rounded">
                   <pre className="text-xs text-gray-600 whitespace-pre-wrap break-all">
-                    {metadata.data}
+                    {metadata.format === "JSON" ? (() => {
+                      try {
+                        return JSON.stringify(JSON.parse(metadata.data), null, 2);
+                      } catch {
+                        return metadata.data;
+                      }
+                    })() : metadata.data}
                   </pre>
                 </div>
               </div>

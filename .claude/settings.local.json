@@ -19,7 +19,8 @@
       "Bash(pnpm build:*)",
       "WebFetch(domain:docs.svar.dev)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "mcp__reactor-mcp__getDrive"
     ],
     "deny": [
       "Write(./document-models/*/gen/**)",

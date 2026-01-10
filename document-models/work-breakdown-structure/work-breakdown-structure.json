@@ -164,11 +164,19 @@
                     "operations": [
                         {
                             "description": "Creates a new goal in the hierarchy with status TODO, or status DELEGATED if the assignee is set.",
-                            "errors": [],
+                            "errors": [
+                                {
+                                    "code": "DUPLICATE_GOAL_ID",
+                                    "description": "A goal with the specified ID already exists",
+                                    "id": "duplicate-goal-id-error",
+                                    "name": "DuplicateGoalIdError",
+                                    "template": ""
+                                }
+                            ],
                             "examples": [],
                             "id": "a8ed582c-06d7-4014-90de-b7b696947af8",
                             "name": "CREATE_GOAL",
-                            "reducer": "// Create the new goal with required fields\nconst newGoal = {\n    id: action.input.id,\n    description: action.input.description,\n    status: action.input.assignee ? 'DELEGATED' : 'TODO',\n    parentId: action.input.parentId || null,\n    dependencies: action.input.dependsOn || [],\n    isDraft: action.input.draft || false,\n    instructions: action.input.instructions || null,\n    notes: [],\n    assignee: action.input.assignee || null,\n};\n\n// Add initial note if provided\nif (action.input.initialNote) {\n    const note = {\n        id: action.input.initialNote.id,\n        note: action.input.initialNote.note,\n        author: action.input.initialNote.author || null,\n    };\n    newGoal.notes.push(note);\n}\n\n// Helper function to insert goal at position\nfunction insertGoalAtPosition(goals, goal, insertBefore) {\n    if (!insertBefore) {\n        return [...goals, goal];\n    }\n    \n    const insertIndex = goals.findIndex(g => g.id === insertBefore);\n    if (insertIndex === -1) {\n        return [...goals, goal];\n    }\n    \n    const result = [...goals];\n    result.splice(insertIndex, 0, goal);\n    return result;\n}\n\n// Insert goal at the specified position\nstate.goals = insertGoalAtPosition(\n    state.goals, \n    newGoal, \n    action.input.insertBefore || undefined\n);",
+                            "reducer": "// Check if a goal with this ID already exists\nconst existingGoal = findGoal(state.goals, action.input.id);\nif (existingGoal) {\n    throw new DuplicateGoalIdError(`Goal with ID ${action.input.id} already exists`);\n}\n\n// Create the new goal with required fields\nconst newGoal = {\n    id: action.input.id,\n    description: action.input.description,\n    status: action.input.assignee ? 'DELEGATED' : 'TODO',\n    parentId: action.input.parentId || null,\n    dependencies: action.input.dependsOn || [],\n    isDraft: action.input.draft || false,\n    instructions: action.input.instructions || null,\n    notes: [],\n    assignee: action.input.assignee || null,\n};\n\n// Add initial note if provided\nif (action.input.initialNote) {\n    const note = {\n        id: action.input.initialNote.id,\n        note: action.input.initialNote.note,\n        author: action.input.initialNote.author || null,\n    };\n    newGoal.notes.push(note);\n}\n\n// Insert goal at the specified position\nstate.goals = insertGoalAtPosition(\n    state.goals, \n    newGoal, \n    action.input.insertBefore || undefined\n);",
                             "schema": "input CreateGoalInput {\n  id: OID!\n  description: String!\n  instructions: String\n  draft: Boolean\n  parentId: OID\n  insertBefore: OID\n  assignee: String\n  dependsOn: [OID!]\n  initialNote: InitialNoteInput\n  metaData: MetaDataInput\n}\n\ninput InitialNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}\n\ninput MetaDataInput {\n  format: MetaDataFormat\n  data: String\n}",
                             "scope": "global",
                             "template": "Create new goal"

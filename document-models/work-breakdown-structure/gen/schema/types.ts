@@ -115,7 +115,7 @@ export type Goal = {
   isDraft: Scalars["Boolean"]["output"];
   notes: Array<Note>;
   parentId: Maybe<Scalars["OID"]["output"]>;
-  status: GoalStatus;
+  status: GoalStatus | `${GoalStatus}`;
 };
 
 export type GoalStatus =
@@ -171,14 +171,14 @@ export type MarkWontDoInput = {
 
 export type MetaData = {
   data: Scalars["String"]["output"];
-  format: MetaDataFormat;
+  format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
 export type MetaDataFormat = "JSON" | "OTHER" | "TEXT";
 
 export type MetaDataInput = {
   data?: InputMaybe<Scalars["String"]["input"]>;
-  format?: InputMaybe<MetaDataFormat>;
+  format?: InputMaybe<MetaDataFormat | `${MetaDataFormat}`>;
 };
 
 export type Note = {
@@ -224,7 +224,7 @@ export type ReportOnGoalInput = {
 
 export type SetMetaDataInput = {
   data: Scalars["String"]["input"];
-  format: MetaDataFormat;
+  format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
 export type SetOwnerInput = {

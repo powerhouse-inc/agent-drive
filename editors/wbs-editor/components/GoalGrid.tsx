@@ -298,6 +298,9 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         goalDescription={
           document?.state.global.goals.find((g) => g.id === reportProgressPopup.goalId)?.description || ""
         }
+        currentAssignee={
+          document?.state.global.goals.find((g) => g.id === reportProgressPopup.goalId)?.assignee || undefined
+        }
       />
     </div>
   );

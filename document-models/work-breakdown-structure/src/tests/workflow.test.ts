@@ -376,6 +376,104 @@ describe("Workflow Operations", () => {
       expect(grandchild?.assignee).toBe("bob@example.com");
       expect(grandchild?.notes).toHaveLength(1);
     });
+
+    it("should throw an error when creating a goal with duplicate ID", () => {
+      const document = utils.createDocument();
+
+      // Create first goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "First goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: null,
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      expect(updatedDocument.state.global.goals).toHaveLength(1);
+
+      // Try to create another goal with the same ID
+      const result = reducer(
+        updatedDocument,
+        createGoal({
+          id: "goal-1", // Same ID as the first goal
+          description: "Second goal with same ID",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: null,
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      if (
+        lastOperation.error &&
+        typeof lastOperation.error === "object" &&
+        "message" in lastOperation.error
+      ) {
+        expect((lastOperation.error as any).message).toBe(
+          "Goal with ID goal-1 already exists",
+        );
+      }
+
+      // The state should remain unchanged (still only 1 goal)
+      expect(result.state.global.goals).toHaveLength(1);
+    });
+
+    it("should allow creating goals with different IDs", () => {
+      const document = utils.createDocument();
+
+      // Create first goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "First goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: null,
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Create second goal with different ID
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "goal-2", // Different ID
+          description: "Second goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: null,
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      expect(updatedDocument.state.global.goals).toHaveLength(2);
+      expect(updatedDocument.state.global.goals[0].id).toBe("goal-1");
+      expect(updatedDocument.state.global.goals[1].id).toBe("goal-2");
+    });
   });
 
   describe("MARK_IN_PROGRESS", () => {
