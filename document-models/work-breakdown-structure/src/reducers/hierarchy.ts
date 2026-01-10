@@ -59,13 +59,47 @@ export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHi
       }
     },
     addDependenciesOperation(state, action) {
-      // TODO: Implement "addDependenciesOperation" reducer
-      throw new Error('Reducer "addDependenciesOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.goalId);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.goalId} not found`);
+      }
+
+      // Validate each dependency exists
+      for (const depId of action.input.dependsOn) {
+        const dependency = findGoal(state.goals, depId);
+        if (!dependency) {
+          throw new Error(`Dependency goal with ID ${depId} not found`);
+        }
+
+        // Check no circular dependencies (goal can't depend on its descendants)
+        if (isDescendant(state.goals, action.input.goalId, depId)) {
+          throw new Error(`Cannot add dependency ${depId} as it is a descendant of ${action.input.goalId}`);
+        }
+
+        // Also prevent depending on self
+        if (depId === action.input.goalId) {
+          throw new Error(`Goal ${action.input.goalId} cannot depend on itself`);
+        }
+      }
+
+      // Add new dependencies to existing array (avoid duplicates)
+      for (const depId of action.input.dependsOn) {
+        if (!goal.dependencies.includes(depId)) {
+          goal.dependencies.push(depId);
+        }
+      }
     },
     removeDependenciesOperation(state, action) {
-      // TODO: Implement "removeDependenciesOperation" reducer
-      throw new Error(
-        'Reducer "removeDependenciesOperation" not yet implemented',
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.goalId);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.goalId} not found`);
+      }
+
+      // Filter out specified dependencies from array
+      goal.dependencies = goal.dependencies.filter(
+        depId => !action.input.dependencies.includes(depId)
       );
     },
   };

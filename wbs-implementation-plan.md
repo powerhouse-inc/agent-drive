@@ -114,22 +114,22 @@ Critical for maintaining tree structure integrity.
 - [x] **Test**: Attempt circular reference (should fail)
 - [x] **Test**: 6 tests passing
 
-### Phase 3: Hierarchy Module - Dependencies
+### Phase 3: Hierarchy Module - Dependencies ✅
 Manage goal dependencies without creating cycles.
 
-#### 3.1 ADD_DEPENDENCIES
-- [ ] Find target goal by ID
-- [ ] Validate each dependency exists
-- [ ] Check no circular dependencies (goal can't depend on descendants)
-- [ ] Add new dependencies to existing array (avoid duplicates)
-- [ ] **Verify**: No circular dependency chains
-- [ ] **Test**: Valid and invalid dependency scenarios
+#### 3.1 ADD_DEPENDENCIES ✅
+- [x] Find target goal by ID
+- [x] Validate each dependency exists
+- [x] Check no circular dependencies (goal can't depend on descendants)
+- [x] Add new dependencies to existing array (avoid duplicates)
+- [x] **Verify**: No circular dependency chains
+- [x] **Test**: Valid and invalid dependency scenarios (5 tests passing)
 
-#### 3.2 REMOVE_DEPENDENCIES  
-- [ ] Find target goal by ID
-- [ ] Filter out specified dependencies from array
-- [ ] **Verify**: Dependencies removed correctly
-- [ ] **Test**: Remove some, remove all
+#### 3.2 REMOVE_DEPENDENCIES ✅
+- [x] Find target goal by ID
+- [x] Filter out specified dependencies from array
+- [x] **Verify**: Dependencies removed correctly
+- [x] **Test**: Remove some, remove all (4 tests passing)
 
 ### Phase 4: Documentation Module
 Simpler operations for managing goal content.
@@ -205,8 +205,7 @@ function isLeafGoal(goals: Goal[], id: string): boolean
 
 ### Module Completion
 - [x] Workflow Module (9/9 operations) ✅
-- [x] Hierarchy REORDER (1/1 operations) ✅
-- [ ] Hierarchy Dependencies (0/2 operations)
+- [x] Hierarchy Module (3/3 operations) ✅
 - [ ] Documentation Module (0/8 operations)
 - [ ] Metadata Module (0/2 operations)
 
