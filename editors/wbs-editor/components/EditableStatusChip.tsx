@@ -163,10 +163,11 @@ export default function EditableStatusChip({ row, column, onAction, onStatusChan
         >
           <button
             ref={buttonRef}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium min-w-[120px] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all hover:brightness-110"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium min-w-[120px] focus:outline-none transition-all"
             style={{
               backgroundColor: currentColors.bg,
               color: currentColors.text,
+              boxShadow: isOpen ? `0 0 0 2px ${currentColors.text}40` : undefined,
             }}
             onClick={(e) => {
               e.stopPropagation();
