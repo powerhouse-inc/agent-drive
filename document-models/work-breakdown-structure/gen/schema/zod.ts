@@ -2,12 +2,15 @@ import { z } from "zod";
 import type {
   AddDependenciesInput,
   AddNoteInput,
+  BlockedNoteInput,
   ClearInstructionsInput,
   ClearNotesInput,
+  CompletedNoteInput,
   CreateGoalInput,
   DelegateGoalInput,
   Goal,
   GoalStatus,
+  InProgressNoteInput,
   InitialNoteInput,
   MarkAsDraftInput,
   MarkAsReadyInput,
@@ -23,10 +26,13 @@ import type {
   RemoveNoteInput,
   ReorderInput,
   ReportBlockedInput,
+  ReportNoteInput,
   ReportOnGoalInput,
   SetMetaDataInput,
   SetReferencesInput,
+  TodoNoteInput,
   UnblockGoalInput,
+  UnblockNoteInput,
   UpdateDescriptionInput,
   UpdateInstructionsInput,
   WorkBreakdownStructureState,
@@ -75,6 +81,16 @@ export function AddNoteInputSchema(): z.ZodObject<Properties<AddNoteInput>> {
   });
 }
 
+export function BlockedNoteInputSchema(): z.ZodObject<
+  Properties<BlockedNoteInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
+  });
+}
+
 export function ClearInstructionsInputSchema(): z.ZodObject<
   Properties<ClearInstructionsInput>
 > {
@@ -88,6 +104,16 @@ export function ClearNotesInputSchema(): z.ZodObject<
 > {
   return z.object({
     goalId: z.string(),
+  });
+}
+
+export function CompletedNoteInputSchema(): z.ZodObject<
+  Properties<CompletedNoteInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
   });
 }
 
@@ -132,6 +158,16 @@ export function GoalSchema(): z.ZodObject<Properties<Goal>> {
   });
 }
 
+export function InProgressNoteInputSchema(): z.ZodObject<
+  Properties<InProgressNoteInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
+  });
+}
+
 export function InitialNoteInputSchema(): z.ZodObject<
   Properties<InitialNoteInput>
 > {
@@ -163,7 +199,7 @@ export function MarkCompletedInputSchema(): z.ZodObject<
 > {
   return z.object({
     id: z.string(),
-    note: z.string().nullish(),
+    note: z.lazy(() => CompletedNoteInputSchema().nullish()),
   });
 }
 
@@ -172,14 +208,14 @@ export function MarkInProgressInputSchema(): z.ZodObject<
 > {
   return z.object({
     id: z.string(),
-    note: z.string().nullish(),
+    note: z.lazy(() => InProgressNoteInputSchema().nullish()),
   });
 }
 
 export function MarkTodoInputSchema(): z.ZodObject<Properties<MarkTodoInput>> {
   return z.object({
     id: z.string(),
-    note: z.string().nullish(),
+    note: z.lazy(() => TodoNoteInputSchema().nullish()),
   });
 }
 
@@ -246,7 +282,17 @@ export function ReportBlockedInputSchema(): z.ZodObject<
 > {
   return z.object({
     id: z.string(),
-    question: z.string(),
+    question: z.lazy(() => BlockedNoteInputSchema()),
+  });
+}
+
+export function ReportNoteInputSchema(): z.ZodObject<
+  Properties<ReportNoteInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
   });
 }
 
@@ -256,7 +302,7 @@ export function ReportOnGoalInputSchema(): z.ZodObject<
   return z.object({
     id: z.string(),
     moveInReview: z.boolean(),
-    note: z.string(),
+    note: z.lazy(() => ReportNoteInputSchema()),
   });
 }
 
@@ -277,12 +323,30 @@ export function SetReferencesInputSchema(): z.ZodObject<
   });
 }
 
+export function TodoNoteInputSchema(): z.ZodObject<Properties<TodoNoteInput>> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
+  });
+}
+
 export function UnblockGoalInputSchema(): z.ZodObject<
   Properties<UnblockGoalInput>
 > {
   return z.object({
     id: z.string(),
-    response: z.string(),
+    response: z.lazy(() => UnblockNoteInputSchema()),
+  });
+}
+
+export function UnblockNoteInputSchema(): z.ZodObject<
+  Properties<UnblockNoteInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
   });
 }
 

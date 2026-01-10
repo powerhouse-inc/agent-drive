@@ -19,7 +19,12 @@ export function ProjectStats({ projects }: ProjectStatsProps) {
       // Check if reconciliation is needed
       if (targeted === "RUNNING" && current !== "RUNNING") return true;
       if (targeted === "STOPPED" && current === "RUNNING") return true;
-      if (targeted === "DELETED" && current !== "MISSING" && current !== "DELETED") return true;
+      if (
+        targeted === "DELETED" &&
+        current !== "MISSING" &&
+        current !== "DELETED"
+      )
+        return true;
 
       return false;
     }).length,

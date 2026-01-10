@@ -20,14 +20,16 @@ export function ProjectCard({
   const isTargetedToRun = project.targetedStatus === "RUNNING" && !isRunning;
 
   // Determine border color based on status
-  const borderColor = isRunning 
-    ? "border-green-500 border-2 bg-green-50" 
-    : isTargetedToRun 
-    ? "border-yellow-500 border-2 bg-yellow-50" 
-    : "border-gray-200";
+  const borderColor = isRunning
+    ? "border-green-500 border-2 bg-green-50"
+    : isTargetedToRun
+      ? "border-yellow-500 border-2 bg-yellow-50"
+      : "border-gray-200";
 
   return (
-    <div className={`rounded-lg p-4 hover:shadow-md transition-shadow ${borderColor}`}>
+    <div
+      className={`rounded-lg p-4 hover:shadow-md transition-shadow ${borderColor}`}
+    >
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -41,7 +43,9 @@ export function ProjectCard({
             </h3>
           </div>
           <p className="text-sm text-gray-500 font-mono">
-            {project.path || <span className="italic">Path not yet assigned</span>}
+            {project.path || (
+              <span className="italic">Path not yet assigned</span>
+            )}
           </p>
         </div>
         <ProjectStatusDisplay
@@ -125,7 +129,10 @@ export function ProjectCard({
           </h4>
           <div className="text-xs text-gray-600 max-h-20 overflow-y-auto">
             {project.logs.slice(-3).map((log, index) => (
-              <div key={`${log.timestamp}-${index}`} className="font-mono py-0.5">
+              <div
+                key={`${log.timestamp}-${index}`}
+                className="font-mono py-0.5"
+              >
                 [{new Date(log.timestamp).toLocaleTimeString()}] {log.message}
               </div>
             ))}

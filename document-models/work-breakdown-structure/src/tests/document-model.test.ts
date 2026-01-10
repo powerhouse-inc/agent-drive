@@ -30,7 +30,7 @@ describe("WorkBreakdownStructure Document Model", () => {
     );
   });
 
-  it.skip("should create a new WorkBreakdownStructure document with a valid initial state", () => {
+  it("should create a new WorkBreakdownStructure document with a valid initial state", () => {
     const document = utils.createDocument();
     expect(document.state.global).toStrictEqual(initialGlobalState);
     expect(document.state.local).toStrictEqual(initialLocalState);

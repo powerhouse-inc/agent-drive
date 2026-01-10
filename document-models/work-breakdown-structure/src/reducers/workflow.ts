@@ -1,6 +1,13 @@
-import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 import type { Goal, Note } from "../../gen/index.js";
-import { insertGoalAtPosition } from "../utils.js";
+import {
+  insertGoalAtPosition,
+  findGoal,
+  getAncestors,
+  getDescendants,
+  isLeafGoal,
+  hasBlockedGoals,
+} from "../utils.js";
+import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWorkflowOperations =
   {
@@ -36,35 +43,200 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       );
     },
     delegateGoalOperation(state, action) {
-      // TODO: Implement "delegateGoalOperation" reducer
-      throw new Error('Reducer "delegateGoalOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Validate goal has no children (leaf node only)
+      if (!isLeafGoal(state.goals, action.input.id)) {
+        throw new Error(`Goal with ID ${action.input.id} has children and cannot be delegated`);
+      }
+
+      // Update assignee field
+      goal.assignee = action.input.assignee;
+
+      // Change status to DELEGATED
+      goal.status = "DELEGATED";
     },
     reportOnGoalOperation(state, action) {
-      // TODO: Implement "reportOnGoalOperation" reducer
-      throw new Error('Reducer "reportOnGoalOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Validate goal status is DELEGATED
+      if (goal.status !== "DELEGATED") {
+        throw new Error(`Goal with ID ${action.input.id} is not delegated and cannot be reported on`);
+      }
+
+      // Add note to goal
+      const note: Note = {
+        id: action.input.note.id,
+        note: action.input.note.note,
+        author: action.input.note.author || null,
+      };
+      goal.notes.push(note);
+
+      // If moveInReview is true, change status to IN_REVIEW
+      if (action.input.moveInReview) {
+        goal.status = "IN_REVIEW";
+      }
     },
     markInProgressOperation(state, action) {
-      // TODO: Implement "markInProgressOperation" reducer
-      throw new Error('Reducer "markInProgressOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to IN_PROGRESS
+      goal.status = "IN_PROGRESS";
+
+      // Add optional note if provided
+      if (action.input.note) {
+        const note: Note = {
+          id: action.input.note.id,
+          note: action.input.note.note,
+          author: action.input.note.author || null,
+        };
+        goal.notes.push(note);
+      }
+
+      // Propagate IN_PROGRESS up to all ancestors
+      const ancestors = getAncestors(state.goals, action.input.id);
+      for (const ancestor of ancestors) {
+        // Only update ancestors that are TODO or DELEGATED
+        if (ancestor.status === "TODO" || ancestor.status === "DELEGATED") {
+          ancestor.status = "IN_PROGRESS";
+        }
+      }
     },
     markCompletedOperation(state, action) {
-      // TODO: Implement "markCompletedOperation" reducer
-      throw new Error('Reducer "markCompletedOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to COMPLETED
+      goal.status = "COMPLETED";
+
+      // Add optional note if provided
+      if (action.input.note) {
+        const note: Note = {
+          id: action.input.note.id,
+          note: action.input.note.note,
+          author: action.input.note.author || null,
+        };
+        goal.notes.push(note);
+      }
+
+      // Mark all unfinished child goals as COMPLETED
+      const descendants = getDescendants(state.goals, action.input.id);
+      for (const descendant of descendants) {
+        // Only mark as completed if not already finished (COMPLETED or WONT_DO)
+        if (descendant.status !== "COMPLETED" && descendant.status !== "WONT_DO") {
+          descendant.status = "COMPLETED";
+        }
+      }
     },
     markTodoOperation(state, action) {
-      // TODO: Implement "markTodoOperation" reducer
-      throw new Error('Reducer "markTodoOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to TODO
+      goal.status = "TODO";
+
+      // Add optional note if provided
+      if (action.input.note) {
+        const note: Note = {
+          id: action.input.note.id,
+          note: action.input.note.note,
+          author: action.input.note.author || null,
+        };
+        goal.notes.push(note);
+      }
+
+      // Reset finished parents (COMPLETED or WONT_DO) to TODO
+      const ancestors = getAncestors(state.goals, action.input.id);
+      for (const ancestor of ancestors) {
+        if (ancestor.status === "COMPLETED" || ancestor.status === "WONT_DO") {
+          ancestor.status = "TODO";
+        }
+      }
     },
     reportBlockedOperation(state, action) {
-      // TODO: Implement "reportBlockedOperation" reducer
-      throw new Error('Reducer "reportBlockedOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to BLOCKED
+      goal.status = "BLOCKED";
+
+      // Store blocking question as a note
+      const note: Note = {
+        id: action.input.question.id,
+        note: `BLOCKED: ${action.input.question.note}`,
+        author: action.input.question.author || null,
+      };
+      goal.notes.push(note);
+
+      // Update global isBlocked flag if this is the first blocked goal
+      if (!state.isBlocked) {
+        state.isBlocked = true;
+      }
     },
     unblockGoalOperation(state, action) {
-      // TODO: Implement "unblockGoalOperation" reducer
-      throw new Error('Reducer "unblockGoalOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Validate goal status is BLOCKED
+      if (goal.status !== "BLOCKED") {
+        throw new Error(`Goal with ID ${action.input.id} is not blocked`);
+      }
+
+      // Store response as a note
+      const note: Note = {
+        id: action.input.response.id,
+        note: `UNBLOCKED: ${action.input.response.note}`,
+        author: action.input.response.author || null,
+      };
+      goal.notes.push(note);
+
+      // Change status back to TODO (since we don't track previous status)
+      goal.status = "TODO";
+
+      // Check if any goals remain blocked and update global isBlocked flag
+      state.isBlocked = hasBlockedGoals(state.goals);
     },
     markWontDoOperation(state, action) {
-      // TODO: Implement "markWontDoOperation" reducer
-      throw new Error('Reducer "markWontDoOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to WONT_DO
+      goal.status = "WONT_DO";
+
+      // Mark all unfinished child goals as WONT_DO
+      const descendants = getDescendants(state.goals, action.input.id);
+      for (const descendant of descendants) {
+        // Only mark as WONT_DO if not already finished (COMPLETED or WONT_DO)
+        if (descendant.status !== "COMPLETED" && descendant.status !== "WONT_DO") {
+          descendant.status = "WONT_DO";
+        }
+      }
     },
   };

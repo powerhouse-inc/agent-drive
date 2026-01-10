@@ -220,28 +220,64 @@ export const schema: DocumentNode = gql`
   }
   input WorkBreakdownStructure_ReportOnGoalInput {
     id: OID!
-    note: String!
+    note: WorkBreakdownStructure_ReportNoteInput!
     moveInReview: Boolean!
+  }
+
+  input WorkBreakdownStructure_ReportNoteInput {
+    id: OID!
+    note: String!
+    author: String
   }
   input WorkBreakdownStructure_MarkInProgressInput {
     id: OID!
-    note: String
+    note: WorkBreakdownStructure_InProgressNoteInput
+  }
+
+  input WorkBreakdownStructure_InProgressNoteInput {
+    id: OID!
+    note: String!
+    author: String
   }
   input WorkBreakdownStructure_MarkCompletedInput {
     id: OID!
-    note: String
+    note: WorkBreakdownStructure_CompletedNoteInput
+  }
+
+  input WorkBreakdownStructure_CompletedNoteInput {
+    id: OID!
+    note: String!
+    author: String
   }
   input WorkBreakdownStructure_MarkTodoInput {
     id: OID!
-    note: String
+    note: WorkBreakdownStructure_TodoNoteInput
+  }
+
+  input WorkBreakdownStructure_TodoNoteInput {
+    id: OID!
+    note: String!
+    author: String
   }
   input WorkBreakdownStructure_ReportBlockedInput {
     id: OID!
-    question: String!
+    question: WorkBreakdownStructure_BlockedNoteInput!
+  }
+
+  input WorkBreakdownStructure_BlockedNoteInput {
+    id: OID!
+    note: String!
+    author: String
   }
   input WorkBreakdownStructure_UnblockGoalInput {
     id: OID!
-    response: String!
+    response: WorkBreakdownStructure_UnblockNoteInput!
+  }
+
+  input WorkBreakdownStructure_UnblockNoteInput {
+    id: OID!
+    note: String!
+    author: String
   }
   input WorkBreakdownStructure_MarkWontDoInput {
     id: OID!

@@ -68,12 +68,24 @@ export type AddNoteInput = {
   noteId: Scalars["OID"]["input"];
 };
 
+export type BlockedNoteInput = {
+  author?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note: Scalars["String"]["input"];
+};
+
 export type ClearInstructionsInput = {
   goalId: Scalars["OID"]["input"];
 };
 
 export type ClearNotesInput = {
   goalId: Scalars["OID"]["input"];
+};
+
+export type CompletedNoteInput = {
+  author?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note: Scalars["String"]["input"];
 };
 
 export type CreateGoalInput = {
@@ -103,7 +115,7 @@ export type Goal = {
   isDraft: Scalars["Boolean"]["output"];
   notes: Array<Note>;
   parentId: Maybe<Scalars["OID"]["output"]>;
-  status: GoalStatus;
+  status: GoalStatus | `${GoalStatus}`;
 };
 
 export type GoalStatus =
@@ -117,6 +129,12 @@ export type GoalStatus =
   /** Waiting statuses */
   | "TODO"
   | "WONT_DO";
+
+export type InProgressNoteInput = {
+  author?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note: Scalars["String"]["input"];
+};
 
 export type InitialNoteInput = {
   author?: InputMaybe<Scalars["String"]["input"]>;
@@ -134,17 +152,17 @@ export type MarkAsReadyInput = {
 
 export type MarkCompletedInput = {
   id: Scalars["OID"]["input"];
-  note?: InputMaybe<Scalars["String"]["input"]>;
+  note?: InputMaybe<CompletedNoteInput>;
 };
 
 export type MarkInProgressInput = {
   id: Scalars["OID"]["input"];
-  note?: InputMaybe<Scalars["String"]["input"]>;
+  note?: InputMaybe<InProgressNoteInput>;
 };
 
 export type MarkTodoInput = {
   id: Scalars["OID"]["input"];
-  note?: InputMaybe<Scalars["String"]["input"]>;
+  note?: InputMaybe<TodoNoteInput>;
 };
 
 export type MarkWontDoInput = {
@@ -153,14 +171,14 @@ export type MarkWontDoInput = {
 
 export type MetaData = {
   data: Scalars["String"]["output"];
-  format: MetaDataFormat;
+  format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
 export type MetaDataFormat = "JSON" | "OTHER" | "TEXT";
 
 export type MetaDataInput = {
   data?: InputMaybe<Scalars["String"]["input"]>;
-  format?: InputMaybe<MetaDataFormat>;
+  format?: InputMaybe<MetaDataFormat | `${MetaDataFormat}`>;
 };
 
 export type Note = {
@@ -189,27 +207,45 @@ export type ReorderInput = {
 
 export type ReportBlockedInput = {
   id: Scalars["OID"]["input"];
-  question: Scalars["String"]["input"];
+  question: BlockedNoteInput;
+};
+
+export type ReportNoteInput = {
+  author?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note: Scalars["String"]["input"];
 };
 
 export type ReportOnGoalInput = {
   id: Scalars["OID"]["input"];
   moveInReview: Scalars["Boolean"]["input"];
-  note: Scalars["String"]["input"];
+  note: ReportNoteInput;
 };
 
 export type SetMetaDataInput = {
   data: Scalars["String"]["input"];
-  format: MetaDataFormat;
+  format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
 export type SetReferencesInput = {
   references: Array<Scalars["URL"]["input"]>;
 };
 
+export type TodoNoteInput = {
+  author?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note: Scalars["String"]["input"];
+};
+
 export type UnblockGoalInput = {
   id: Scalars["OID"]["input"];
-  response: Scalars["String"]["input"];
+  response: UnblockNoteInput;
+};
+
+export type UnblockNoteInput = {
+  author?: InputMaybe<Scalars["String"]["input"]>;
+  id: Scalars["OID"]["input"];
+  note: Scalars["String"]["input"];
 };
 
 export type UpdateDescriptionInput = {

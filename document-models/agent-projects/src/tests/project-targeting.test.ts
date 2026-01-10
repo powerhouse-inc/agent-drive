@@ -363,9 +363,8 @@ describe("ProjectTargeting Operations", () => {
       expect(project.path).toBeNull();
 
       // Import necessary function
-      const { updateProjectStatus } = await import(
-        "powerhouse-agent/document-models/agent-projects"
-      );
+      const { updateProjectStatus } =
+        await import("powerhouse-agent/document-models/agent-projects");
 
       // Update status with path
       document = reducer(
@@ -379,7 +378,9 @@ describe("ProjectTargeting Operations", () => {
 
       project = document.state.global.projects[0];
       expect(project.currentStatus).toBe("INITIALIZING");
-      expect(project.path).toBe("/home/wouter/projects/demo-workspace/path-test-project");
+      expect(project.path).toBe(
+        "/home/wouter/projects/demo-workspace/path-test-project",
+      );
 
       // Update status without path (should keep existing path)
       document = reducer(
@@ -392,7 +393,9 @@ describe("ProjectTargeting Operations", () => {
 
       project = document.state.global.projects[0];
       expect(project.currentStatus).toBe("STOPPED");
-      expect(project.path).toBe("/home/wouter/projects/demo-workspace/path-test-project");
+      expect(project.path).toBe(
+        "/home/wouter/projects/demo-workspace/path-test-project",
+      );
     });
 
     it("should clear runtime info when transitioning from RUNNING to STOPPED", async () => {

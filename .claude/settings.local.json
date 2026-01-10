@@ -9,7 +9,14 @@
       "mcp__reactor-mcp__getDocuments",
       "mcp__reactor-mcp__getDocument",
       "mcp__reactor-mcp__addActions",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm run:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": [
       "Write(./document-models/*/gen/**)",

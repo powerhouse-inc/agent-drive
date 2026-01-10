@@ -79,7 +79,7 @@ export const agentProjectsProjectManagementOperations: AgentProjectsProjectManag
 
       const previousStatus = project.currentStatus;
       project.currentStatus = action.input.currentStatus;
-      
+
       // Update path if provided
       if (action.input.path !== undefined && action.input.path !== null) {
         project.path = action.input.path;
