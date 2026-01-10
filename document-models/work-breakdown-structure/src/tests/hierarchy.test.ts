@@ -22,7 +22,7 @@ describe("Hierarchy Operations", () => {
   describe("REORDER", () => {
     it("should move a goal to a different parent", () => {
       const document = utils.createDocument();
-      
+
       // Create parent goals
       let updatedDocument = reducer(
         document,
@@ -83,13 +83,15 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const child = updatedDocument.state.global.goals.find(g => g.id === "child-1");
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
       expect(child?.parentId).toBe("parent-2");
     });
 
     it("should move a goal to root level", () => {
       const document = utils.createDocument();
-      
+
       // Create parent and child
       let updatedDocument = reducer(
         document,
@@ -133,13 +135,15 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const child = updatedDocument.state.global.goals.find(g => g.id === "child-1");
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
       expect(child?.parentId).toBeNull();
     });
 
     it("should reorder goals within the same level", () => {
       const document = utils.createDocument();
-      
+
       // Create three sibling goals
       let updatedDocument = reducer(
         document,
@@ -198,7 +202,7 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const goalIds = updatedDocument.state.global.goals.map(g => g.id);
+      const goalIds = updatedDocument.state.global.goals.map((g) => g.id);
       const goal3Index = goalIds.indexOf("goal-3");
       const goal1Index = goalIds.indexOf("goal-1");
       expect(goal3Index).toBeLessThan(goal1Index);
@@ -206,7 +210,7 @@ describe("Hierarchy Operations", () => {
 
     it("should prevent circular references", () => {
       const document = utils.createDocument();
-      
+
       // Create parent-child-grandchild hierarchy
       let updatedDocument = reducer(
         document,
@@ -267,17 +271,19 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("under its own descendant");
     });
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         reorder({
@@ -288,19 +294,21 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("not found");
     });
 
     it("should fail when new parent does not exist", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -327,19 +335,23 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
-      expect(errorMessage).toContain("Parent goal with ID nonexistent-parent not found");
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain(
+        "Parent goal with ID nonexistent-parent not found",
+      );
     });
   });
 
   describe("ADD_DEPENDENCIES", () => {
     it("should add dependencies to a goal", () => {
       const document = utils.createDocument();
-      
+
       // Create goals
       let updatedDocument = reducer(
         document,
@@ -398,7 +410,9 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const goal = updatedDocument.state.global.goals.find(g => g.id === "goal-3");
+      const goal = updatedDocument.state.global.goals.find(
+        (g) => g.id === "goal-3",
+      );
       expect(goal?.dependencies).toContain("goal-1");
       expect(goal?.dependencies).toContain("goal-2");
       expect(goal?.dependencies).toHaveLength(2);
@@ -406,7 +420,7 @@ describe("Hierarchy Operations", () => {
 
     it("should avoid duplicate dependencies", () => {
       const document = utils.createDocument();
-      
+
       // Create goals
       let updatedDocument = reducer(
         document,
@@ -449,14 +463,16 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const goal = updatedDocument.state.global.goals.find(g => g.id === "goal-2");
+      const goal = updatedDocument.state.global.goals.find(
+        (g) => g.id === "goal-2",
+      );
       expect(goal?.dependencies).toHaveLength(1); // Should still be 1, not 2
       expect(goal?.dependencies).toContain("goal-1");
     });
 
     it("should prevent circular dependencies", () => {
       const document = utils.createDocument();
-      
+
       // Create parent-child hierarchy
       let updatedDocument = reducer(
         document,
@@ -500,19 +516,21 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("is a descendant");
     });
 
     it("should prevent self-dependencies", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -538,19 +556,21 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("cannot depend on itself");
     });
 
     it("should fail when dependency does not exist", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -576,19 +596,23 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
-      expect(errorMessage).toContain("Dependency goal with ID nonexistent not found");
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain(
+        "Dependency goal with ID nonexistent not found",
+      );
     });
   });
 
   describe("REMOVE_DEPENDENCIES", () => {
     it("should remove specified dependencies", () => {
       const document = utils.createDocument();
-      
+
       // Create goals with dependencies
       let updatedDocument = reducer(
         document,
@@ -647,7 +671,9 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const goal = updatedDocument.state.global.goals.find(g => g.id === "goal-3");
+      const goal = updatedDocument.state.global.goals.find(
+        (g) => g.id === "goal-3",
+      );
       expect(goal?.dependencies).not.toContain("goal-1");
       expect(goal?.dependencies).toContain("goal-2");
       expect(goal?.dependencies).toHaveLength(1);
@@ -655,7 +681,7 @@ describe("Hierarchy Operations", () => {
 
     it("should remove all dependencies when specified", () => {
       const document = utils.createDocument();
-      
+
       // Create goals with dependencies
       let updatedDocument = reducer(
         document,
@@ -714,13 +740,15 @@ describe("Hierarchy Operations", () => {
         }),
       );
 
-      const goal = updatedDocument.state.global.goals.find(g => g.id === "goal-3");
+      const goal = updatedDocument.state.global.goals.find(
+        (g) => g.id === "goal-3",
+      );
       expect(goal?.dependencies).toHaveLength(0);
     });
 
     it("should handle removing non-existent dependencies gracefully", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal with one dependency
       let updatedDocument = reducer(
         document,
@@ -764,14 +792,16 @@ describe("Hierarchy Operations", () => {
       );
 
       // Should not fail, just not remove anything
-      const goal = updatedDocument.state.global.goals.find(g => g.id === "goal-2");
+      const goal = updatedDocument.state.global.goals.find(
+        (g) => g.id === "goal-2",
+      );
       expect(goal?.dependencies).toContain("goal-1");
       expect(goal?.dependencies).toHaveLength(1);
     });
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         removeDependencies({
@@ -781,11 +811,13 @@ describe("Hierarchy Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("not found");
     });
   });

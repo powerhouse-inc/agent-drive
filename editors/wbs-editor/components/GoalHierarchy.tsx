@@ -1,5 +1,9 @@
 import { GoalGrid } from "./GoalGrid.js";
 
-export function GoalHierarchy() {
-  return <GoalGrid />;
+interface GoalHierarchyProps {
+  onGoalSelect?: (goalId: string) => void;
+}
+
+export function GoalHierarchy({ onGoalSelect }: GoalHierarchyProps) {
+  return <GoalGrid onGoalSelect={onGoalSelect} />;
 }

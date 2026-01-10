@@ -51,7 +51,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Validate goal has no children (leaf node only)
       if (!isLeafGoal(state.goals, action.input.id)) {
-        throw new Error(`Goal with ID ${action.input.id} has children and cannot be delegated`);
+        throw new Error(
+          `Goal with ID ${action.input.id} has children and cannot be delegated`,
+        );
       }
 
       // Update assignee field
@@ -69,7 +71,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Validate goal status is DELEGATED
       if (goal.status !== "DELEGATED") {
-        throw new Error(`Goal with ID ${action.input.id} is not delegated and cannot be reported on`);
+        throw new Error(
+          `Goal with ID ${action.input.id} is not delegated and cannot be reported on`,
+        );
       }
 
       // Add note to goal
@@ -138,7 +142,10 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       const descendants = getDescendants(state.goals, action.input.id);
       for (const descendant of descendants) {
         // Only mark as completed if not already finished (COMPLETED or WONT_DO)
-        if (descendant.status !== "COMPLETED" && descendant.status !== "WONT_DO") {
+        if (
+          descendant.status !== "COMPLETED" &&
+          descendant.status !== "WONT_DO"
+        ) {
           descendant.status = "COMPLETED";
         }
       }
@@ -234,7 +241,10 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       const descendants = getDescendants(state.goals, action.input.id);
       for (const descendant of descendants) {
         // Only mark as WONT_DO if not already finished (COMPLETED or WONT_DO)
-        if (descendant.status !== "COMPLETED" && descendant.status !== "WONT_DO") {
+        if (
+          descendant.status !== "COMPLETED" &&
+          descendant.status !== "WONT_DO"
+        ) {
           descendant.status = "WONT_DO";
         }
       }

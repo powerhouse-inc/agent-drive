@@ -1,0 +1,16 @@
+.wx-header.wx-sAsPVaUK,
+.wx-footer.wx-sAsPVaUK {
+  font-weight: 500;
+}
+
+.wx-header.wx-sAsPVaUK {
+  top: 0;
+  border-bottom: var(--wx-table-header-border);
+}
+
+.wx-footer.wx-sAsPVaUK {
+  position: sticky;
+  z-index: 2;
+  bottom: 0;
+  border-top: var(--wx-table-header-border);
+}

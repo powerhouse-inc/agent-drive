@@ -1,9 +1,5 @@
 import type { Goal } from "../../gen/index.js";
-import {
-  findGoal,
-  findGoalIndex,
-  isDescendant,
-} from "../utils.js";
+import { findGoal, findGoalIndex, isDescendant } from "../utils.js";
 import type { WorkBreakdownStructureHierarchyOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHierarchyOperations =
@@ -21,12 +17,22 @@ export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHi
         if (action.input.parentId !== null) {
           const newParent = findGoal(state.goals, action.input.parentId);
           if (!newParent) {
-            throw new Error(`Parent goal with ID ${action.input.parentId} not found`);
+            throw new Error(
+              `Parent goal with ID ${action.input.parentId} not found`,
+            );
           }
-          
+
           // Prevent circular reference - can't move a goal under its own descendant
-          if (isDescendant(state.goals, action.input.goalId, action.input.parentId)) {
-            throw new Error(`Cannot move goal ${action.input.goalId} under its own descendant ${action.input.parentId}`);
+          if (
+            isDescendant(
+              state.goals,
+              action.input.goalId,
+              action.input.parentId,
+            )
+          ) {
+            throw new Error(
+              `Cannot move goal ${action.input.goalId} under its own descendant ${action.input.parentId}`,
+            );
           }
         }
 
@@ -40,13 +46,16 @@ export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHi
         const currentIndex = findGoalIndex(state.goals, action.input.goalId);
         if (currentIndex !== -1) {
           const [removedGoal] = state.goals.splice(currentIndex, 1);
-          
+
           // Find the position to insert
           if (action.input.insertBefore === null) {
             // Insert at the end
             state.goals.push(removedGoal);
           } else {
-            const insertIndex = findGoalIndex(state.goals, action.input.insertBefore);
+            const insertIndex = findGoalIndex(
+              state.goals,
+              action.input.insertBefore,
+            );
             if (insertIndex === -1) {
               // If insertBefore goal not found, append at end
               state.goals.push(removedGoal);
@@ -74,12 +83,16 @@ export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHi
 
         // Check no circular dependencies (goal can't depend on its descendants)
         if (isDescendant(state.goals, action.input.goalId, depId)) {
-          throw new Error(`Cannot add dependency ${depId} as it is a descendant of ${action.input.goalId}`);
+          throw new Error(
+            `Cannot add dependency ${depId} as it is a descendant of ${action.input.goalId}`,
+          );
         }
 
         // Also prevent depending on self
         if (depId === action.input.goalId) {
-          throw new Error(`Goal ${action.input.goalId} cannot depend on itself`);
+          throw new Error(
+            `Goal ${action.input.goalId} cannot depend on itself`,
+          );
         }
       }
 
@@ -99,7 +112,7 @@ export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHi
 
       // Filter out specified dependencies from array
       goal.dependencies = goal.dependencies.filter(
-        depId => !action.input.dependencies.includes(depId)
+        (depId) => !action.input.dependencies.includes(depId),
       );
     },
   };

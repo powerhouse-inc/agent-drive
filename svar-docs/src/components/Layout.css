@@ -1,0 +1,84 @@
+.wx-grid.wx-4VuBwK2D {
+  height: 100%;
+}
+
+.wx-table-box.wx-4VuBwK2D {
+  outline: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: var(--wx-table-cell-border);
+  overflow: hidden;
+  box-sizing: content-box;
+}
+
+.wx-header-wrapper.wx-4VuBwK2D {
+  position: sticky;
+  z-index: 3;
+  top: 0px;
+}
+
+.wx-body.wx-4VuBwK2D {
+  position: relative;
+}
+
+.wx-data.wx-4VuBwK2D {
+  position: relative;
+}
+
+.wx-scroll.wx-4VuBwK2D {
+  position: relative;
+  flex: 1;
+  scroll-padding-top: var(--header-height);
+  scroll-padding-bottom: var(--footer-height);
+}
+
+.wx-row.wx-4VuBwK2D {
+  display: flex;
+  box-sizing: border-box;
+  background-color: var(--wx-background);
+}
+
+.wx-row.wx-4VuBwK2D:not(:last-child) {
+  border-bottom: var(--wx-table-cell-border);
+}
+
+.wx-row.wx-autoheight.wx-4VuBwK2D .wx-cell {
+  overflow: visible;
+  text-overflow: initial;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.wx-row.wx-autoheight.wx-4VuBwK2D {
+  height: max-content;
+}
+
+.wx-selected.wx-4VuBwK2D {
+  color: var(--wx-table-select-color);
+  background-color: var(--wx-table-select-background);
+}
+
+.wx-selected.wx-4VuBwK2D .wx-cell:first-child {
+  box-shadow: var(--wx-table-select-border);
+}
+
+.wx-inactive.wx-4VuBwK2D {
+  color: var(--wx-table-drag-over-background);
+  background-color: var(--wx-table-drag-over-background);
+  --wx-table-select-border: none;
+}
+
+.wx-drag-zone {
+  z-index: 10;
+  position: absolute;
+  pointer-events: none;
+  overflow: hidden;
+  box-shadow: var(--wx-table-drag-zone-shadow);
+}
+
+.wx-cell.wx-collapsed.wx-4VuBwK2D {
+  width: 36px;
+  border-right: var(--wx-table-cell-border);
+}

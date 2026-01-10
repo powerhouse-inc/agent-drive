@@ -496,9 +496,13 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
       expect(child?.status).toBe("IN_PROGRESS");
       expect(parent?.status).toBe("IN_PROGRESS");
     });
@@ -564,10 +568,16 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const grandparent = updatedDocument.state.global.goals.find((g) => g.id === "grandparent-1");
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      
+      const grandparent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "grandparent-1",
+      );
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
       expect(child?.status).toBe("IN_PROGRESS");
       expect(parent?.status).toBe("IN_PROGRESS");
       expect(grandparent?.status).toBe("IN_PROGRESS");
@@ -634,7 +644,9 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parentAfterFirst = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const parentAfterFirst = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
       expect(parentAfterFirst?.status).toBe("IN_PROGRESS");
 
       // Mark second child as in progress
@@ -646,7 +658,9 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parentAfterSecond = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const parentAfterSecond = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
       expect(parentAfterSecond?.status).toBe("IN_PROGRESS");
     });
 
@@ -698,9 +712,13 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
       expect(child?.status).toBe("IN_PROGRESS");
       expect(parent?.status).toBe("COMPLETED"); // Should stay COMPLETED
     });
@@ -714,12 +732,18 @@ describe("Workflow Operations", () => {
           id: "non-existent",
         }),
       );
-      
+
       const lastOperation = updatedDocument.operations.global[0];
       expect(lastOperation).toBeDefined();
       expect(lastOperation.error).toBeDefined();
-      if (lastOperation.error && typeof lastOperation.error === 'object' && 'message' in lastOperation.error) {
-        expect((lastOperation.error as any).message).toBe("Goal with ID non-existent not found");
+      if (
+        lastOperation.error &&
+        typeof lastOperation.error === "object" &&
+        "message" in lastOperation.error
+      ) {
+        expect((lastOperation.error as any).message).toBe(
+          "Goal with ID non-existent not found",
+        );
       }
     });
   });
@@ -859,10 +883,16 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child1 = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      const child2 = updatedDocument.state.global.goals.find((g) => g.id === "child-2");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child1 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const child2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-2",
+      );
+
       expect(parent?.status).toBe("COMPLETED");
       expect(child1?.status).toBe("COMPLETED");
       expect(child2?.status).toBe("COMPLETED");
@@ -929,10 +959,16 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const root = updatedDocument.state.global.goals.find((g) => g.id === "root-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      const grandchild = updatedDocument.state.global.goals.find((g) => g.id === "grandchild-1");
-      
+      const root = updatedDocument.state.global.goals.find(
+        (g) => g.id === "root-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const grandchild = updatedDocument.state.global.goals.find(
+        (g) => g.id === "grandchild-1",
+      );
+
       expect(root?.status).toBe("COMPLETED");
       expect(child?.status).toBe("COMPLETED");
       expect(grandchild?.status).toBe("COMPLETED");
@@ -987,7 +1023,9 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const childBefore = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      const childBefore = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
       expect(childBefore?.status).toBe("COMPLETED");
       expect(childBefore?.notes).toHaveLength(1);
 
@@ -1000,7 +1038,9 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const childAfter = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      const childAfter = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
       // Child should still have its original note
       expect(childAfter?.status).toBe("COMPLETED");
       expect(childAfter?.notes).toHaveLength(1);
@@ -1071,10 +1111,16 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child1 = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      const child2 = updatedDocument.state.global.goals.find((g) => g.id === "child-2");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child1 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const child2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-2",
+      );
+
       expect(parent?.status).toBe("COMPLETED");
       expect(child1?.status).toBe("COMPLETED");
       expect(child2?.status).toBe("WONT_DO"); // Should stay WONT_DO
@@ -1226,9 +1272,13 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
       expect(child?.status).toBe("TODO");
       expect(parent?.status).toBe("TODO"); // Parent should be reset
     });
@@ -1280,9 +1330,13 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+
       expect(child?.status).toBe("TODO");
       expect(parent?.status).toBe("TODO"); // Parent should be reset
     });
@@ -1331,7 +1385,9 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parentBefore = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const parentBefore = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
       expect(parentBefore?.status).toBe("IN_PROGRESS");
 
       // Mark child back to TODO
@@ -1342,7 +1398,9 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parentAfter = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const parentAfter = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
       expect(parentAfter?.status).toBe("IN_PROGRESS"); // Should stay IN_PROGRESS
     });
   });
@@ -1440,10 +1498,16 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child1 = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      const child2 = updatedDocument.state.global.goals.find((g) => g.id === "child-2");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child1 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const child2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-2",
+      );
+
       expect(parent?.status).toBe("WONT_DO");
       expect(child1?.status).toBe("WONT_DO");
       expect(child2?.status).toBe("WONT_DO");
@@ -1517,10 +1581,16 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
-      const child1 = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      const child2 = updatedDocument.state.global.goals.find((g) => g.id === "child-2");
-      
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child1 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const child2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-2",
+      );
+
       expect(parent?.status).toBe("WONT_DO");
       expect(child1?.status).toBe("COMPLETED"); // Should stay COMPLETED
       expect(child2?.status).toBe("WONT_DO");
@@ -1586,21 +1656,26 @@ describe("Workflow Operations", () => {
         }),
       );
 
-      const root = updatedDocument.state.global.goals.find((g) => g.id === "root-1");
-      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
-      const grandchild = updatedDocument.state.global.goals.find((g) => g.id === "grandchild-1");
-      
+      const root = updatedDocument.state.global.goals.find(
+        (g) => g.id === "root-1",
+      );
+      const child = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      const grandchild = updatedDocument.state.global.goals.find(
+        (g) => g.id === "grandchild-1",
+      );
+
       expect(root?.status).toBe("WONT_DO");
       expect(child?.status).toBe("WONT_DO");
       expect(grandchild?.status).toBe("WONT_DO");
     });
   });
 
-
   describe("DELEGATE_GOAL", () => {
     it("should delegate a leaf goal to an assignee", () => {
       const document = utils.createDocument();
-      
+
       // Create a leaf goal
       let updatedDocument = reducer(
         document,
@@ -1634,7 +1709,7 @@ describe("Workflow Operations", () => {
 
     it("should fail when trying to delegate a parent goal", () => {
       const document = utils.createDocument();
-      
+
       // Create parent and child goals
       let updatedDocument = reducer(
         document,
@@ -1678,17 +1753,19 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("has children and cannot be delegated");
     });
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         delegateGoal({
@@ -1698,17 +1775,19 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("not found");
     });
 
     it("should update assignee when re-delegating", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
       let updatedDocument = reducer(
         document,
@@ -1728,7 +1807,9 @@ describe("Workflow Operations", () => {
 
       // Initial status should be DELEGATED (since it had an assignee)
       expect(updatedDocument.state.global.goals[0].status).toBe("DELEGATED");
-      expect(updatedDocument.state.global.goals[0].assignee).toBe("bob@example.com");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe(
+        "bob@example.com",
+      );
 
       // Re-delegate to someone else
       updatedDocument = reducer(
@@ -1748,7 +1829,7 @@ describe("Workflow Operations", () => {
   describe("REPORT_ON_GOAL", () => {
     it("should add a report note to a delegated goal", () => {
       const document = utils.createDocument();
-      
+
       // Create a delegated goal
       let updatedDocument = reducer(
         document,
@@ -1789,7 +1870,7 @@ describe("Workflow Operations", () => {
 
     it("should move goal to IN_REVIEW when moveInReview is true", () => {
       const document = utils.createDocument();
-      
+
       // Create a delegated goal
       let updatedDocument = reducer(
         document,
@@ -1829,9 +1910,9 @@ describe("Workflow Operations", () => {
 
     it("should fail when goal is not delegated", () => {
       const document = utils.createDocument();
-      
+
       // Create a non-delegated goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -1862,17 +1943,21 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
-      expect(errorMessage).toContain("is not delegated and cannot be reported on");
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain(
+        "is not delegated and cannot be reported on",
+      );
     });
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         reportOnGoal({
@@ -1887,11 +1972,13 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("not found");
     });
   });
@@ -1899,7 +1986,7 @@ describe("Workflow Operations", () => {
   describe("REPORT_BLOCKED", () => {
     it("should mark a goal as BLOCKED and add question note", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
       let updatedDocument = reducer(
         document,
@@ -1933,7 +2020,9 @@ describe("Workflow Operations", () => {
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.status).toBe("BLOCKED");
       expect(goal.notes).toHaveLength(1);
-      expect(goal.notes[0].note).toBe("BLOCKED: What is the API endpoint for this service?");
+      expect(goal.notes[0].note).toBe(
+        "BLOCKED: What is the API endpoint for this service?",
+      );
       expect(goal.notes[0].author).toBe("Developer");
       expect(updatedDocument.state.global.isBlocked).toBe(true);
     });
@@ -1941,7 +2030,7 @@ describe("Workflow Operations", () => {
     it("should update global isBlocked flag on first blocked goal", () => {
       const document = utils.createDocument();
       expect(document.state.global.isBlocked).toBe(false);
-      
+
       // Create two goals
       let updatedDocument = reducer(
         document,
@@ -1993,7 +2082,7 @@ describe("Workflow Operations", () => {
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         reportBlocked({
@@ -2007,11 +2096,13 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("not found");
     });
   });
@@ -2019,7 +2110,7 @@ describe("Workflow Operations", () => {
   describe("UNBLOCK_GOAL", () => {
     it("should unblock a blocked goal and add response note", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal and block it
       let updatedDocument = reducer(
         document,
@@ -2065,14 +2156,16 @@ describe("Workflow Operations", () => {
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.status).toBe("TODO");
       expect(goal.notes).toHaveLength(2);
-      expect(goal.notes[1].note).toBe("UNBLOCKED: Use https://api.example.com/v1");
+      expect(goal.notes[1].note).toBe(
+        "UNBLOCKED: Use https://api.example.com/v1",
+      );
       expect(goal.notes[1].author).toBe("Tech Lead");
       expect(updatedDocument.state.global.isBlocked).toBe(false);
     });
 
     it("should update global isBlocked flag when last blocked goal is unblocked", () => {
       const document = utils.createDocument();
-      
+
       // Create two goals and block them
       let updatedDocument = reducer(
         document,
@@ -2167,9 +2260,9 @@ describe("Workflow Operations", () => {
 
     it("should fail when goal is not blocked", () => {
       const document = utils.createDocument();
-      
+
       // Create a non-blocked goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -2199,17 +2292,19 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("is not blocked");
     });
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         unblockGoal({
@@ -2223,11 +2318,13 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
-      const errorMessage = typeof lastOperation.error === 'string' 
-        ? lastOperation.error 
-        : (lastOperation.error as any)?.message;
+      const errorMessage =
+        typeof lastOperation.error === "string"
+          ? lastOperation.error
+          : (lastOperation.error as any)?.message;
       expect(errorMessage).toContain("not found");
     });
   });

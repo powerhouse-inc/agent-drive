@@ -22,7 +22,7 @@ describe("Documentation Operations", () => {
   describe("UPDATE_DESCRIPTION", () => {
     it("should update goal description", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
       let updatedDocument = reducer(
         document,
@@ -55,7 +55,7 @@ describe("Documentation Operations", () => {
 
     it("should fail when goal does not exist", () => {
       const document = utils.createDocument();
-      
+
       const result = reducer(
         document,
         updateDescription({
@@ -64,7 +64,8 @@ describe("Documentation Operations", () => {
         }),
       );
 
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
     });
   });
@@ -72,7 +73,7 @@ describe("Documentation Operations", () => {
   describe("UPDATE_INSTRUCTIONS", () => {
     it("should update goal instructions", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
       let updatedDocument = reducer(
         document,
@@ -105,7 +106,7 @@ describe("Documentation Operations", () => {
 
     it("should set instructions when previously null", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal without instructions
       let updatedDocument = reducer(
         document,
@@ -140,7 +141,7 @@ describe("Documentation Operations", () => {
   describe("ADD_NOTE", () => {
     it("should add a note to a goal", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
       let updatedDocument = reducer(
         document,
@@ -178,7 +179,7 @@ describe("Documentation Operations", () => {
 
     it("should add multiple notes", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
       let updatedDocument = reducer(
         document,
@@ -228,7 +229,7 @@ describe("Documentation Operations", () => {
   describe("REMOVE_NOTE", () => {
     it("should remove a specific note", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal with an initial note
       let updatedDocument = reducer(
         document,
@@ -277,9 +278,9 @@ describe("Documentation Operations", () => {
 
     it("should fail when note does not exist", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -304,7 +305,8 @@ describe("Documentation Operations", () => {
         }),
       );
 
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
     });
   });
@@ -312,7 +314,7 @@ describe("Documentation Operations", () => {
   describe("CLEAR_INSTRUCTIONS", () => {
     it("should clear goal instructions", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal with instructions
       let updatedDocument = reducer(
         document,
@@ -346,7 +348,7 @@ describe("Documentation Operations", () => {
   describe("CLEAR_NOTES", () => {
     it("should clear all notes", () => {
       const document = utils.createDocument();
-      
+
       // Create a goal with notes
       let updatedDocument = reducer(
         document,
@@ -405,7 +407,7 @@ describe("Documentation Operations", () => {
   describe("MARK_AS_DRAFT", () => {
     it("should mark goal as draft", () => {
       const document = utils.createDocument();
-      
+
       // Create a non-draft goal
       let updatedDocument = reducer(
         document,
@@ -439,7 +441,7 @@ describe("Documentation Operations", () => {
   describe("MARK_AS_READY", () => {
     it("should mark goal as ready (not draft)", () => {
       const document = utils.createDocument();
-      
+
       // Create a draft goal
       let updatedDocument = reducer(
         document,

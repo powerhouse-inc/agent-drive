@@ -14,14 +14,14 @@ export function flatToTree(goals: Goal[]): TreeGoal[] {
   const rootGoals: TreeGoal[] = [];
 
   // First pass: create a map of all goals
-  goals.forEach(goal => {
+  goals.forEach((goal) => {
     goalMap.set(goal.id, { ...goal, data: [], open: true });
   });
 
   // Second pass: build the tree structure
-  goals.forEach(goal => {
+  goals.forEach((goal) => {
     const treeGoal = goalMap.get(goal.id)!;
-    
+
     if (goal.parentId === null) {
       // This is a root goal
       rootGoals.push(treeGoal);
@@ -47,7 +47,10 @@ export function flatToTree(goals: Goal[]): TreeGoal[] {
 /**
  * Finds a goal by ID in the tree structure
  */
-export function findGoalInTree(tree: TreeGoal[], goalId: string): TreeGoal | null {
+export function findGoalInTree(
+  tree: TreeGoal[],
+  goalId: string,
+): TreeGoal | null {
   for (const goal of tree) {
     if (goal.id === goalId) {
       return goal;

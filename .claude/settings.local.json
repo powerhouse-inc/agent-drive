@@ -18,7 +18,8 @@
       "Bash(pnpm tsc:*)",
       "Bash(pnpm build:*)",
       "WebFetch(domain:docs.svar.dev)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [
       "Write(./document-models/*/gen/**)",

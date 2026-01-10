@@ -1,0 +1,19 @@
+.wx-value.wx-ywGRk611 {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  overflow: hidden;
+  outline: none;
+  border: 1px solid var(--wx-color-primary);
+}
+.wx-text.wx-ywGRk611 {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wx-value.wx-ywGRk611:focus {
+  outline: none;
+  display: block;
+}

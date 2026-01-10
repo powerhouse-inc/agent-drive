@@ -1,0 +1,8 @@
+.bar.wx-BSVA8Eaw {
+  height: 50px;
+  padding: 12px;
+}
+.demo.wx-BSVA8Eaw {
+  padding: 20px;
+  height: calc(100% - 50px);
+}

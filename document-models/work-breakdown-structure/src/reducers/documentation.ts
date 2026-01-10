@@ -67,7 +67,9 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
       }
 
       // Find and remove note by ID
-      const noteIndex = goal.notes.findIndex(n => n.id === action.input.noteId);
+      const noteIndex = goal.notes.findIndex(
+        (n) => n.id === action.input.noteId,
+      );
       if (noteIndex === -1) {
         throw new Error(`Note with ID ${action.input.noteId} not found`);
       }
@@ -94,7 +96,7 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
       goal.isDraft = false;
     },
     setOwnerOperation(state, action) {
-        // Set the owner field in the global state
-        state.owner = action.input.owner;
-    }
-};
+      // Set the owner field in the global state
+      state.owner = action.input.owner;
+    },
+  };

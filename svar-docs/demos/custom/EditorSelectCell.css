@@ -1,0 +1,22 @@
+.container.wx-SeTmaThJ {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar.wx-SeTmaThJ {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--wx-color-primary);
+}
+.avatar.wx-SeTmaThJ span.wx-SeTmaThJ {
+  color: white;
+  font-weight: 600;
+}
+.empty.wx-SeTmaThJ {
+  color: var(--wx-color-font-disabled);
+}
