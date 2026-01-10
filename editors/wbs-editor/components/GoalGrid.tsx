@@ -1,9 +1,19 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState, useRef } from "react";
 import { Grid, Willow } from "@svar-ui/react-grid";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { flatToTree, countGoalsInTree } from "../utils/treeTransform.js";
-import StatusChip from "./StatusChip.js";
-import { updateDescription, delegateGoal } from "powerhouse-agent/document-models/work-breakdown-structure";
+import EditableStatusChip from "./EditableStatusChip.js";
+import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
+import {
+  updateDescription,
+  delegateGoal,
+  markTodo,
+  markInProgress,
+  markCompleted,
+  reportBlocked,
+  markWontDo,
+} from "powerhouse-agent/document-models/work-breakdown-structure";
+import { generateId } from "document-model/core";
 
 interface GoalGridProps {
   onGoalSelect?: (goalId: string) => void;
@@ -11,6 +21,11 @@ interface GoalGridProps {
 
 export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();
+  const apiRef = useRef<any>(null);
+  const [blockedPopup, setBlockedPopup] = useState<{ isOpen: boolean; goalId: string }>({
+    isOpen: false,
+    goalId: "",
+  });
 
   // Transform flat goals to tree structure
   // useMemo will recompute when document.state.global.goals changes
@@ -19,6 +34,44 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
     const goals = document.state.global.goals || [];
     return flatToTree(goals);
   }, [document?.state.global.goals]);
+
+  // Handle custom status change actions
+  const handleStatusChange = useCallback((actionData: any) => {
+    if (!dispatch) return;
+    
+    console.log("Status change received:", actionData);
+    const { value, row: goalId } = actionData.data || actionData;
+    console.log("Status change:", { value, goalId });
+    
+    if (value === "BLOCKED") {
+      // Show popup for blocked status
+      console.log("Blocked status selected - showing popup");
+      setBlockedPopup({ isOpen: true, goalId });
+    } else {
+      // Handle other status changes directly
+      switch (value) {
+        case "TODO":
+          dispatch(markTodo({ id: goalId }));
+          break;
+        case "IN_PROGRESS":
+          dispatch(markInProgress({ id: goalId }));
+          break;
+        case "COMPLETED":
+          dispatch(markCompleted({ id: goalId }));
+          break;
+        case "WONT_DO":
+          dispatch(markWontDo({ id: goalId }));
+          break;
+        case "DELEGATED":
+        case "IN_REVIEW":
+          // These might need special handling
+          console.log(`${value} status not yet implemented`);
+          break;
+        default:
+          console.warn("Unknown status:", value);
+      }
+    }
+  }, [dispatch]);
 
   // Column configuration for the grid
   const columns = useMemo(
@@ -32,9 +85,14 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
       },
       {
         id: "status",
-        header: "Status",
+        header: "Status", 
         width: 140,
-        cell: StatusChip,
+        cell: (props: any) => (
+          <EditableStatusChip 
+            {...props} 
+            onStatusChange={handleStatusChange}
+          />
+        ),
       },
       {
         id: "assignee",
@@ -50,7 +108,7 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         template: (v: boolean) => (v ? "📝" : ""),
       },
     ],
-    [],
+    [handleStatusChange],
   );
 
   if (!document) return <div>No document loaded</div>;
@@ -64,29 +122,53 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
     }
   };
 
-  // Handle inline editing events
-  const handleCellEdit = useCallback((event: any) => {
-    const { row, column, value } = event;
-    console.log("Cell edited:", { row, column, value });
+  // Handle blocked status popup
+  const handleBlockedSubmit = useCallback((note: string, author?: string) => {
+    if (!dispatch) return;
+    dispatch(reportBlocked({ 
+      id: blockedPopup.goalId, 
+      question: {
+        id: generateId(),
+        note,
+        author: author || undefined
+      }
+    }));
+  }, [dispatch, blockedPopup.goalId]);
+
+  const handleBlockedClose = useCallback(() => {
+    setBlockedPopup({ isOpen: false, goalId: "" });
+  }, []);
+
+  // Initialize Grid API and set up event handlers
+  const init = useCallback((api: any) => {
+    apiRef.current = api;
     
-    if (column === "description") {
-      dispatch(
-        updateDescription({
-          goalId: row,
-          description: value,
-        }),
-      );
-    } else if (column === "assignee") {
-      // Use delegateGoal to set assignee
-      if (value && value.trim()) {
+    // Handle cell updates from inline editing
+    api.on('update-cell', (event: any) => {
+      if (!dispatch) return;
+      
+      const { id, column, value } = event;
+      console.log("update-cell event:", { id, column, value });
+      
+      if (column === "description") {
         dispatch(
-          delegateGoal({
-            id: row,
-            assignee: value.trim(),
+          updateDescription({
+            goalId: id,
+            description: value,
           }),
         );
+      } else if (column === "assignee") {
+        // Use delegateGoal to set assignee
+        if (value && value.trim()) {
+          dispatch(
+            delegateGoal({
+              id: id,
+              assignee: value.trim(),
+            }),
+          );
+        }
       }
-    }
+    });
   }, [dispatch]);
 
   return (
@@ -119,11 +201,18 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
             data={treeData}
             columns={columns}
             tree={true}
+            init={init}
             onSelectRow={handleRowClick}
-            onAfterEdit={handleCellEdit}
           />
         </Willow>
       </div>
+
+      <BlockedStatusPopup
+        isOpen={blockedPopup.isOpen}
+        onClose={handleBlockedClose}
+        onSubmit={handleBlockedSubmit}
+        goalId={blockedPopup.goalId}
+      />
     </div>
   );
 }
