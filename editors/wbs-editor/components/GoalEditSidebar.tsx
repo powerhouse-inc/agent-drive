@@ -342,9 +342,6 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
                 onStatusChange={handleStatusChange}
               />
             </div>
-            <div className="mt-2 text-xs text-gray-500">
-              Click to change status
-            </div>
           </div>
         </div>
 

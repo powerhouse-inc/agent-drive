@@ -134,10 +134,19 @@ export function SingleClickStatusChip({ goal, onStatusChange }: SingleClickStatu
       >
         <div
           ref={buttonRef}
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium min-w-[120px] cursor-pointer transition-all hover:ring-2 hover:ring-gray-400 hover:ring-offset-1"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium min-w-[120px] cursor-pointer transition-all hover:shadow-md"
           style={{
             backgroundColor: currentColors.bg,
             color: currentColors.text,
+            boxShadow: isOpen ? `0 0 0 2px ${currentColors.text}40` : undefined,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = `0 0 0 2px ${currentColors.text}40`;
+          }}
+          onMouseLeave={(e) => {
+            if (!isOpen) {
+              e.currentTarget.style.boxShadow = '';
+            }
           }}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
