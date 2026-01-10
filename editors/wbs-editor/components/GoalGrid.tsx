@@ -1,16 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { Grid, Willow } from "@svar-ui/react-grid";
-import "@svar-ui/react-grid/all.css";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { flatToTree, countGoalsInTree } from "../utils/treeTransform.js";
 import StatusChip from "./StatusChip.js";
+import { updateDescription, delegateGoal } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 interface GoalGridProps {
   onGoalSelect?: (goalId: string) => void;
 }
 
 export function GoalGrid({ onGoalSelect }: GoalGridProps) {
-  const [document] = useSelectedWorkBreakdownStructureDocument();
+  const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();
 
   // Transform flat goals to tree structure
   // useMemo will recompute when document.state.global.goals changes
@@ -28,6 +28,7 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         header: "Goal Description",
         flexgrow: 1,
         treetoggle: true, // This column will show the expand/collapse toggle
+        editor: "text", // Enable text editing
       },
       {
         id: "status",
@@ -39,6 +40,8 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         id: "assignee",
         header: "Assignee",
         width: 150,
+        editor: "text", // Enable text editing
+        template: (v: string | null) => v || "", // Show empty string instead of null
       },
       {
         id: "isDraft",
@@ -60,6 +63,31 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
       onGoalSelect(event.id);
     }
   };
+
+  // Handle inline editing events
+  const handleCellEdit = useCallback((event: any) => {
+    const { row, column, value } = event;
+    console.log("Cell edited:", { row, column, value });
+    
+    if (column === "description") {
+      dispatch(
+        updateDescription({
+          goalId: row,
+          description: value,
+        }),
+      );
+    } else if (column === "assignee") {
+      // Use delegateGoal to set assignee
+      if (value && value.trim()) {
+        dispatch(
+          delegateGoal({
+            id: row,
+            assignee: value.trim(),
+          }),
+        );
+      }
+    }
+  }, [dispatch]);
 
   return (
     <div className="h-full flex flex-col">
@@ -92,6 +120,7 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
             columns={columns}
             tree={true}
             onSelectRow={handleRowClick}
+            onAfterEdit={handleCellEdit}
           />
         </Willow>
       </div>
