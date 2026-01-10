@@ -705,17 +705,22 @@ describe("Workflow Operations", () => {
       expect(parent?.status).toBe("COMPLETED"); // Should stay COMPLETED
     });
 
-    it.skip("should throw error for non-existent goal - error handling issue", () => {
+    it("should handle error for non-existent goal", () => {
       const document = utils.createDocument();
 
-      expect(() => 
-        reducer(
-          document,
-          markInProgress({
-            id: "non-existent",
-          }),
-        )
-      ).toThrow("Goal with ID non-existent not found");
+      const updatedDocument = reducer(
+        document,
+        markInProgress({
+          id: "non-existent",
+        }),
+      );
+      
+      const lastOperation = updatedDocument.operations.global[0];
+      expect(lastOperation).toBeDefined();
+      expect(lastOperation.error).toBeDefined();
+      if (lastOperation.error && typeof lastOperation.error === 'object' && 'message' in lastOperation.error) {
+        expect(lastOperation.error.message).toBe("Goal with ID non-existent not found");
+      }
     });
   });
 
@@ -1591,132 +1596,6 @@ describe("Workflow Operations", () => {
     });
   });
 
-  it.skip("should handle delegateGoal operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(DelegateGoalInputSchema());
-
-    const updatedDocument = reducer(document, delegateGoal(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "DELEGATE_GOAL",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle reportOnGoal operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(ReportOnGoalInputSchema());
-
-    const updatedDocument = reducer(document, reportOnGoal(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "REPORT_ON_GOAL",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle markInProgress operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(MarkInProgressInputSchema());
-
-    const updatedDocument = reducer(document, markInProgress(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "MARK_IN_PROGRESS",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle markCompleted operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(MarkCompletedInputSchema());
-
-    const updatedDocument = reducer(document, markCompleted(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "MARK_COMPLETED",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle markTodo operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(MarkTodoInputSchema());
-
-    const updatedDocument = reducer(document, markTodo(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe("MARK_TODO");
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle reportBlocked operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(ReportBlockedInputSchema());
-
-    const updatedDocument = reducer(document, reportBlocked(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "REPORT_BLOCKED",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle unblockGoal operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(UnblockGoalInputSchema());
-
-    const updatedDocument = reducer(document, unblockGoal(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "UNBLOCK_GOAL",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-  it.skip("should handle markWontDo operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(MarkWontDoInputSchema());
-
-    const updatedDocument = reducer(document, markWontDo(input));
-
-    expect(isWorkBreakdownStructureDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "MARK_WONT_DO",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
 
   describe("DELEGATE_GOAL", () => {
     it("should delegate a leaf goal to an assignee", () => {
