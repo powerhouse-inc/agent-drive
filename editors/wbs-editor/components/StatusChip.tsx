@@ -6,51 +6,47 @@ interface StatusChipProps {
   };
 }
 
+// Status colors based on document model categories
+const WAITING_COLOR = {
+  bg: "#fef3c7", // amber-100
+  text: "#d97706", // amber-600
+  dot: "#f59e0b", // amber-500
+};
+
+const ACTIVE_COLOR = {
+  bg: "#dbeafe", // blue-100
+  text: "#2563eb", // blue-600
+  dot: "#3b82f6", // blue-500
+};
+
+const FINISHED_COLOR = {
+  bg: "#dcfce7", // green-100
+  text: "#16a34a", // green-600
+  dot: "#22c55e", // green-500
+};
+
 export const STATUS_COLORS = {
-  TODO: {
-    bg: "#f3f4f6", // gray-100
-    text: "#6b7280", // gray-500
-    dot: "#9ca3af", // gray-400
-  },
-  IN_PROGRESS: {
-    bg: "#dbeafe", // blue-100
-    text: "#2563eb", // blue-600
-    dot: "#3b82f6", // blue-500
-  },
-  IN_REVIEW: {
-    bg: "#fef3c7", // amber-100
-    text: "#d97706", // amber-600
-    dot: "#f59e0b", // amber-500
-  },
-  COMPLETED: {
-    bg: "#dcfce7", // green-100
-    text: "#16a34a", // green-600
-    dot: "#22c55e", // green-500
-  },
-  BLOCKED: {
-    bg: "#fee2e2", // red-100
-    text: "#dc2626", // red-600
-    dot: "#ef4444", // red-500
-  },
-  DELEGATED: {
-    bg: "#f3e8ff", // purple-100
-    text: "#9333ea", // purple-600
-    dot: "#a855f7", // purple-500
-  },
-  WONT_DO: {
-    bg: "#f1f5f9", // slate-100
-    text: "#64748b", // slate-500
-    dot: "#94a3b8", // slate-400
-  },
+  // Waiting statuses
+  TODO: WAITING_COLOR,
+  BLOCKED: WAITING_COLOR,
+  
+  // Active statuses
+  IN_PROGRESS: ACTIVE_COLOR,
+  DELEGATED: ACTIVE_COLOR,
+  IN_REVIEW: ACTIVE_COLOR,
+  
+  // Finished statuses
+  COMPLETED: FINISHED_COLOR,
+  WONT_DO: FINISHED_COLOR,
 };
 
 export const STATUS_LABELS = {
   TODO: "To Do",
+  BLOCKED: "Blocked",
   IN_PROGRESS: "In Progress",
+  DELEGATED: "Delegated",
   IN_REVIEW: "In Review",
   COMPLETED: "Completed",
-  BLOCKED: "Blocked",
-  DELEGATED: "Delegated",
   WONT_DO: "Won't Do",
 };
 

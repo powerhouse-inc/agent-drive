@@ -15,13 +15,17 @@ interface EditableStatusChipProps {
   onStatusChange?: (statusData: any) => void;
 }
 
+// Status options ordered as per document model specification
 const STATUS_OPTIONS = [
+  // Waiting statuses
   { id: "TODO", label: "To Do" },
-  { id: "IN_PROGRESS", label: "In Progress" },
-  { id: "IN_REVIEW", label: "In Review" },
-  { id: "COMPLETED", label: "Completed" },
   { id: "BLOCKED", label: "Blocked" },
+  // Active statuses  
+  { id: "IN_PROGRESS", label: "In Progress" },
   { id: "DELEGATED", label: "Delegated" },
+  { id: "IN_REVIEW", label: "In Review" },
+  // Finished statuses
+  { id: "COMPLETED", label: "Completed" },
   { id: "WONT_DO", label: "Won't Do" },
 ];
 
