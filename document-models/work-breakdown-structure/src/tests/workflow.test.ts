@@ -1076,6 +1076,272 @@ describe("Workflow Operations", () => {
     });
   });
 
+  describe("MARK_TODO", () => {
+    it("should mark a goal as TODO", () => {
+      const document = utils.createDocument();
+
+      // Create goal and mark it IN_PROGRESS first
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // First mark as IN_PROGRESS
+      updatedDocument = reducer(
+        updatedDocument,
+        markInProgress({
+          id: "goal-1",
+        }),
+      );
+
+      expect(updatedDocument.state.global.goals[0].status).toBe("IN_PROGRESS");
+
+      // Now mark back to TODO
+      updatedDocument = reducer(
+        updatedDocument,
+        markTodo({
+          id: "goal-1",
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("TODO");
+    });
+
+    it("should add a note when marking as TODO", () => {
+      const document = utils.createDocument();
+
+      // Create goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark as IN_PROGRESS first
+      updatedDocument = reducer(
+        updatedDocument,
+        markInProgress({
+          id: "goal-1",
+        }),
+      );
+
+      // Mark back to TODO with note
+      updatedDocument = reducer(
+        updatedDocument,
+        markTodo({
+          id: "goal-1",
+          note: {
+            id: "note-1",
+            note: "Reverting to TODO",
+            author: "user@example.com",
+          },
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("TODO");
+      expect(goal.notes).toHaveLength(1);
+      expect(goal.notes[0].note).toBe("Reverting to TODO");
+    });
+
+    it("should reset COMPLETED parent goals to TODO", () => {
+      const document = utils.createDocument();
+
+      // Create hierarchy
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark parent as completed (this will also complete child)
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "parent-1",
+        }),
+      );
+
+      expect(updatedDocument.state.global.goals[0].status).toBe("COMPLETED");
+      expect(updatedDocument.state.global.goals[1].status).toBe("COMPLETED");
+
+      // Now mark child back to TODO
+      updatedDocument = reducer(
+        updatedDocument,
+        markTodo({
+          id: "child-1",
+        }),
+      );
+
+      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      
+      expect(child?.status).toBe("TODO");
+      expect(parent?.status).toBe("TODO"); // Parent should be reset
+    });
+
+    it("should reset WONT_DO parent goals to TODO", () => {
+      const document = utils.createDocument();
+
+      // Create hierarchy
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Manually mark parent as WONT_DO
+      updatedDocument.state.global.goals[0].status = "WONT_DO";
+
+      // Mark child back to TODO
+      updatedDocument = reducer(
+        updatedDocument,
+        markTodo({
+          id: "child-1",
+        }),
+      );
+
+      const parent = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      const child = updatedDocument.state.global.goals.find((g) => g.id === "child-1");
+      
+      expect(child?.status).toBe("TODO");
+      expect(parent?.status).toBe("TODO"); // Parent should be reset
+    });
+
+    it("should not change parent if already TODO or IN_PROGRESS", () => {
+      const document = utils.createDocument();
+
+      // Create hierarchy
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark child as IN_PROGRESS
+      updatedDocument = reducer(
+        updatedDocument,
+        markInProgress({
+          id: "child-1",
+        }),
+      );
+
+      const parentBefore = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      expect(parentBefore?.status).toBe("IN_PROGRESS");
+
+      // Mark child back to TODO
+      updatedDocument = reducer(
+        updatedDocument,
+        markTodo({
+          id: "child-1",
+        }),
+      );
+
+      const parentAfter = updatedDocument.state.global.goals.find((g) => g.id === "parent-1");
+      expect(parentAfter?.status).toBe("IN_PROGRESS"); // Should stay IN_PROGRESS
+    });
+  });
+
   it.skip("should handle delegateGoal operation", () => {
     const document = utils.createDocument();
     const input = generateMock(DelegateGoalInputSchema());

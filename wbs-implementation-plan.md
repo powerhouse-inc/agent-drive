@@ -46,14 +46,14 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Verify**: Entire subtree is completed correctly
 - [x] **Test**: Mixed subtree with some already completed (6 tests passing)
 
-##### MARK_TODO
-- [ ] Find target goal by ID
-- [ ] Update goal status to TODO
-- [ ] Add optional note if provided
-- [ ] Find parent goals up the chain
-- [ ] Reset finished parents (COMPLETED/WONT_DO) to TODO
-- [ ] **Verify**: Parent chain consistency maintained
-- [ ] **Test**: Deep hierarchy with mixed statuses
+##### MARK_TODO ✅
+- [x] Find target goal by ID
+- [x] Update goal status to TODO
+- [x] Add optional note if provided
+- [x] Find parent goals up the chain
+- [x] Reset finished parents (COMPLETED/WONT_DO) to TODO
+- [x] **Verify**: Parent chain consistency maintained
+- [x] **Test**: Deep hierarchy with mixed statuses (5 tests passing)
 
 ##### MARK_WONT_DO
 - [ ] Find target goal by ID

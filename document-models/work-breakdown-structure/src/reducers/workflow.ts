@@ -107,8 +107,32 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       }
     },
     markTodoOperation(state, action) {
-      // TODO: Implement "markTodoOperation" reducer
-      throw new Error('Reducer "markTodoOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to TODO
+      goal.status = "TODO";
+
+      // Add optional note if provided
+      if (action.input.note) {
+        const note: Note = {
+          id: action.input.note.id,
+          note: action.input.note.note,
+          author: action.input.note.author || null,
+        };
+        goal.notes.push(note);
+      }
+
+      // Reset finished parents (COMPLETED or WONT_DO) to TODO
+      const ancestors = getAncestors(state.goals, action.input.id);
+      for (const ancestor of ancestors) {
+        if (ancestor.status === "COMPLETED" || ancestor.status === "WONT_DO") {
+          ancestor.status = "TODO";
+        }
+      }
     },
     reportBlockedOperation(state, action) {
       // TODO: Implement "reportBlockedOperation" reducer
