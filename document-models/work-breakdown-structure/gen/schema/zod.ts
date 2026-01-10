@@ -1,0 +1,318 @@
+import { z } from "zod";
+import type {
+  AddDependenciesInput,
+  AddNoteInput,
+  ClearInstructionsInput,
+  ClearNotesInput,
+  CreateGoalInput,
+  DelegateGoalInput,
+  Goal,
+  GoalStatus,
+  InitialNoteInput,
+  MarkAsDraftInput,
+  MarkAsReadyInput,
+  MarkCompletedInput,
+  MarkInProgressInput,
+  MarkTodoInput,
+  MarkWontDoInput,
+  MetaData,
+  MetaDataFormat,
+  MetaDataInput,
+  Note,
+  RemoveDependenciesInput,
+  RemoveNoteInput,
+  ReorderInput,
+  ReportBlockedInput,
+  ReportOnGoalInput,
+  SetMetaDataInput,
+  SetReferencesInput,
+  UnblockGoalInput,
+  UpdateDescriptionInput,
+  UpdateInstructionsInput,
+  WorkBreakdownStructureState,
+} from "./types.js";
+
+type Properties<T> = Required<{
+  [K in keyof T]: z.ZodType<T[K], any, T[K]>;
+}>;
+
+type definedNonNullAny = {};
+
+export const isDefinedNonNullAny = (v: any): v is definedNonNullAny =>
+  v !== undefined && v !== null;
+
+export const definedNonNullAnySchema = z
+  .any()
+  .refine((v) => isDefinedNonNullAny(v));
+
+export const GoalStatusSchema = z.enum([
+  "BLOCKED",
+  "COMPLETED",
+  "DELEGATED",
+  "IN_PROGRESS",
+  "IN_REVIEW",
+  "TODO",
+  "WONT_DO",
+]);
+
+export const MetaDataFormatSchema = z.enum(["JSON", "OTHER", "TEXT"]);
+
+export function AddDependenciesInputSchema(): z.ZodObject<
+  Properties<AddDependenciesInput>
+> {
+  return z.object({
+    dependsOn: z.array(z.string()),
+    goalId: z.string(),
+  });
+}
+
+export function AddNoteInputSchema(): z.ZodObject<Properties<AddNoteInput>> {
+  return z.object({
+    author: z.string().nullish(),
+    goalId: z.string(),
+    note: z.string(),
+    noteId: z.string(),
+  });
+}
+
+export function ClearInstructionsInputSchema(): z.ZodObject<
+  Properties<ClearInstructionsInput>
+> {
+  return z.object({
+    goalId: z.string(),
+  });
+}
+
+export function ClearNotesInputSchema(): z.ZodObject<
+  Properties<ClearNotesInput>
+> {
+  return z.object({
+    goalId: z.string(),
+  });
+}
+
+export function CreateGoalInputSchema(): z.ZodObject<
+  Properties<CreateGoalInput>
+> {
+  return z.object({
+    assignee: z.string().nullish(),
+    dependsOn: z.array(z.string()).nullish(),
+    description: z.string(),
+    draft: z.boolean().nullish(),
+    id: z.string(),
+    initialNote: z.lazy(() => InitialNoteInputSchema().nullish()),
+    insertBefore: z.string().nullish(),
+    instructions: z.string().nullish(),
+    metaData: z.lazy(() => MetaDataInputSchema().nullish()),
+    parentId: z.string().nullish(),
+  });
+}
+
+export function DelegateGoalInputSchema(): z.ZodObject<
+  Properties<DelegateGoalInput>
+> {
+  return z.object({
+    assignee: z.string(),
+    id: z.string(),
+  });
+}
+
+export function GoalSchema(): z.ZodObject<Properties<Goal>> {
+  return z.object({
+    __typename: z.literal("Goal").optional(),
+    assignee: z.string().nullable(),
+    dependencies: z.array(z.string()),
+    description: z.string(),
+    id: z.string(),
+    instructions: z.string().nullable(),
+    isDraft: z.boolean(),
+    notes: z.array(NoteSchema()),
+    parentId: z.string().nullable(),
+    status: GoalStatusSchema,
+  });
+}
+
+export function InitialNoteInputSchema(): z.ZodObject<
+  Properties<InitialNoteInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    id: z.string(),
+    note: z.string(),
+  });
+}
+
+export function MarkAsDraftInputSchema(): z.ZodObject<
+  Properties<MarkAsDraftInput>
+> {
+  return z.object({
+    goalId: z.string(),
+  });
+}
+
+export function MarkAsReadyInputSchema(): z.ZodObject<
+  Properties<MarkAsReadyInput>
+> {
+  return z.object({
+    goalId: z.string(),
+  });
+}
+
+export function MarkCompletedInputSchema(): z.ZodObject<
+  Properties<MarkCompletedInput>
+> {
+  return z.object({
+    id: z.string(),
+    note: z.string().nullish(),
+  });
+}
+
+export function MarkInProgressInputSchema(): z.ZodObject<
+  Properties<MarkInProgressInput>
+> {
+  return z.object({
+    id: z.string(),
+    note: z.string().nullish(),
+  });
+}
+
+export function MarkTodoInputSchema(): z.ZodObject<Properties<MarkTodoInput>> {
+  return z.object({
+    id: z.string(),
+    note: z.string().nullish(),
+  });
+}
+
+export function MarkWontDoInputSchema(): z.ZodObject<
+  Properties<MarkWontDoInput>
+> {
+  return z.object({
+    id: z.string(),
+  });
+}
+
+export function MetaDataSchema(): z.ZodObject<Properties<MetaData>> {
+  return z.object({
+    __typename: z.literal("MetaData").optional(),
+    data: z.string(),
+    format: MetaDataFormatSchema,
+  });
+}
+
+export function MetaDataInputSchema(): z.ZodObject<Properties<MetaDataInput>> {
+  return z.object({
+    data: z.string().nullish(),
+    format: MetaDataFormatSchema.nullish(),
+  });
+}
+
+export function NoteSchema(): z.ZodObject<Properties<Note>> {
+  return z.object({
+    __typename: z.literal("Note").optional(),
+    author: z.string().nullable(),
+    id: z.string(),
+    note: z.string(),
+  });
+}
+
+export function RemoveDependenciesInputSchema(): z.ZodObject<
+  Properties<RemoveDependenciesInput>
+> {
+  return z.object({
+    dependencies: z.array(z.string()),
+    goalId: z.string(),
+  });
+}
+
+export function RemoveNoteInputSchema(): z.ZodObject<
+  Properties<RemoveNoteInput>
+> {
+  return z.object({
+    goalId: z.string(),
+    noteId: z.string(),
+  });
+}
+
+export function ReorderInputSchema(): z.ZodObject<Properties<ReorderInput>> {
+  return z.object({
+    goalId: z.string(),
+    insertBefore: z.string().nullish(),
+    parentId: z.string().nullish(),
+  });
+}
+
+export function ReportBlockedInputSchema(): z.ZodObject<
+  Properties<ReportBlockedInput>
+> {
+  return z.object({
+    id: z.string(),
+    question: z.string(),
+  });
+}
+
+export function ReportOnGoalInputSchema(): z.ZodObject<
+  Properties<ReportOnGoalInput>
+> {
+  return z.object({
+    id: z.string(),
+    moveInReview: z.boolean(),
+    note: z.string(),
+  });
+}
+
+export function SetMetaDataInputSchema(): z.ZodObject<
+  Properties<SetMetaDataInput>
+> {
+  return z.object({
+    data: z.string(),
+    format: MetaDataFormatSchema,
+  });
+}
+
+export function SetReferencesInputSchema(): z.ZodObject<
+  Properties<SetReferencesInput>
+> {
+  return z.object({
+    references: z.array(z.string().url()),
+  });
+}
+
+export function UnblockGoalInputSchema(): z.ZodObject<
+  Properties<UnblockGoalInput>
+> {
+  return z.object({
+    id: z.string(),
+    response: z.string(),
+  });
+}
+
+export function UpdateDescriptionInputSchema(): z.ZodObject<
+  Properties<UpdateDescriptionInput>
+> {
+  return z.object({
+    description: z.string(),
+    goalId: z.string(),
+  });
+}
+
+export function UpdateInstructionsInputSchema(): z.ZodObject<
+  Properties<UpdateInstructionsInput>
+> {
+  return z.object({
+    goalId: z.string(),
+    instructions: z.string(),
+  });
+}
+
+export function WorkBreakdownStructureStateSchema(): z.ZodObject<
+  Properties<WorkBreakdownStructureState>
+> {
+  return z.object({
+    __typename: z.literal("WorkBreakdownStructureState").optional(),
+    goals: z.array(GoalSchema()),
+    isBlocked: z.boolean(),
+    metaData: MetaDataSchema().nullable(),
+    owner: z.string().nullable(),
+    references: z.array(z.string().url()),
+  });
+}

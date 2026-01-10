@@ -1,0 +1,344 @@
+import type { DocumentModelGlobalState } from "document-model";
+
+export const documentModel: DocumentModelGlobalState = {
+  author: {
+    name: "Powerhouse",
+    website: "https://www.powerhouse.inc",
+  },
+  description:
+    "This document model describes a work breakdown structure as a way to keep track of a hierarchy of goals that are achieved through direct action by the owner or through task delegation. A work breakdown structure can be blocked if it requires additional input from stakeholders to be completed.",
+  extension: ".wbs",
+  id: "powerhouse/work-breakdown-structure",
+  name: "Work Breakdown Structure",
+  specifications: [
+    {
+      changeLog: [],
+      modules: [
+        {
+          description:
+            "Operations for managing goal documentation, notes, and draft status",
+          id: "f5f97505-aff6-4ea5-8264-e1a77e2414ae",
+          name: "documentation",
+          operations: [
+            {
+              description:
+                "Updates the description of a goal to reflect new requirements or understanding",
+              errors: [],
+              examples: [],
+              id: "55818191-71f0-4acc-bf46-842741c82bff",
+              name: "UPDATE_DESCRIPTION",
+              reducer: "",
+              schema:
+                "input UpdateDescriptionInput {\n  goalId: OID!\n  description: String!\n}",
+              scope: "global",
+              template: "Update goal description",
+            },
+            {
+              description:
+                "Updates the instructions for completing a goal with detailed steps or requirements",
+              errors: [],
+              examples: [],
+              id: "3ff1ffeb-167d-4211-93ea-6c1605cf5a22",
+              name: "UPDATE_INSTRUCTIONS",
+              reducer: "",
+              schema:
+                "input UpdateInstructionsInput {\n  goalId: OID!\n  instructions: String!\n}",
+              scope: "global",
+              template: "Update goal instructions",
+            },
+            {
+              description:
+                "Adds a note to a goal with optional author attribution for tracking comments and progress",
+              errors: [],
+              examples: [],
+              id: "e47f3e38-fcaf-438a-8ada-f50fb7f31cb3",
+              name: "ADD_NOTE",
+              reducer: "",
+              schema:
+                "input AddNoteInput {\n  goalId: OID!\n  noteId: OID!\n  note: String!\n  author: String\n}",
+              scope: "global",
+              template: "Add note to goal",
+            },
+            {
+              description:
+                "Clears all instructions from a goal when they are no longer relevant",
+              errors: [],
+              examples: [],
+              id: "fb088914-0b28-4a88-878b-eb267b76f2da",
+              name: "CLEAR_INSTRUCTIONS",
+              reducer: "",
+              schema: "input ClearInstructionsInput {\n  goalId: OID!\n}",
+              scope: "global",
+              template: "Clear goal instructions",
+            },
+            {
+              description:
+                "Removes all notes from a goal to reset its comment history",
+              errors: [],
+              examples: [],
+              id: "0ef7d5a9-8fa6-4f05-8a4a-24023575874d",
+              name: "CLEAR_NOTES",
+              reducer: "",
+              schema: "input ClearNotesInput {\n  goalId: OID!\n}",
+              scope: "global",
+              template: "Clear all goal notes",
+            },
+            {
+              description: "Removes a specific note from a goal by its ID",
+              errors: [],
+              examples: [],
+              id: "7ed13a0a-a973-4e8e-9f18-8a4c6a4869fd",
+              name: "REMOVE_NOTE",
+              reducer: "",
+              schema:
+                "input RemoveNoteInput {\n  goalId: OID!\n  noteId: OID!\n}",
+              scope: "global",
+              template: "Remove specific note",
+            },
+            {
+              description: "Sets the isDraft flag to true.",
+              errors: [],
+              examples: [],
+              id: "c784a624-2666-4612-b61b-9af034fdea25",
+              name: "MARK_AS_DRAFT",
+              reducer: "",
+              schema: "input MarkAsDraftInput {\n  goalId: OID!\n}",
+              scope: "global",
+              template: "Mark goal as draft",
+            },
+            {
+              description: "Sets the isDraft flag to false.",
+              errors: [],
+              examples: [],
+              id: "f2581c9a-0d6a-47c5-b706-22fbeb0405fc",
+              name: "MARK_AS_READY",
+              reducer: "",
+              schema: "input MarkAsReadyInput {\n  goalId: OID!\n}",
+              scope: "global",
+              template: "Mark goal as ready",
+            },
+          ],
+        },
+        {
+          description:
+            "Operations for managing goal relationships and dependencies",
+          id: "0384d125-358d-4d7d-8e66-77d81d3da1fb",
+          name: "hierarchy",
+          operations: [
+            {
+              description:
+                "Moves a goal to a new position in the hierarchy by changing its parent or sibling order",
+              errors: [],
+              examples: [],
+              id: "2c1346c0-0ab9-4771-8b6e-44b9f6ffffbf",
+              name: "REORDER",
+              reducer: "",
+              schema:
+                'input ReorderInput {\n  goalId: OID!\n  "Omit for root goals"\n  parentId: OID\n  "Omit for appending at the end"\n  insertBefore: OID\n}',
+              scope: "global",
+              template: "Reorder goal in hierarchy",
+            },
+            {
+              description:
+                "Adds dependencies that must be completed before this goal can be started",
+              errors: [],
+              examples: [],
+              id: "6d514265-8691-4f4a-94f6-a79c6589df15",
+              name: "ADD_DEPENDENCIES",
+              reducer: "",
+              schema:
+                "input AddDependenciesInput {\n  goalId: OID!\n  dependsOn: [OID!]!\n}",
+              scope: "global",
+              template: "Add goal dependencies",
+            },
+            {
+              description:
+                "Removes specified dependencies from a goal to adjust task relationships",
+              errors: [],
+              examples: [],
+              id: "c9efe29b-ff2e-4553-93a3-74723d32f162",
+              name: "REMOVE_DEPENDENCIES",
+              reducer: "",
+              schema:
+                "input RemoveDependenciesInput {\n  goalId: OID!\n  dependencies: [OID!]!\n}",
+              scope: "global",
+              template: "Remove goal dependencies",
+            },
+          ],
+        },
+        {
+          description:
+            "Operations for managing goal lifecycle, delegation, and status transitions",
+          id: "26c0d80c-cfb0-43aa-90ad-26e86bf67bd5",
+          name: "workflow",
+          operations: [
+            {
+              description:
+                "Creates a new goal in the hierarchy with status TODO, or status DELEGATED if the assignee is set.",
+              errors: [],
+              examples: [],
+              id: "a8ed582c-06d7-4014-90de-b7b696947af8",
+              name: "CREATE_GOAL",
+              reducer:
+                "// Create the new goal with required fields\nconst newGoal = {\n    id: action.input.id,\n    description: action.input.description,\n    status: action.input.assignee ? 'DELEGATED' : 'TODO',\n    parentId: action.input.parentId || null,\n    dependencies: action.input.dependsOn || [],\n    isDraft: action.input.draft || false,\n    instructions: action.input.instructions || null,\n    notes: [],\n    assignee: action.input.assignee || null,\n};\n\n// Add initial note if provided\nif (action.input.initialNote) {\n    const note = {\n        id: action.input.initialNote.id,\n        note: action.input.initialNote.note,\n        author: action.input.initialNote.author || null,\n    };\n    newGoal.notes.push(note);\n}\n\n// Helper function to insert goal at position\nfunction insertGoalAtPosition(goals, goal, insertBefore) {\n    if (!insertBefore) {\n        return [...goals, goal];\n    }\n    \n    const insertIndex = goals.findIndex(g => g.id === insertBefore);\n    if (insertIndex === -1) {\n        return [...goals, goal];\n    }\n    \n    const result = [...goals];\n    result.splice(insertIndex, 0, goal);\n    return result;\n}\n\n// Insert goal at the specified position\nstate.goals = insertGoalAtPosition(\n    state.goals, \n    newGoal, \n    action.input.insertBefore || undefined\n);",
+              schema:
+                "input CreateGoalInput {\n  id: OID!\n  description: String!\n  instructions: String\n  draft: Boolean\n  parentId: OID\n  insertBefore: OID\n  assignee: String\n  dependsOn: [OID!]\n  initialNote: InitialNoteInput\n  metaData: MetaDataInput\n}\n\ninput InitialNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}\n\ninput MetaDataInput {\n  format: MetaDataFormat\n  data: String\n}",
+              scope: "global",
+              template: "Create new goal",
+            },
+            {
+              description:
+                "Delegates a goal to an assignee who works on it and puts it IN_REVIEW",
+              errors: [],
+              examples: [],
+              id: "aa26a23d-39f5-49ab-ab24-d647a0bdb289",
+              name: "DELEGATE_GOAL",
+              reducer: "",
+              schema:
+                "input DelegateGoalInput {\n  id: OID!\n  assignee: String!\n}",
+              scope: "global",
+              template: "Delegate goal to assignee",
+            },
+            {
+              description:
+                "Report on a delegated goal by adding a note and optionally moving it IN_REVIEW. Only valid for goals with status DELEGATED.",
+              errors: [],
+              examples: [],
+              id: "23ec52e2-e446-416e-8eb2-a1224972fa18",
+              name: "REPORT_ON_GOAL",
+              reducer: "",
+              schema:
+                "input ReportOnGoalInput {\n  id: OID!\n  note: String!\n  moveInReview: Boolean!\n}",
+              scope: "global",
+              template: "Report progress on delegated goal",
+            },
+            {
+              description:
+                "Marks a goal as IN_PROGRESS and propagates this status up to all ancestor goals to reflect active work in the subtree",
+              errors: [],
+              examples: [],
+              id: "b29c3d71-3864-4df9-845e-8e976d47d84f",
+              name: "MARK_IN_PROGRESS",
+              reducer: "",
+              schema:
+                "input MarkInProgressInput {\n  id: OID!\n  note: String\n}",
+              scope: "global",
+              template: "Mark goal in progress",
+            },
+            {
+              description:
+                "Marks a goal as COMPLETED. All unfinished child goals (those not COMPLETED or WONT_DO) are automatically marked COMPLETED as well",
+              errors: [],
+              examples: [],
+              id: "7f2ebf1a-369e-4c53-ae28-c41bcdaaf75d",
+              name: "MARK_COMPLETED",
+              reducer: "",
+              schema:
+                "input MarkCompletedInput {\n  id: OID!\n  note: String\n}",
+              scope: "global",
+              template: "Mark goal completed",
+            },
+            {
+              description:
+                "Marks a goal as TODO. If parent goals are COMPLETED or WONT_DO, they are also reset to TODO to maintain hierarchy consistency",
+              errors: [],
+              examples: [],
+              id: "6313e929-4ad2-4c66-9b6a-950340032746",
+              name: "MARK_TODO",
+              reducer: "",
+              schema: "input MarkTodoInput {\n  id: OID!\n  note: String\n}",
+              scope: "global",
+              template: "Mark goal as todo",
+            },
+            {
+              description:
+                "Reports a goal as blocked indicating it requires stakeholder input to proceed. ",
+              errors: [],
+              examples: [],
+              id: "d5b3de4b-a611-4d01-a86f-71b3447d7d00",
+              name: "REPORT_BLOCKED",
+              reducer: "",
+              schema:
+                "input ReportBlockedInput {\n  id: OID!\n  question: String!\n}",
+              scope: "global",
+              template: "Report goal blocked",
+            },
+            {
+              description:
+                "Unblocks a goal by providing the required input to proceed.",
+              errors: [],
+              examples: [],
+              id: "cad9e6bf-ce36-4a1d-b9b1-92a299fbf1ea",
+              name: "UNBLOCK_GOAL",
+              reducer: "",
+              schema:
+                "input UnblockGoalInput {\n  id: OID!\n  response: String!\n}",
+              scope: "global",
+              template: "Unblock goal with response",
+            },
+            {
+              description:
+                "Marks a goal as WONT_DO. All unfinished child goals (those not COMPLETED or WONT_DO) are automatically marked WONT_DO as well",
+              errors: [],
+              examples: [],
+              id: "cfa55588-a5a1-40f3-afc6-c0467ef4265f",
+              name: "MARK_WONT_DO",
+              reducer: "",
+              schema: "input MarkWontDoInput {\n  id: OID!\n}",
+              scope: "global",
+              template: "Mark goal won't do",
+            },
+          ],
+        },
+        {
+          description:
+            "Operations for managing external references and structured metadata",
+          id: "6bf81707-bd21-438e-a545-d0ff16b0135b",
+          name: "metadata",
+          operations: [
+            {
+              description:
+                "Sets external reference URLs for the entire work breakdown structure",
+              errors: [],
+              examples: [],
+              id: "e5ef1a2f-1b25-4b3a-8255-ab9fea56e196",
+              name: "SET_REFERENCES",
+              reducer: "",
+              schema: "input SetReferencesInput {\n  references: [URL!]!\n}",
+              scope: "global",
+              template: "Set WBS references",
+            },
+            {
+              description:
+                "Sets structured metadata for the work breakdown structure in various formats (TEXT, JSON, or OTHER)",
+              errors: [],
+              examples: [],
+              id: "7d8bce24-382f-4708-87fa-2a90d2424d1c",
+              name: "SET_META_DATA",
+              reducer: "",
+              schema:
+                "input SetMetaDataInput {\n  format: MetaDataFormat!\n  data: String!\n}",
+              scope: "global",
+              template: "Set WBS metadata",
+            },
+          ],
+        },
+      ],
+      state: {
+        global: {
+          examples: [],
+          initialValue:
+            '"{\\n  \\"owner\\": null,\\n  \\"isBlocked\\": false,\\n  \\"goals\\": [],\\n  \\"references\\": [],\\n  \\"metaData\\": null\\n}"',
+          schema:
+            'type WorkBreakdownStructureState {\n  owner: String\n  isBlocked: Boolean!\n  goals: [Goal!]!\n  references: [URL!]!\n  metaData: MetaData  \n}\n\ntype Goal {\n  id: OID!\n  status: GoalStatus!\n  parentId: OID\n  dependencies: [OID!]!\n  description: String!\n  isDraft: Boolean!\n  instructions: String\n  notes: [Note!]!\n  assignee: String\n}\n\ntype MetaData {\n  format: MetaDataFormat!\n  data: String!\n}\n\nenum MetaDataFormat {\n  TEXT\n  JSON\n  OTHER\n}\n\ntype Note {\n  id: OID!\n  note: String!\n  author: String\n}\n\nenum GoalStatus {\n  "Waiting statuses"\n  TODO\n  BLOCKED\n\n  "Active statuses"\n  IN_PROGRESS\n  DELEGATED\n  IN_REVIEW\n\n  "Finished statuses"\n  COMPLETED\n  WONT_DO\n}',
+        },
+        local: {
+          examples: [],
+          initialValue: '""',
+          schema: "",
+        },
+      },
+      version: 1,
+    },
+  ],
+};

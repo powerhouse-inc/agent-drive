@@ -1,0 +1,207 @@
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar Amount_Percentage
+scalar EmailAddress
+scalar Date
+scalar DateTime
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+type WorkBreakdownStructureState {
+  owner: String
+  isBlocked: Boolean!
+  goals: [Goal!]!
+  references: [URL!]!
+  metaData: MetaData  
+}
+
+type Goal {
+  id: OID!
+  status: GoalStatus!
+  parentId: OID
+  dependencies: [OID!]!
+  description: String!
+  isDraft: Boolean!
+  instructions: String
+  notes: [Note!]!
+  assignee: String
+}
+
+type MetaData {
+  format: MetaDataFormat!
+  data: String!
+}
+
+enum MetaDataFormat {
+  TEXT
+  JSON
+  OTHER
+}
+
+type Note {
+  id: OID!
+  note: String!
+  author: String
+}
+
+enum GoalStatus {
+  "Waiting statuses"
+  TODO
+  BLOCKED
+
+  "Active statuses"
+  IN_PROGRESS
+  DELEGATED
+  IN_REVIEW
+
+  "Finished statuses"
+  COMPLETED
+  WONT_DO
+}
+
+
+
+# documentation
+
+input UpdateDescriptionInput {
+  goalId: OID!
+  description: String!
+}
+
+input UpdateInstructionsInput {
+  goalId: OID!
+  instructions: String!
+}
+
+input AddNoteInput {
+  goalId: OID!
+  noteId: OID!
+  note: String!
+  author: String
+}
+
+input ClearInstructionsInput {
+  goalId: OID!
+}
+
+input ClearNotesInput {
+  goalId: OID!
+}
+
+input RemoveNoteInput {
+  goalId: OID!
+  noteId: OID!
+}
+
+input MarkAsDraftInput {
+  goalId: OID!
+}
+
+input MarkAsReadyInput {
+  goalId: OID!
+}
+
+# hierarchy
+
+input ReorderInput {
+  goalId: OID!
+  "Omit for root goals"
+  parentId: OID
+  "Omit for appending at the end"
+  insertBefore: OID
+}
+
+input AddDependenciesInput {
+  goalId: OID!
+  dependsOn: [OID!]!
+}
+
+input RemoveDependenciesInput {
+  goalId: OID!
+  dependencies: [OID!]!
+}
+
+# workflow
+
+input CreateGoalInput {
+  id: OID!
+  description: String!
+  instructions: String
+  draft: Boolean
+  parentId: OID
+  insertBefore: OID
+  assignee: String
+  dependsOn: [OID!]
+  initialNote: InitialNoteInput
+  metaData: MetaDataInput
+}
+
+input InitialNoteInput {
+  id: OID!
+  note: String!
+  author: String
+}
+
+input MetaDataInput {
+  format: MetaDataFormat
+  data: String
+}
+
+input DelegateGoalInput {
+  id: OID!
+  assignee: String!
+}
+
+input ReportOnGoalInput {
+  id: OID!
+  note: String!
+  moveInReview: Boolean!
+}
+
+input MarkInProgressInput {
+  id: OID!
+  note: String
+}
+
+input MarkCompletedInput {
+  id: OID!
+  note: String
+}
+
+input MarkTodoInput {
+  id: OID!
+  note: String
+}
+
+input ReportBlockedInput {
+  id: OID!
+  question: String!
+}
+
+input UnblockGoalInput {
+  id: OID!
+  response: String!
+}
+
+input MarkWontDoInput {
+  id: OID!
+}
+
+# metadata
+
+input SetReferencesInput {
+  references: [URL!]!
+}
+
+input SetMetaDataInput {
+  format: MetaDataFormat!
+  data: String!
+}

@@ -1,0 +1,52 @@
+import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
+import {
+  useDocumentsInSelectedDrive,
+  useDocumentsInSelectedFolder,
+  useDocumentById,
+  useSelectedDocument,
+} from "@powerhousedao/reactor-browser";
+import type {
+  WorkBreakdownStructureDocument,
+  WorkBreakdownStructureAction,
+} from "powerhouse-agent/document-models/work-breakdown-structure";
+import { isWorkBreakdownStructureDocument } from "./gen/document-schema.js";
+
+/** Hook to get a WorkBreakdownStructure document by its id */
+export function useWorkBreakdownStructureDocumentById(
+  documentId: string | null | undefined,
+):
+  | [
+      WorkBreakdownStructureDocument,
+      DocumentDispatch<WorkBreakdownStructureAction>,
+    ]
+  | [undefined, undefined] {
+  const [document, dispatch] = useDocumentById(documentId);
+  if (!isWorkBreakdownStructureDocument(document))
+    return [undefined, undefined];
+  return [document, dispatch];
+}
+
+/** Hook to get the selected WorkBreakdownStructure document */
+export function useSelectedWorkBreakdownStructureDocument():
+  | [
+      WorkBreakdownStructureDocument,
+      DocumentDispatch<WorkBreakdownStructureAction>,
+    ]
+  | [undefined, undefined] {
+  const [document, dispatch] = useSelectedDocument();
+  if (!isWorkBreakdownStructureDocument(document))
+    return [undefined, undefined];
+  return [document, dispatch];
+}
+
+/** Hook to get all WorkBreakdownStructure documents in the selected drive */
+export function useWorkBreakdownStructureDocumentsInSelectedDrive() {
+  const documentsInSelectedDrive = useDocumentsInSelectedDrive();
+  return documentsInSelectedDrive?.filter(isWorkBreakdownStructureDocument);
+}
+
+/** Hook to get all WorkBreakdownStructure documents in the selected folder */
+export function useWorkBreakdownStructureDocumentsInSelectedFolder() {
+  const documentsInSelectedFolder = useDocumentsInSelectedFolder();
+  return documentsInSelectedFolder?.filter(isWorkBreakdownStructureDocument);
+}

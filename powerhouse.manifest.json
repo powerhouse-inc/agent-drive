@@ -14,6 +14,10 @@
         {
             "id": "powerhouse/agent-projects",
             "name": "AgentProjects"
+        },
+        {
+            "id": "powerhouse/work-breakdown-structure",
+            "name": "Work Breakdown Structure"
         }
     ],
     "editors": [
