@@ -1,6 +1,6 @@
-import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 import type { Goal, Note } from "../../gen/index.js";
-import { insertGoalAtPosition } from "../utils.js";
+import { insertGoalAtPosition, findGoal, getAncestors } from "../utils.js";
+import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWorkflowOperations =
   {
@@ -44,8 +44,33 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       throw new Error('Reducer "reportOnGoalOperation" not yet implemented');
     },
     markInProgressOperation(state, action) {
-      // TODO: Implement "markInProgressOperation" reducer
-      throw new Error('Reducer "markInProgressOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to IN_PROGRESS
+      goal.status = "IN_PROGRESS";
+
+      // Add optional note if provided
+      if (action.input.note) {
+        const note: Note = {
+          id: action.input.note.id,
+          note: action.input.note.note,
+          author: action.input.note.author || null,
+        };
+        goal.notes.push(note);
+      }
+
+      // Propagate IN_PROGRESS up to all ancestors
+      const ancestors = getAncestors(state.goals, action.input.id);
+      for (const ancestor of ancestors) {
+        // Only update ancestors that are TODO or DELEGATED
+        if (ancestor.status === "TODO" || ancestor.status === "DELEGATED") {
+          ancestor.status = "IN_PROGRESS";
+        }
+      }
     },
     markCompletedOperation(state, action) {
       // TODO: Implement "markCompletedOperation" reducer

@@ -162,33 +162,69 @@ input DelegateGoalInput {
 
 input ReportOnGoalInput {
   id: OID!
-  note: String!
+  note: ReportNoteInput!
   moveInReview: Boolean!
+}
+
+input ReportNoteInput {
+  id: OID!
+  note: String!
+  author: String
 }
 
 input MarkInProgressInput {
   id: OID!
-  note: String
+  note: InProgressNoteInput
+}
+
+input InProgressNoteInput {
+  id: OID!
+  note: String!
+  author: String
 }
 
 input MarkCompletedInput {
   id: OID!
-  note: String
+  note: CompletedNoteInput
+}
+
+input CompletedNoteInput {
+  id: OID!
+  note: String!
+  author: String
 }
 
 input MarkTodoInput {
   id: OID!
-  note: String
+  note: TodoNoteInput
+}
+
+input TodoNoteInput {
+  id: OID!
+  note: String!
+  author: String
 }
 
 input ReportBlockedInput {
   id: OID!
-  question: String!
+  question: BlockedNoteInput!
+}
+
+input BlockedNoteInput {
+  id: OID!
+  note: String!
+  author: String
 }
 
 input UnblockGoalInput {
   id: OID!
-  response: String!
+  response: UnblockNoteInput!
+}
+
+input UnblockNoteInput {
+  id: OID!
+  note: String!
+  author: String
 }
 
 input MarkWontDoInput {

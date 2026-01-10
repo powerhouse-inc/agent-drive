@@ -208,7 +208,7 @@ export const documentModel: DocumentModelGlobalState = {
               name: "REPORT_ON_GOAL",
               reducer: "",
               schema:
-                "input ReportOnGoalInput {\n  id: OID!\n  note: String!\n  moveInReview: Boolean!\n}",
+                "input ReportOnGoalInput {\n  id: OID!\n  note: ReportNoteInput!\n  moveInReview: Boolean!\n}\n\ninput ReportNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
               scope: "global",
               template: "Report progress on delegated goal",
             },
@@ -221,7 +221,7 @@ export const documentModel: DocumentModelGlobalState = {
               name: "MARK_IN_PROGRESS",
               reducer: "",
               schema:
-                "input MarkInProgressInput {\n  id: OID!\n  note: String\n}",
+                "input MarkInProgressInput {\n  id: OID!\n  note: InProgressNoteInput\n}\n\ninput InProgressNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
               scope: "global",
               template: "Mark goal in progress",
             },
@@ -234,7 +234,7 @@ export const documentModel: DocumentModelGlobalState = {
               name: "MARK_COMPLETED",
               reducer: "",
               schema:
-                "input MarkCompletedInput {\n  id: OID!\n  note: String\n}",
+                "input MarkCompletedInput {\n  id: OID!\n  note: CompletedNoteInput\n}\n\ninput CompletedNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
               scope: "global",
               template: "Mark goal completed",
             },
@@ -246,7 +246,8 @@ export const documentModel: DocumentModelGlobalState = {
               id: "6313e929-4ad2-4c66-9b6a-950340032746",
               name: "MARK_TODO",
               reducer: "",
-              schema: "input MarkTodoInput {\n  id: OID!\n  note: String\n}",
+              schema:
+                "input MarkTodoInput {\n  id: OID!\n  note: TodoNoteInput\n}\n\ninput TodoNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
               scope: "global",
               template: "Mark goal as todo",
             },
@@ -259,7 +260,7 @@ export const documentModel: DocumentModelGlobalState = {
               name: "REPORT_BLOCKED",
               reducer: "",
               schema:
-                "input ReportBlockedInput {\n  id: OID!\n  question: String!\n}",
+                "input ReportBlockedInput {\n  id: OID!\n  question: BlockedNoteInput!\n}\n\ninput BlockedNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
               scope: "global",
               template: "Report goal blocked",
             },
@@ -272,7 +273,7 @@ export const documentModel: DocumentModelGlobalState = {
               name: "UNBLOCK_GOAL",
               reducer: "",
               schema:
-                "input UnblockGoalInput {\n  id: OID!\n  response: String!\n}",
+                "input UnblockGoalInput {\n  id: OID!\n  response: UnblockNoteInput!\n}\n\ninput UnblockNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
               scope: "global",
               template: "Unblock goal with response",
             },
