@@ -37,14 +37,14 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Verify**: All ancestors are marked IN_PROGRESS
 - [x] **Test**: Deep hierarchy propagation (6 tests passing)
 
-##### MARK_COMPLETED
-- [ ] Find target goal by ID  
-- [ ] Update goal status to COMPLETED
-- [ ] Add optional note if provided
-- [ ] Find all child goals (recursive)
-- [ ] Mark unfinished children as COMPLETED (skip COMPLETED/WONT_DO)
-- [ ] **Verify**: Entire subtree is completed correctly
-- [ ] **Test**: Mixed subtree with some already completed
+##### MARK_COMPLETED ✅
+- [x] Find target goal by ID  
+- [x] Update goal status to COMPLETED
+- [x] Add optional note if provided
+- [x] Find all child goals (recursive)
+- [x] Mark unfinished children as COMPLETED (skip COMPLETED/WONT_DO)
+- [x] **Verify**: Entire subtree is completed correctly
+- [x] **Test**: Mixed subtree with some already completed (6 tests passing)
 
 ##### MARK_TODO
 - [ ] Find target goal by ID

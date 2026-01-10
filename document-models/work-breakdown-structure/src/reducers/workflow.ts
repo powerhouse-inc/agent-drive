@@ -1,5 +1,10 @@
 import type { Goal, Note } from "../../gen/index.js";
-import { insertGoalAtPosition, findGoal, getAncestors } from "../utils.js";
+import {
+  insertGoalAtPosition,
+  findGoal,
+  getAncestors,
+  getDescendants,
+} from "../utils.js";
 import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWorkflowOperations =
@@ -73,8 +78,33 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       }
     },
     markCompletedOperation(state, action) {
-      // TODO: Implement "markCompletedOperation" reducer
-      throw new Error('Reducer "markCompletedOperation" not yet implemented');
+      // Find the target goal
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to COMPLETED
+      goal.status = "COMPLETED";
+
+      // Add optional note if provided
+      if (action.input.note) {
+        const note: Note = {
+          id: action.input.note.id,
+          note: action.input.note.note,
+          author: action.input.note.author || null,
+        };
+        goal.notes.push(note);
+      }
+
+      // Mark all unfinished child goals as COMPLETED
+      const descendants = getDescendants(state.goals, action.input.id);
+      for (const descendant of descendants) {
+        // Only mark as completed if not already finished (COMPLETED or WONT_DO)
+        if (descendant.status !== "COMPLETED" && descendant.status !== "WONT_DO") {
+          descendant.status = "COMPLETED";
+        }
+      }
     },
     markTodoOperation(state, action) {
       // TODO: Implement "markTodoOperation" reducer
