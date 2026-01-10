@@ -4,6 +4,7 @@ import {
   findGoal,
   getAncestors,
   getDescendants,
+  isLeafGoal,
 } from "../utils.js";
 import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
@@ -41,8 +42,22 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       );
     },
     delegateGoalOperation(state, action) {
-      // TODO: Implement "delegateGoalOperation" reducer
-      throw new Error('Reducer "delegateGoalOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Validate goal has no children (leaf node only)
+      if (!isLeafGoal(state.goals, action.input.id)) {
+        throw new Error(`Goal with ID ${action.input.id} has children and cannot be delegated`);
+      }
+
+      // Update assignee field
+      goal.assignee = action.input.assignee;
+
+      // Change status to DELEGATED
+      goal.status = "DELEGATED";
     },
     reportOnGoalOperation(state, action) {
       // TODO: Implement "reportOnGoalOperation" reducer

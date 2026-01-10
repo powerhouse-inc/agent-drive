@@ -1717,4 +1717,152 @@ describe("Workflow Operations", () => {
     );
     expect(updatedDocument.operations.global[0].index).toEqual(0);
   });
+
+  describe("DELEGATE_GOAL", () => {
+    it("should delegate a leaf goal to an assignee", () => {
+      const document = utils.createDocument();
+      
+      // Create a leaf goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Delegate it
+      updatedDocument = reducer(
+        updatedDocument,
+        delegateGoal({
+          id: "goal-1",
+          assignee: "alice@example.com",
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("DELEGATED");
+      expect(goal.assignee).toBe("alice@example.com");
+    });
+
+    it("should fail when trying to delegate a parent goal", () => {
+      const document = utils.createDocument();
+      
+      // Create parent and child goals
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: null,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Try to delegate the parent (should fail)
+      const result = reducer(
+        updatedDocument,
+        delegateGoal({
+          id: "parent-1",
+          assignee: "alice@example.com",
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("has children and cannot be delegated");
+    });
+
+    it("should fail when goal does not exist", () => {
+      const document = utils.createDocument();
+      
+      const result = reducer(
+        document,
+        delegateGoal({
+          id: "nonexistent",
+          assignee: "alice@example.com",
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("not found");
+    });
+
+    it("should update assignee when re-delegating", () => {
+      const document = utils.createDocument();
+      
+      // Create a goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: "bob@example.com",
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Initial status should be DELEGATED (since it had an assignee)
+      expect(updatedDocument.state.global.goals[0].status).toBe("DELEGATED");
+      expect(updatedDocument.state.global.goals[0].assignee).toBe("bob@example.com");
+
+      // Re-delegate to someone else
+      updatedDocument = reducer(
+        updatedDocument,
+        delegateGoal({
+          id: "goal-1",
+          assignee: "charlie@example.com",
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("DELEGATED");
+      expect(goal.assignee).toBe("charlie@example.com");
+    });
+  });
 });

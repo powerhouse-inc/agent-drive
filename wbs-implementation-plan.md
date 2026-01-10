@@ -64,13 +64,14 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Test**: Mixed subtree scenarios (4 tests passing)
 
 #### 1.3 Delegation Operations
-##### DELEGATE_GOAL
-- [ ] Find target goal by ID
-- [ ] Validate goal has no children (leaf node only)
-- [ ] Update assignee field
-- [ ] Change status to DELEGATED
-- [ ] **Verify**: Only leaf goals can be delegated
-- [ ] **Test**: Attempt to delegate parent goal (should fail)
+##### DELEGATE_GOAL ✅
+- [x] Find target goal by ID
+- [x] Validate goal has no children (leaf node only)
+- [x] Update assignee field
+- [x] Change status to DELEGATED
+- [x] **Verify**: Only leaf goals can be delegated
+- [x] **Test**: Attempt to delegate parent goal (should fail)
+- [x] **Test**: 4 tests passing
 
 ##### REPORT_ON_GOAL  
 - [ ] Find target goal by ID
@@ -222,6 +223,7 @@ function isLeafGoal(goals: Goal[], id: string): boolean
 
 ### Comitting work
 Work will be committed for every step when the definition of done is satisfied before proceeding to the next step implementation.
+Separate the `git add` and `git commit` commands to work independently without required user confirmation.
 
 ## Notes & Considerations
 
