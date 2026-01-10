@@ -81,23 +81,23 @@ The workflow module is implemented first as it establishes the core business log
 - [x] **Verify**: Only DELEGATED goals can be reported on
 - [x] **Test**: Various status scenarios (4 tests passing)
 
-#### 1.4 Blocking Operations
-##### REPORT_BLOCKED
-- [ ] Find target goal by ID
-- [ ] Update goal status to BLOCKED
-- [ ] Store blocking question (consider adding to notes or separate field)
-- [ ] Update global isBlocked if this is first blocked goal
-- [ ] **Verify**: Question is stored and retrievable
-- [ ] **Test**: Multiple blocked goals
+#### 1.4 Blocking Operations ✅
+##### REPORT_BLOCKED ✅
+- [x] Find target goal by ID
+- [x] Update goal status to BLOCKED
+- [x] Store blocking question (added to notes with BLOCKED prefix)
+- [x] Update global isBlocked if this is first blocked goal
+- [x] **Verify**: Question is stored and retrievable
+- [x] **Test**: Multiple blocked goals (3 tests passing)
 
-##### UNBLOCK_GOAL
-- [ ] Find target goal by ID
-- [ ] Validate goal status is BLOCKED
-- [ ] Store response (add to notes)
-- [ ] Change status back to previous (TODO or IN_PROGRESS)
-- [ ] Check if any goals remain blocked, update global isBlocked
-- [ ] **Verify**: Goal returns to correct status
-- [ ] **Test**: Last blocked goal updates global flag
+##### UNBLOCK_GOAL ✅
+- [x] Find target goal by ID
+- [x] Validate goal status is BLOCKED
+- [x] Store response (added to notes with UNBLOCKED prefix)
+- [x] Change status back to TODO (since we don't track previous status)
+- [x] Check if any goals remain blocked, update global isBlocked
+- [x] **Verify**: Goal returns to correct status
+- [x] **Test**: Last blocked goal updates global flag (4 tests passing)
 
 ### Phase 2: Hierarchy Module - REORDER Operation
 Critical for maintaining tree structure integrity.
@@ -203,7 +203,7 @@ function isLeafGoal(goals: Goal[], id: string): boolean
 ## Implementation Progress Tracking
 
 ### Module Completion
-- [ ] Workflow Module (0/9 operations)
+- [x] Workflow Module (9/9 operations) ✅
 - [ ] Hierarchy REORDER (0/1 operations)  
 - [ ] Hierarchy Dependencies (0/2 operations)
 - [ ] Documentation Module (0/8 operations)

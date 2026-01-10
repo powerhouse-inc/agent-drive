@@ -5,6 +5,7 @@ import {
   getAncestors,
   getDescendants,
   isLeafGoal,
+  hasBlockedGoals,
 } from "../utils.js";
 import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
@@ -171,12 +172,53 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       }
     },
     reportBlockedOperation(state, action) {
-      // TODO: Implement "reportBlockedOperation" reducer
-      throw new Error('Reducer "reportBlockedOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Update goal status to BLOCKED
+      goal.status = "BLOCKED";
+
+      // Store blocking question as a note
+      const note: Note = {
+        id: action.input.question.id,
+        note: `BLOCKED: ${action.input.question.note}`,
+        author: action.input.question.author || null,
+      };
+      goal.notes.push(note);
+
+      // Update global isBlocked flag if this is the first blocked goal
+      if (!state.isBlocked) {
+        state.isBlocked = true;
+      }
     },
     unblockGoalOperation(state, action) {
-      // TODO: Implement "unblockGoalOperation" reducer
-      throw new Error('Reducer "unblockGoalOperation" not yet implemented');
+      // Find target goal by ID
+      const goal = findGoal(state.goals, action.input.id);
+      if (!goal) {
+        throw new Error(`Goal with ID ${action.input.id} not found`);
+      }
+
+      // Validate goal status is BLOCKED
+      if (goal.status !== "BLOCKED") {
+        throw new Error(`Goal with ID ${action.input.id} is not blocked`);
+      }
+
+      // Store response as a note
+      const note: Note = {
+        id: action.input.response.id,
+        note: `UNBLOCKED: ${action.input.response.note}`,
+        author: action.input.response.author || null,
+      };
+      goal.notes.push(note);
+
+      // Change status back to TODO (since we don't track previous status)
+      goal.status = "TODO";
+
+      // Check if any goals remain blocked and update global isBlocked flag
+      state.isBlocked = hasBlockedGoals(state.goals);
     },
     markWontDoOperation(state, action) {
       // Find the target goal

@@ -2016,4 +2016,340 @@ describe("Workflow Operations", () => {
       expect(errorMessage).toContain("not found");
     });
   });
+
+  describe("REPORT_BLOCKED", () => {
+    it("should mark a goal as BLOCKED and add question note", () => {
+      const document = utils.createDocument();
+      
+      // Create a goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Report it as blocked
+      updatedDocument = reducer(
+        updatedDocument,
+        reportBlocked({
+          id: "goal-1",
+          question: {
+            id: "note-1",
+            note: "What is the API endpoint for this service?",
+            author: "Developer",
+          },
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("BLOCKED");
+      expect(goal.notes).toHaveLength(1);
+      expect(goal.notes[0].note).toBe("BLOCKED: What is the API endpoint for this service?");
+      expect(goal.notes[0].author).toBe("Developer");
+      expect(updatedDocument.state.global.isBlocked).toBe(true);
+    });
+
+    it("should update global isBlocked flag on first blocked goal", () => {
+      const document = utils.createDocument();
+      expect(document.state.global.isBlocked).toBe(false);
+      
+      // Create two goals
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Goal 1",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "goal-2",
+          description: "Goal 2",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Block the first goal
+      updatedDocument = reducer(
+        updatedDocument,
+        reportBlocked({
+          id: "goal-1",
+          question: {
+            id: "note-1",
+            note: "Need clarification",
+            author: null,
+          },
+        }),
+      );
+
+      expect(updatedDocument.state.global.isBlocked).toBe(true);
+    });
+
+    it("should fail when goal does not exist", () => {
+      const document = utils.createDocument();
+      
+      const result = reducer(
+        document,
+        reportBlocked({
+          id: "nonexistent",
+          question: {
+            id: "note-1",
+            note: "Question",
+            author: null,
+          },
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("not found");
+    });
+  });
+
+  describe("UNBLOCK_GOAL", () => {
+    it("should unblock a blocked goal and add response note", () => {
+      const document = utils.createDocument();
+      
+      // Create a goal and block it
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        reportBlocked({
+          id: "goal-1",
+          question: {
+            id: "note-1",
+            note: "What is the API endpoint?",
+            author: "Developer",
+          },
+        }),
+      );
+
+      // Unblock it
+      updatedDocument = reducer(
+        updatedDocument,
+        unblockGoal({
+          id: "goal-1",
+          response: {
+            id: "note-2",
+            note: "Use https://api.example.com/v1",
+            author: "Tech Lead",
+          },
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.status).toBe("TODO");
+      expect(goal.notes).toHaveLength(2);
+      expect(goal.notes[1].note).toBe("UNBLOCKED: Use https://api.example.com/v1");
+      expect(goal.notes[1].author).toBe("Tech Lead");
+      expect(updatedDocument.state.global.isBlocked).toBe(false);
+    });
+
+    it("should update global isBlocked flag when last blocked goal is unblocked", () => {
+      const document = utils.createDocument();
+      
+      // Create two goals and block them
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Goal 1",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "goal-2",
+          description: "Goal 2",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        reportBlocked({
+          id: "goal-1",
+          question: {
+            id: "note-1",
+            note: "Question 1",
+            author: null,
+          },
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        reportBlocked({
+          id: "goal-2",
+          question: {
+            id: "note-2",
+            note: "Question 2",
+            author: null,
+          },
+        }),
+      );
+
+      expect(updatedDocument.state.global.isBlocked).toBe(true);
+
+      // Unblock first goal
+      updatedDocument = reducer(
+        updatedDocument,
+        unblockGoal({
+          id: "goal-1",
+          response: {
+            id: "note-3",
+            note: "Answer 1",
+            author: null,
+          },
+        }),
+      );
+
+      // Should still be blocked (goal-2 is still blocked)
+      expect(updatedDocument.state.global.isBlocked).toBe(true);
+
+      // Unblock second goal
+      updatedDocument = reducer(
+        updatedDocument,
+        unblockGoal({
+          id: "goal-2",
+          response: {
+            id: "note-4",
+            note: "Answer 2",
+            author: null,
+          },
+        }),
+      );
+
+      // Now should be unblocked
+      expect(updatedDocument.state.global.isBlocked).toBe(false);
+    });
+
+    it("should fail when goal is not blocked", () => {
+      const document = utils.createDocument();
+      
+      // Create a non-blocked goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Test goal",
+          instructions: null,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Try to unblock it
+      const result = reducer(
+        updatedDocument,
+        unblockGoal({
+          id: "goal-1",
+          response: {
+            id: "note-1",
+            note: "Response",
+            author: null,
+          },
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("is not blocked");
+    });
+
+    it("should fail when goal does not exist", () => {
+      const document = utils.createDocument();
+      
+      const result = reducer(
+        document,
+        unblockGoal({
+          id: "nonexistent",
+          response: {
+            id: "note-1",
+            note: "Response",
+            author: null,
+          },
+        }),
+      );
+
+      // Check that the operation has an error
+      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      expect(lastOperation.error).toBeDefined();
+      const errorMessage = typeof lastOperation.error === 'string' 
+        ? lastOperation.error 
+        : (lastOperation.error as any)?.message;
+      expect(errorMessage).toContain("not found");
+    });
+  });
 });
