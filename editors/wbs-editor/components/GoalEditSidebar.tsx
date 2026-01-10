@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
 import {
   updateDescription,
@@ -8,10 +8,19 @@ import {
   removeNote,
   markAsDraft,
   markAsReady,
+  markTodo,
+  markInProgress,
+  markCompleted,
+  markWontDo,
+  reportBlocked,
+  delegateGoal,
 } from "powerhouse-agent/document-models/work-breakdown-structure";
 import { generateId } from "document-model/core";
 import { findGoalInTree } from "../utils/treeTransform.js";
 import { Tooltip } from "./Tooltip.js";
+import EditableStatusChip from "./EditableStatusChip.js";
+import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
+import StatusChip from "./StatusChip.js";
 
 interface GoalEditSidebarProps {
   goalId: string;
@@ -27,6 +36,12 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const [descriptionValue, setDescriptionValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState("");
   const [newNoteValue, setNewNoteValue] = useState("");
+  const [editingAssignee, setEditingAssignee] = useState(false);
+  const [assigneeValue, setAssigneeValue] = useState("");
+  const [blockedPopup, setBlockedPopup] = useState<{ isOpen: boolean; goalId: string }>({
+    isOpen: false,
+    goalId: "",
+  });
 
   if (!document) return null;
 
@@ -39,8 +54,9 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     if (goal) {
       setDescriptionValue(goal.description);
       setInstructionsValue(goal.instructions || "");
+      setAssigneeValue(goal.assignee || "");
     }
-  }, [goal?.description, goal?.instructions]);
+  }, [goal?.description, goal?.instructions, goal?.assignee]);
 
   if (!goal) {
     return (
@@ -112,6 +128,28 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     }
   };
 
+  const handleAssigneeBlur = () => {
+    const newAssignee = assigneeValue.trim();
+    if (newAssignee !== goal.assignee) {
+      if (newAssignee) {
+        dispatch(delegateGoal({ id: goal.id, assignee: newAssignee }));
+      } else {
+        // Clear assignee if empty
+        dispatch(delegateGoal({ id: goal.id, assignee: "" }));
+      }
+    }
+    setEditingAssignee(false);
+  };
+
+  const handleAssigneeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur(); // Trigger onBlur to save
+    } else if (e.key === "Escape") {
+      setAssigneeValue(goal.assignee || ""); // Reset to original
+      setEditingAssignee(false);
+    }
+  };
+
   const handleToggleDraft = () => {
     if (goal.isDraft) {
       dispatch(markAsReady({ goalId: goal.id }));
@@ -119,6 +157,60 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
       dispatch(markAsDraft({ goalId: goal.id }));
     }
   };
+
+  // Handle status changes from the dropdown
+  const handleStatusChange = useCallback((actionData: any) => {
+    if (!dispatch) return;
+    
+    const { value } = actionData.data || actionData;
+    
+    if (value === "BLOCKED") {
+      // Show popup for blocked status
+      setBlockedPopup({ isOpen: true, goalId: goal.id });
+    } else {
+      // Handle other status changes directly
+      switch (value) {
+        case "TODO":
+          dispatch(markTodo({ id: goal.id }));
+          break;
+        case "IN_PROGRESS":
+          dispatch(markInProgress({ id: goal.id }));
+          break;
+        case "COMPLETED":
+          dispatch(markCompleted({ id: goal.id }));
+          break;
+        case "WONT_DO":
+          dispatch(markWontDo({ id: goal.id }));
+          break;
+        case "DELEGATED":
+          // Handle delegation - would need additional UI for assignee
+          console.log("Delegation not yet implemented in sidebar");
+          break;
+        case "IN_REVIEW":
+          console.log("In Review status not yet implemented");
+          break;
+        default:
+          console.warn("Unknown status:", value);
+      }
+    }
+  }, [dispatch, goal?.id]);
+
+  // Handle blocked status popup
+  const handleBlockedSubmit = useCallback((note: string, author?: string) => {
+    if (!dispatch) return;
+    dispatch(reportBlocked({ 
+      id: blockedPopup.goalId, 
+      question: {
+        id: generateId(),
+        note,
+        author: author || undefined
+      }
+    }));
+  }, [dispatch, blockedPopup.goalId]);
+
+  const handleBlockedClose = useCallback(() => {
+    setBlockedPopup({ isOpen: false, goalId: "" });
+  }, []);
 
   const handleCopyId = async () => {
     try {
@@ -244,21 +336,46 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           <h4 className="text-base font-semibold text-gray-700 mb-2">
             Current Status
           </h4>
-          <div className="text-base text-gray-600 p-2 bg-gray-50 rounded">
-            {goal.status}
+          <div className="bg-gray-50 rounded p-2">
+            <div className="inline-block">
+              <EditableStatusChip 
+                row={goal} 
+                column={{ id: "status" }}
+                onStatusChange={handleStatusChange}
+              />
+            </div>
+            <div className="mt-2 text-xs text-gray-500">
+              Double-click to change status
+            </div>
           </div>
         </div>
 
-        {goal.assignee && (
-          <div>
-            <h4 className="text-base font-semibold text-gray-700 mb-2">
-              Assignee
-            </h4>
-            <div className="text-base text-gray-600 p-2 bg-gray-50 rounded">
-              {goal.assignee}
+        <div>
+          <h4 className="text-base font-semibold text-gray-700 mb-2">
+            Assignee
+          </h4>
+          {editingAssignee ? (
+            <input
+              type="text"
+              value={assigneeValue}
+              onChange={(e) => setAssigneeValue(e.target.value)}
+              onBlur={handleAssigneeBlur}
+              onKeyDown={handleAssigneeKeyDown}
+              onFocus={(e) => e.target.select()}
+              className="w-full text-base text-gray-600 bg-white border-2 border-blue-500 focus:outline-none focus:border-blue-600 p-2 rounded"
+              placeholder="Enter assignee name"
+              autoFocus
+            />
+          ) : (
+            <div
+              className="text-base text-gray-600 p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-2 border-transparent hover:border-gray-300"
+              onClick={() => setEditingAssignee(true)}
+              title="Click to edit assignee"
+            >
+              {goal.assignee || "Unassigned - Click to assign"}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Instructions Section */}
         <div>
@@ -378,6 +495,13 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
           </div>
         </div>
       </div>
+      
+      <BlockedStatusPopup
+        isOpen={blockedPopup.isOpen}
+        onClose={handleBlockedClose}
+        onSubmit={handleBlockedSubmit}
+        goalId={blockedPopup.goalId}
+      />
     </div>
   );
 }
