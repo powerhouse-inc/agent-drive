@@ -16,7 +16,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(pnpm tsc:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "WebFetch(domain:docs.svar.dev)",
+      "WebSearch"
     ],
     "deny": [
       "Write(./document-models/*/gen/**)",

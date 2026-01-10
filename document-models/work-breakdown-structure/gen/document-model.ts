@@ -117,6 +117,17 @@ export const documentModel: DocumentModelGlobalState = {
               scope: "global",
               template: "Mark goal as ready",
             },
+            {
+              description: "",
+              errors: [],
+              examples: [],
+              id: "591bd9a9-1f5b-4bd8-8a96-4e97975f7cbe",
+              name: "SET_OWNER",
+              reducer: "",
+              schema: "input SetOwnerInput {\n  owner: String!\n}",
+              scope: "global",
+              template: "",
+            },
           ],
         },
         {

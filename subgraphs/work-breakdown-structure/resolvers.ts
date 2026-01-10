@@ -16,6 +16,7 @@ import type {
   RemoveNoteInput,
   MarkAsDraftInput,
   MarkAsReadyInput,
+  SetOwnerInput,
   ReorderInput,
   AddDependenciesInput,
   RemoveDependenciesInput,
@@ -310,6 +311,26 @@ export const getResolvers = (
 
         if (result.status !== "SUCCESS") {
           throw new Error(result.error?.message ?? "Failed to markAsReady");
+        }
+
+        return true;
+      },
+
+      WorkBreakdownStructure_setOwner: async (
+        _: unknown,
+        args: { docId: string; input: SetOwnerInput },
+      ) => {
+        const { docId, input } = args;
+        const doc =
+          await reactor.getDocument<WorkBreakdownStructureDocument>(docId);
+        if (!doc) {
+          throw new Error("Document not found");
+        }
+
+        const result = await reactor.addAction(docId, actions.setOwner(input));
+
+        if (result.status !== "SUCCESS") {
+          throw new Error(result.error?.message ?? "Failed to setOwner");
         }
 
         return true;

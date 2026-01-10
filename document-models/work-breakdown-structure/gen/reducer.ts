@@ -19,6 +19,7 @@ import {
   RemoveNoteInputSchema,
   MarkAsDraftInputSchema,
   MarkAsReadyInputSchema,
+  SetOwnerInputSchema,
   ReorderInputSchema,
   AddDependenciesInputSchema,
   RemoveDependenciesInputSchema,
@@ -111,6 +112,15 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
     case "MARK_AS_READY":
       MarkAsReadyInputSchema().parse(action.input);
       workBreakdownStructureDocumentationOperations.markAsReadyOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+      break;
+
+    case "SET_OWNER":
+      SetOwnerInputSchema().parse(action.input);
+      workBreakdownStructureDocumentationOperations.setOwnerOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

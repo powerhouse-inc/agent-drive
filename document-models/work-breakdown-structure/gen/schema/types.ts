@@ -227,6 +227,10 @@ export type SetMetaDataInput = {
   format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
+export type SetOwnerInput = {
+  owner: Scalars["String"]["input"];
+};
+
 export type SetReferencesInput = {
   references: Array<Scalars["URL"]["input"]>;
 };

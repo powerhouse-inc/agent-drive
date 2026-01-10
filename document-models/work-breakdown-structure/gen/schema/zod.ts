@@ -29,6 +29,7 @@ import type {
   ReportNoteInput,
   ReportOnGoalInput,
   SetMetaDataInput,
+  SetOwnerInput,
   SetReferencesInput,
   TodoNoteInput,
   UnblockGoalInput,
@@ -312,6 +313,12 @@ export function SetMetaDataInputSchema(): z.ZodObject<
   return z.object({
     data: z.string(),
     format: MetaDataFormatSchema,
+  });
+}
+
+export function SetOwnerInputSchema(): z.ZodObject<Properties<SetOwnerInput>> {
+  return z.object({
+    owner: z.string(),
   });
 }
 

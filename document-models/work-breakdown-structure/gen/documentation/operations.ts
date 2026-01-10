@@ -8,6 +8,7 @@ import {
   type RemoveNoteAction,
   type MarkAsDraftAction,
   type MarkAsReadyAction,
+  type SetOwnerAction,
 } from "./actions.js";
 import { type WorkBreakdownStructureState } from "../types.js";
 
@@ -50,6 +51,11 @@ export interface WorkBreakdownStructureDocumentationOperations {
   markAsReadyOperation: (
     state: WorkBreakdownStructureState,
     action: MarkAsReadyAction,
+    dispatch?: SignalDispatch,
+  ) => void;
+  setOwnerOperation: (
+    state: WorkBreakdownStructureState,
+    action: SetOwnerAction,
     dispatch?: SignalDispatch,
   ) => void;
 }

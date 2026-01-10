@@ -109,6 +109,10 @@ input MarkAsReadyInput {
   goalId: OID!
 }
 
+input SetOwnerInput {
+  owner: String!
+}
+
 # hierarchy
 
 input ReorderInput {

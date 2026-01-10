@@ -63,6 +63,11 @@ export const schema: DocumentNode = gql`
       docId: PHID
       input: WorkBreakdownStructure_MarkAsReadyInput
     ): Int
+    WorkBreakdownStructure_setOwner(
+      driveId: String
+      docId: PHID
+      input: WorkBreakdownStructure_SetOwnerInput
+    ): Int
     WorkBreakdownStructure_reorder(
       driveId: String
       docId: PHID
@@ -167,6 +172,9 @@ export const schema: DocumentNode = gql`
   }
   input WorkBreakdownStructure_MarkAsReadyInput {
     goalId: OID!
+  }
+  input WorkBreakdownStructure_SetOwnerInput {
+    owner: String!
   }
 
   """

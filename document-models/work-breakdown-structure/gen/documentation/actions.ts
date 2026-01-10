@@ -8,6 +8,7 @@ import type {
   RemoveNoteInput,
   MarkAsDraftInput,
   MarkAsReadyInput,
+  SetOwnerInput,
 } from "../types.js";
 
 export type UpdateDescriptionAction = Action & {
@@ -39,6 +40,10 @@ export type MarkAsReadyAction = Action & {
   type: "MARK_AS_READY";
   input: MarkAsReadyInput;
 };
+export type SetOwnerAction = Action & {
+  type: "SET_OWNER";
+  input: SetOwnerInput;
+};
 
 export type WorkBreakdownStructureDocumentationAction =
   | UpdateDescriptionAction
@@ -48,4 +53,5 @@ export type WorkBreakdownStructureDocumentationAction =
   | ClearNotesAction
   | RemoveNoteAction
   | MarkAsDraftAction
-  | MarkAsReadyAction;
+  | MarkAsReadyAction
+  | SetOwnerAction;

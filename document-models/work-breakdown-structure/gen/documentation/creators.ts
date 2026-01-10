@@ -8,6 +8,7 @@ import {
   RemoveNoteInputSchema,
   MarkAsDraftInputSchema,
   MarkAsReadyInputSchema,
+  SetOwnerInputSchema,
 } from "../schema/zod.js";
 import type {
   UpdateDescriptionInput,
@@ -18,6 +19,7 @@ import type {
   RemoveNoteInput,
   MarkAsDraftInput,
   MarkAsReadyInput,
+  SetOwnerInput,
 } from "../types.js";
 import type {
   UpdateDescriptionAction,
@@ -28,6 +30,7 @@ import type {
   RemoveNoteAction,
   MarkAsDraftAction,
   MarkAsReadyAction,
+  SetOwnerAction,
 } from "./actions.js";
 
 export const updateDescription = (input: UpdateDescriptionInput) =>
@@ -99,5 +102,14 @@ export const markAsReady = (input: MarkAsReadyInput) =>
     { ...input },
     undefined,
     MarkAsReadyInputSchema,
+    "global",
+  );
+
+export const setOwner = (input: SetOwnerInput) =>
+  createAction<SetOwnerAction>(
+    "SET_OWNER",
+    { ...input },
+    undefined,
+    SetOwnerInputSchema,
     "global",
   );

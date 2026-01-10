@@ -65,6 +65,7 @@
     "@powerhousedao/design-system": "latest",
     "@powerhousedao/document-engineering": "^1.38.0",
     "@powerhousedao/vetra": "latest",
+    "@svar-ui/react-grid": "^2.4.0",
     "document-model": "latest",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
