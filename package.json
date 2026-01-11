@@ -41,6 +41,7 @@
   },
   "scripts": {
     "build": "npm run tsc && npm run tailwind",
+    "build:patched": "npm run patch-imports && pnpm build",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint --config eslint.config.js --cache --cache-strategy content",
@@ -56,7 +57,8 @@
     "service": "ph-cli service",
     "vetra": "ph-cli vetra",
     "service-startup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-startup.sh",
-    "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh"
+    "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh",
+    "patch-imports": "node scripts/patch-imports.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
