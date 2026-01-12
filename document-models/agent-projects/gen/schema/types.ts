@@ -95,13 +95,13 @@ export type LogEntry = {
 
 export type Project = {
   configuration: ProjectConfig;
-  currentStatus: CurrentStatus | `${CurrentStatus}`;
+  currentStatus: CurrentStatus;
   id: Scalars["OID"]["output"];
   logs: Array<LogEntry>;
   name: Scalars["String"]["output"];
   path: Maybe<Scalars["String"]["output"]>;
   runtime: Maybe<RuntimeInfo>;
-  targetedStatus: TargetedStatus | `${TargetedStatus}`;
+  targetedStatus: TargetedStatus;
 };
 
 export type ProjectConfig = {
@@ -114,7 +114,7 @@ export type ProjectConfig = {
 export type RegisterProjectInput = {
   autoStart: Scalars["Boolean"]["input"];
   connectPort: Scalars["Int"]["input"];
-  currentStatus: CurrentStatus | `${CurrentStatus}`;
+  currentStatus: CurrentStatus;
   id: Scalars["OID"]["input"];
   name: Scalars["String"]["input"];
   path: Scalars["String"]["input"];
@@ -149,7 +149,7 @@ export type UpdateProjectConfigInput = {
 };
 
 export type UpdateProjectStatusInput = {
-  currentStatus: CurrentStatus | `${CurrentStatus}`;
+  currentStatus: CurrentStatus;
   path?: InputMaybe<Scalars["String"]["input"]>;
   projectId: Scalars["OID"]["input"];
 };

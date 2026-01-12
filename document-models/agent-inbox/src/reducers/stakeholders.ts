@@ -1,79 +1,107 @@
-import { DuplicateStakeholderError, StakeholderNotFoundError } from "../../gen/stakeholders/error.js";
+import {
+  DuplicateStakeholderError,
+  StakeholderNotFoundError,
+} from "../../gen/stakeholders/error.js";
 import type { AgentInboxStakeholdersOperations } from "powerhouse-agent/document-models/agent-inbox";
 
-export const agentInboxStakeholdersOperations: AgentInboxStakeholdersOperations = {
+export const agentInboxStakeholdersOperations: AgentInboxStakeholdersOperations =
+  {
     addStakeholderOperation(state, action) {
-        // Check if stakeholder with same ID already exists
-        const existing = state.stakeholders.find(s => s.id === action.input.id);
-        if (existing) {
-            throw new DuplicateStakeholderError(`Stakeholder with ID ${action.input.id} already exists`);
-        }
-        
-        const newStakeholder = {
-            id: action.input.id,
-            name: action.input.name,
-            ethAddress: action.input.ethAddress || null,
-            avatar: action.input.avatar || null,
-            removed: false
-        };
-        
-        state.stakeholders.push(newStakeholder);
+      // Check if stakeholder with same ID already exists
+      const existing = state.stakeholders.find((s) => s.id === action.input.id);
+      if (existing) {
+        throw new DuplicateStakeholderError(
+          `Stakeholder with ID ${action.input.id} already exists`,
+        );
+      }
+
+      const newStakeholder = {
+        id: action.input.id,
+        name: action.input.name,
+        ethAddress: action.input.ethAddress || null,
+        avatar: action.input.avatar || null,
+        removed: false,
+      };
+
+      state.stakeholders.push(newStakeholder);
     },
     removeStakeholderOperation(state, action) {
-        const stakeholder = state.stakeholders.find(s => s.id === action.input.id);
-        if (!stakeholder) {
-            throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);
-        }
-        
-        // Soft delete - set removed flag to true
-        stakeholder.removed = true;
+      const stakeholder = state.stakeholders.find(
+        (s) => s.id === action.input.id,
+      );
+      if (!stakeholder) {
+        throw new StakeholderNotFoundError(
+          `Stakeholder with ID ${action.input.id} not found`,
+        );
+      }
+
+      // Soft delete - set removed flag to true
+      stakeholder.removed = true;
     },
     setStakeholderNameOperation(state, action) {
-        const stakeholder = state.stakeholders.find(s => s.id === action.input.id);
-        if (!stakeholder) {
-            throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);
-        }
-        
-        stakeholder.name = action.input.name;
+      const stakeholder = state.stakeholders.find(
+        (s) => s.id === action.input.id,
+      );
+      if (!stakeholder) {
+        throw new StakeholderNotFoundError(
+          `Stakeholder with ID ${action.input.id} not found`,
+        );
+      }
+
+      stakeholder.name = action.input.name;
     },
     setStakeholderAddressOperation(state, action) {
-        const stakeholder = state.stakeholders.find(s => s.id === action.input.id);
-        if (!stakeholder) {
-            throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);
-        }
-        
-        stakeholder.ethAddress = action.input.ethAddress || null;
+      const stakeholder = state.stakeholders.find(
+        (s) => s.id === action.input.id,
+      );
+      if (!stakeholder) {
+        throw new StakeholderNotFoundError(
+          `Stakeholder with ID ${action.input.id} not found`,
+        );
+      }
+
+      stakeholder.ethAddress = action.input.ethAddress || null;
     },
     setStakeholderAvatarOperation(state, action) {
-        const stakeholder = state.stakeholders.find(s => s.id === action.input.id);
-        if (!stakeholder) {
-            throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);
-        }
-        
-        stakeholder.avatar = action.input.avatar || null;
+      const stakeholder = state.stakeholders.find(
+        (s) => s.id === action.input.id,
+      );
+      if (!stakeholder) {
+        throw new StakeholderNotFoundError(
+          `Stakeholder with ID ${action.input.id} not found`,
+        );
+      }
+
+      stakeholder.avatar = action.input.avatar || null;
     },
     moveStakeholderOperation(state, action) {
-        const stakeholderIndex = state.stakeholders.findIndex(s => s.id === action.input.id);
-        if (stakeholderIndex === -1) {
-            throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);
-        }
-        
-        // Remove stakeholder from current position
-        const [stakeholder] = state.stakeholders.splice(stakeholderIndex, 1);
-        
-        if (!action.input.insertBefore) {
-            // Move to end if no insertBefore specified
-            state.stakeholders.push(stakeholder);
+      const stakeholderIndex = state.stakeholders.findIndex(
+        (s) => s.id === action.input.id,
+      );
+      if (stakeholderIndex === -1) {
+        throw new StakeholderNotFoundError(
+          `Stakeholder with ID ${action.input.id} not found`,
+        );
+      }
+
+      // Remove stakeholder from current position
+      const [stakeholder] = state.stakeholders.splice(stakeholderIndex, 1);
+
+      if (!action.input.insertBefore) {
+        // Move to end if no insertBefore specified
+        state.stakeholders.push(stakeholder);
+      } else {
+        // Find position of stakeholder to insert before
+        const insertIndex = state.stakeholders.findIndex(
+          (s) => s.id === action.input.insertBefore,
+        );
+        if (insertIndex === -1) {
+          // If insertBefore stakeholder not found, add to end
+          state.stakeholders.push(stakeholder);
         } else {
-            // Find position of stakeholder to insert before
-            const insertIndex = state.stakeholders.findIndex(s => s.id === action.input.insertBefore);
-            if (insertIndex === -1) {
-                // If insertBefore stakeholder not found, add to end
-                state.stakeholders.push(stakeholder);
-            } else {
-                // Insert at the specified position
-                state.stakeholders.splice(insertIndex, 0, stakeholder);
-            }
+          // Insert at the specified position
+          state.stakeholders.splice(insertIndex, 0, stakeholder);
         }
-    }
-};
+      }
+    },
+  };

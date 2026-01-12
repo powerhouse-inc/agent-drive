@@ -2,7 +2,7 @@ interface Thread {
   id: string;
   stakeholderId: string;
   stakeholderName: string;
-  topic: string;
+  topic: string | null;
   status: string;
   lastMessage: string;
   lastMessageTime: string;
@@ -11,7 +11,7 @@ interface Thread {
 
 interface ThreadsListProps {
   threads: Thread[];
-  selectedThreadId: string;
+  selectedThreadId: string | null;
   onThreadSelect: (threadId: string) => void;
 }
 
@@ -93,7 +93,7 @@ export function ThreadsList({
                     )}
                   </div>
                   <p className="text-sm font-medium text-gray-800 mt-1 line-clamp-1">
-                    {thread.topic}
+                    {thread.topic || "No topic"}
                   </p>
                 </div>
                 <span className="text-xs text-gray-500 whitespace-nowrap ml-2">

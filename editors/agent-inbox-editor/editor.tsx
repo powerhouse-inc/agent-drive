@@ -1,8 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { generateId } from "document-model/core";
 import { AgentPanel } from "./components/AgentPanel.js";
 import { ThreadsList } from "./components/ThreadsList.js";
 import { MessageThread } from "./components/MessageThread.js";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect/index";
+import { useSelectedAgentInboxDocument } from "../../document-models/agent-inbox/hooks.js";
+import {
+  setAgentName,
+  setAgentAddress,
+  setAgentRole,
+  setAgentDescription,
+  setAgentAvatar,
+  sendStakeholderMessage,
+  sendAgentMessage,
+} from "../../document-models/agent-inbox/gen/creators.js";
 
 // Dummy data for the agent
 const dummyAgent = {
@@ -146,12 +157,54 @@ const dummyThreads = [
 ];
 
 export default function Editor() {
+  const [document, dispatch] = useSelectedAgentInboxDocument();
   const [activeTab, setActiveTab] = useState<"inbox" | "archive">("inbox");
-  const [selectedThreadId, setSelectedThreadId] = useState<string>("t1");
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLeftColumnCollapsed, setIsLeftColumnCollapsed] = useState(false);
+
+  // Return early if no document
+  if (!document || !dispatch) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        No document selected
+      </div>
+    );
+  }
+
+  const agent = document.state.global.agent;
+  const stakeholders = document.state.global.stakeholders;
+  const threads = document.state.global.threads;
+
+  // Set initial selected thread
+  useEffect(() => {
+    if (!selectedThreadId && threads.length > 0) {
+      setSelectedThreadId(threads[0].id);
+    }
+  }, [threads, selectedThreadId]);
+
+  // Transform threads for display with stakeholder info
+  const threadsWithInfo = threads.map((thread) => {
+    const stakeholder = stakeholders.find((s) => s.id === thread.stakeholder);
+    const lastMessage =
+      thread.messages.length > 0
+        ? thread.messages[thread.messages.length - 1]
+        : null;
+
+    return {
+      ...thread,
+      stakeholderId: thread.stakeholder,
+      stakeholderName: stakeholder?.name || "Unknown",
+      lastMessage: lastMessage?.content || "",
+      lastMessageTime: lastMessage
+        ? new Date(lastMessage.when).toLocaleString()
+        : "",
+      unreadCount: thread.messages.filter((m) => !m.read).length,
+    };
+  });
 
   // Filter threads based on tab
-  const displayedThreads = dummyThreads.filter((thread) => {
+  const displayedThreads = threadsWithInfo.filter((thread) => {
     if (activeTab === "inbox") {
       return thread.status !== "Archived";
     } else {
@@ -162,16 +215,16 @@ export default function Editor() {
   // Further filter by search query
   const filteredThreads = displayedThreads.filter(
     (thread) =>
-      thread.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (thread.topic || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       thread.stakeholderName
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       thread.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const selectedThread = dummyThreads.find((t) => t.id === selectedThreadId);
+  const selectedThread = threads.find((t) => t.id === selectedThreadId);
   const selectedStakeholder = selectedThread
-    ? dummyStakeholders.find((s) => s.id === selectedThread.stakeholderId)
+    ? stakeholders.find((s) => s.id === selectedThread.stakeholder)
     : null;
 
   return (
@@ -203,53 +256,96 @@ export default function Editor() {
           style={{ height: "calc(100% - 0.5rem)" }}
         >
           {/* Left Column - 1/3 width */}
-          <div
-            className="bg-white border-r border-gray-200 flex flex-col h-full"
-            style={{ width: "33.333%", minWidth: "400px" }}
-          >
-            {/* Agent Panel - Fixed */}
-            <div className="flex-shrink-0">
-              <AgentPanel agent={dummyAgent} />
-            </div>
-
-            {/* Tabs and Search - Fixed */}
-            <div className="px-4 pt-4 pb-2 border-t border-gray-200 flex-shrink-0">
-              <div className="flex space-x-1 mb-3">
-                <button
-                  onClick={() => setActiveTab("inbox")}
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    activeTab === "inbox"
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  Inbox (
-                  {dummyThreads.filter((t) => t.status !== "Archived").length})
-                </button>
-                <button
-                  onClick={() => setActiveTab("archive")}
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    activeTab === "archive"
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  Archive (
-                  {dummyThreads.filter((t) => t.status === "Archived").length})
-                </button>
+          {!isLeftColumnCollapsed && (
+            <div
+              className="bg-white border-r border-gray-200 flex flex-col h-full"
+              style={{ width: "33.333%", minWidth: "400px" }}
+            >
+              {/* Agent Panel - Fixed */}
+              <div className="flex-shrink-0">
+                <AgentPanel
+                  agent={agent}
+                  dispatch={dispatch}
+                  onCollapse={() => setIsLeftColumnCollapsed(true)}
+                />
               </div>
 
-              {/* Search Bar */}
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search threads..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-3 py-2 pl-9 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {/* Tabs and Search - Fixed */}
+              <div className="px-4 pt-4 pb-2 border-t border-gray-200 flex-shrink-0">
+                <div className="flex space-x-1 mb-3">
+                  <button
+                    onClick={() => setActiveTab("inbox")}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      activeTab === "inbox"
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    Inbox (
+                    {threadsWithInfo.filter((t) => t.status !== "Archived").length}
+                    )
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("archive")}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      activeTab === "archive"
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    Archive (
+                    {threadsWithInfo.filter((t) => t.status === "Archived").length}
+                    )
+                  </button>
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search threads..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-3 py-2 pl-9 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <svg
+                    className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Threads List - scrollable */}
+              <div className="flex-1 overflow-y-auto">
+                <ThreadsList
+                  threads={filteredThreads}
+                  selectedThreadId={selectedThreadId}
+                  onThreadSelect={setSelectedThreadId}
                 />
+              </div>
+            </div>
+          )}
+
+          {/* Right Column - 2/3 width or full width when collapsed */}
+          <div className="flex-1 flex flex-col bg-white overflow-hidden relative">
+            {/* Expand button when collapsed */}
+            {isLeftColumnCollapsed && (
+              <button
+                onClick={() => setIsLeftColumnCollapsed(false)}
+                className="absolute top-4 left-4 z-10 p-1.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+                title="Expand sidebar"
+              >
                 <svg
-                  className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+                  className="w-5 h-5 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -258,29 +354,17 @@ export default function Editor() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    d="M13 5l7 7-7 7M5 5l7 7-7 7"
                   />
                 </svg>
-              </div>
-            </div>
-
-            {/* Threads List - scrollable */}
-            <div className="flex-1 overflow-y-auto">
-              <ThreadsList
-                threads={filteredThreads}
-                selectedThreadId={selectedThreadId}
-                onThreadSelect={setSelectedThreadId}
-              />
-            </div>
-          </div>
-
-          {/* Right Column - 2/3 width */}
-          <div className="flex-1 flex flex-col bg-white overflow-hidden">
+              </button>
+            )}
             {selectedThread && selectedStakeholder ? (
               <MessageThread
                 thread={selectedThread}
                 stakeholder={selectedStakeholder}
-                agent={dummyAgent}
+                agent={agent}
+                dispatch={dispatch}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center text-gray-400">

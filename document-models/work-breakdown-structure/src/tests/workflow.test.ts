@@ -381,7 +381,7 @@ describe("Workflow Operations", () => {
       const document = utils.createDocument();
 
       // Create first goal
-      let updatedDocument = reducer(
+      const updatedDocument = reducer(
         document,
         createGoal({
           id: "goal-1",
@@ -417,7 +417,8 @@ describe("Workflow Operations", () => {
       );
 
       // Check that the operation has an error
-      const lastOperation = result.operations.global[result.operations.global.length - 1];
+      const lastOperation =
+        result.operations.global[result.operations.global.length - 1];
       expect(lastOperation.error).toBeDefined();
       if (
         lastOperation.error &&

@@ -1,49 +1,51 @@
 import { useState, useRef, useEffect } from "react";
+import { generateId } from "document-model/core";
+import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
+import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
+import { sendStakeholderMessage } from "../../../document-models/agent-inbox/gen/creators.js";
 
 interface Message {
   id: string;
-  sender: string;
+  flow: "Incoming" | "Outgoing";
+  when: string;
   content: string;
-  time: string;
-  isIncoming: boolean;
+  read: boolean;
 }
 
 interface Thread {
   id: string;
-  stakeholderId: string;
-  stakeholderName: string;
-  topic: string;
+  topic: string | null;
+  stakeholder: string;
   status: string;
-  lastMessage: string;
-  lastMessageTime: string;
-  unreadCount: number;
   messages: Message[];
 }
 
 interface Stakeholder {
   id: string;
   name: string;
-  avatar: string;
+  avatar: string | null;
 }
 
 interface Agent {
-  name: string;
-  role: string;
-  ethAddress: string;
-  description: string;
-  avatar: string;
+  name: string | null;
+  role: string | null;
+  ethAddress: string | null;
+  description: string | null;
+  avatar: string | null;
 }
 
 interface MessageThreadProps {
-  thread: Thread;
+  thread: any; // Using any for now since the actual thread type from document model is complex
   stakeholder: Stakeholder;
   agent: Agent;
+  dispatch: DocumentDispatch<AgentInboxAction>;
 }
 
 export function MessageThread({
   thread,
   stakeholder,
   agent,
+  dispatch,
 }: MessageThreadProps) {
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -52,15 +54,25 @@ export function MessageThread({
 
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
     }
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      // In a real app, this would dispatch an action
-      console.log("Sending message:", newMessage);
+    if (newMessage.trim() && thread) {
+      // Dispatch stakeholder message (simulating stakeholder sending a message)
+      dispatch(
+        sendStakeholderMessage({
+          threadId: thread.id,
+          messageId: generateId(),
+          content: newMessage,
+          when: new Date().toISOString(),
+        }),
+      );
       setNewMessage("");
+      // Scroll to bottom after sending
+      setTimeout(scrollToBottom, 100);
     }
   };
 
@@ -115,7 +127,10 @@ export function MessageThread({
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <img
-              src={stakeholder.avatar}
+              src={
+                stakeholder.avatar ||
+                `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
+              }
               alt={stakeholder.name}
               className="w-10 h-10 rounded-full"
             />
@@ -123,7 +138,9 @@ export function MessageThread({
               <h2 className="text-lg font-semibold text-gray-900">
                 {stakeholder.name}
               </h2>
-              <p className="text-sm text-gray-600">{thread.topic}</p>
+              <p className="text-sm text-gray-600">
+                {thread.topic || "No topic"}
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -148,9 +165,12 @@ export function MessageThread({
       </div>
 
       {/* Messages Area - Scrollable */}
-      <div className="flex-1 overflow-y-auto bg-gray-50" ref={scrollContainerRef}>
+      <div
+        className="flex-1 overflow-y-auto bg-gray-50"
+        ref={scrollContainerRef}
+      >
         <div className="px-6 py-4 space-y-6">
-          {thread.messages.length === 0 ? (
+          {!thread.messages || thread.messages.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
               <svg
                 className="mx-auto h-12 w-12 mb-4"
@@ -170,57 +190,75 @@ export function MessageThread({
             </div>
           ) : (
             <>
-              {thread.messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.isIncoming ? "justify-start" : "justify-end"}`}
-                >
+              {thread.messages.map((message: Message) => {
+                const isFromAgent = message.flow === "Outgoing";
+                const sender = isFromAgent
+                  ? agent.name || "Agent"
+                  : stakeholder.name;
+                const avatarUrl = isFromAgent
+                  ? agent.avatar ||
+                    `https://api.dicebear.com/7.x/initials/svg?seed=${agent.name || "Agent"}`
+                  : stakeholder.avatar ||
+                    `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`;
+                const messageTime = new Date(message.when).toLocaleTimeString(
+                  [],
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                );
+
+                return (
                   <div
-                    className={`flex ${
-                      message.isIncoming ? "flex-row" : "flex-row-reverse"
-                    } items-start space-x-3 max-w-[75%]`}
+                    key={message.id}
+                    className={`flex ${isFromAgent ? "justify-start" : "justify-end"}`}
                   >
-                    <img
-                      src={
-                        message.isIncoming ? stakeholder.avatar : agent.avatar
-                      }
-                      alt={message.sender}
-                      className="w-8 h-8 rounded-full flex-shrink-0"
-                    />
                     <div
-                      className={`${
-                        message.isIncoming ? "ml-3 mr-0" : "ml-0 mr-3"
-                      }`}
+                      className={`flex ${
+                        isFromAgent ? "flex-row" : "flex-row-reverse"
+                      } items-start space-x-3 max-w-[75%]`}
                     >
-                      <div className="flex items-baseline space-x-2 mb-1">
-                        <span className="text-sm font-medium text-gray-900">
-                          {message.sender}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {message.time}
-                        </span>
-                      </div>
+                      <img
+                        src={avatarUrl}
+                        alt={sender}
+                        className="w-8 h-8 rounded-full flex-shrink-0"
+                      />
                       <div
-                        className={`rounded-lg px-4 py-3 ${
-                          message.isIncoming
-                            ? "bg-white border border-gray-200"
-                            : "bg-blue-600 text-white"
-                        }`}
+                        className={`${isFromAgent ? "ml-3 mr-0" : "ml-0 mr-3"}`}
                       >
-                        <p className="text-sm whitespace-pre-wrap">
-                          {message.content}
-                        </p>
+                        <div className="flex items-baseline space-x-2 mb-1">
+                          <span className="text-sm font-medium text-gray-900">
+                            {sender}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {messageTime}
+                          </span>
+                        </div>
+                        <div
+                          className={`rounded-lg px-4 py-3 ${
+                            isFromAgent
+                              ? "bg-blue-600 text-white"
+                              : "bg-white border border-gray-200"
+                          }`}
+                        >
+                          <p className="text-sm whitespace-pre-wrap">
+                            {message.content}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {isTyping && (
                 <div className="flex justify-start">
                   <div className="flex items-start space-x-3 max-w-[75%]">
                     <img
-                      src={stakeholder.avatar}
+                      src={
+                        stakeholder.avatar ||
+                        `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
+                      }
                       alt={stakeholder.name}
                       className="w-8 h-8 rounded-full"
                     />

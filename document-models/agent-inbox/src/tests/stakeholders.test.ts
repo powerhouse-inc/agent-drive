@@ -31,7 +31,7 @@ describe("Stakeholders Operations", () => {
       id: stakeholderId,
       name: "Bob Stakeholder",
       ethAddress: "0x1234567890123456789012345678901234567890",
-      avatar: "https://example.com/bob.png"
+      avatar: "https://example.com/bob.png",
     };
 
     const updatedDocument = reducer(document, addStakeholder(input));
@@ -45,7 +45,7 @@ describe("Stakeholders Operations", () => {
       input,
     );
     expect(updatedDocument.operations.global[0].index).toEqual(0);
-    
+
     // Test actual state change
     expect(updatedDocument.state.global.stakeholders).toHaveLength(1);
     expect(updatedDocument.state.global.stakeholders[0]).toEqual({
@@ -53,7 +53,7 @@ describe("Stakeholders Operations", () => {
       name: "Bob Stakeholder",
       ethAddress: "0x1234567890123456789012345678901234567890",
       avatar: "https://example.com/bob.png",
-      removed: false
+      removed: false,
     });
   });
 
@@ -64,22 +64,22 @@ describe("Stakeholders Operations", () => {
       id: stakeholderId,
       name: "Bob Stakeholder",
       ethAddress: null,
-      avatar: null
+      avatar: null,
     };
-    
+
     // Add first stakeholder
     const doc1 = reducer(document, addStakeholder(input1));
-    
+
     // Try to add duplicate
     const input2 = {
       id: stakeholderId, // Same ID
       name: "Alice Stakeholder",
       ethAddress: null,
-      avatar: null
+      avatar: null,
     };
-    
+
     const doc2 = reducer(doc1, addStakeholder(input2));
-    
+
     // Check that the operation failed with error
     expect(doc2.operations.global).toHaveLength(2);
     const lastOp = doc2.operations.global[1];
@@ -87,23 +87,23 @@ describe("Stakeholders Operations", () => {
     expect(lastOp.error).toContain("Stakeholder with ID");
     expect(lastOp.error).toContain(stakeholderId);
     expect(lastOp.error).toContain("already exists");
-    
+
     // State should remain unchanged
     expect(doc2.state.global.stakeholders).toHaveLength(1);
   });
   it("should handle removeStakeholder operation", () => {
     const document = utils.createDocument();
     const stakeholderId = generateId();
-    
+
     // First add a stakeholder
     const addInput = {
       id: stakeholderId,
       name: "Bob Stakeholder",
       ethAddress: null,
-      avatar: null
+      avatar: null,
     };
     const doc1 = reducer(document, addStakeholder(addInput));
-    
+
     // Now remove it
     const removeInput = { id: stakeholderId };
     const updatedDocument = reducer(doc1, removeStakeholder(removeInput));
@@ -113,7 +113,7 @@ describe("Stakeholders Operations", () => {
     expect(updatedDocument.operations.global[1].action.type).toBe(
       "REMOVE_STAKEHOLDER",
     );
-    
+
     // Check soft delete - stakeholder still exists but marked as removed
     expect(updatedDocument.state.global.stakeholders).toHaveLength(1);
     expect(updatedDocument.state.global.stakeholders[0].removed).toBe(true);
@@ -123,9 +123,9 @@ describe("Stakeholders Operations", () => {
     const document = utils.createDocument();
     const nonExistentId = generateId();
     const input = { id: nonExistentId };
-    
+
     const updatedDocument = reducer(document, removeStakeholder(input));
-    
+
     // Check for error in operation
     const lastOp = updatedDocument.operations.global[0];
     expect(lastOp.error).toBeDefined();
@@ -136,20 +136,20 @@ describe("Stakeholders Operations", () => {
   it("should handle setStakeholderName operation", () => {
     const document = utils.createDocument();
     const stakeholderId = generateId();
-    
+
     // First add a stakeholder
     const addInput = {
       id: stakeholderId,
       name: "Old Name",
       ethAddress: null,
-      avatar: null
+      avatar: null,
     };
     const doc1 = reducer(document, addStakeholder(addInput));
-    
+
     // Update the name
     const updateInput = {
       id: stakeholderId,
-      name: "New Name"
+      name: "New Name",
     };
     const updatedDocument = reducer(doc1, setStakeholderName(updateInput));
 
@@ -157,7 +157,7 @@ describe("Stakeholders Operations", () => {
     expect(updatedDocument.operations.global[1].action.type).toBe(
       "SET_STAKEHOLDER_NAME",
     );
-    
+
     // Check state change
     expect(updatedDocument.state.global.stakeholders[0].name).toBe("New Name");
   });
@@ -167,11 +167,11 @@ describe("Stakeholders Operations", () => {
     const nonExistentId = generateId();
     const input = {
       id: nonExistentId,
-      name: "New Name"
+      name: "New Name",
     };
-    
+
     const updatedDocument = reducer(document, setStakeholderName(input));
-    
+
     const lastOp = updatedDocument.operations.global[0];
     expect(lastOp.error).toBeDefined();
     expect(lastOp.error).toContain("Stakeholder with ID");
@@ -181,43 +181,45 @@ describe("Stakeholders Operations", () => {
   it("should handle setStakeholderAddress operation", () => {
     const document = utils.createDocument();
     const stakeholderId = generateId();
-    
+
     // First add a stakeholder
     const addInput = {
       id: stakeholderId,
       name: "Bob",
       ethAddress: "0xOLD",
-      avatar: null
+      avatar: null,
     };
     const doc1 = reducer(document, addStakeholder(addInput));
-    
+
     // Update the address
     const updateInput = {
       id: stakeholderId,
-      ethAddress: "0xNEW"
+      ethAddress: "0xNEW",
     };
     const updatedDocument = reducer(doc1, setStakeholderAddress(updateInput));
 
-    expect(updatedDocument.state.global.stakeholders[0].ethAddress).toBe("0xNEW");
+    expect(updatedDocument.state.global.stakeholders[0].ethAddress).toBe(
+      "0xNEW",
+    );
   });
 
   it("should clear stakeholder address when null provided", () => {
     const document = utils.createDocument();
     const stakeholderId = generateId();
-    
+
     // First add a stakeholder with address
     const addInput = {
       id: stakeholderId,
       name: "Bob",
       ethAddress: "0xADDRESS",
-      avatar: null
+      avatar: null,
     };
     const doc1 = reducer(document, addStakeholder(addInput));
-    
+
     // Clear the address
     const updateInput = {
       id: stakeholderId,
-      ethAddress: null
+      ethAddress: null,
     };
     const updatedDocument = reducer(doc1, setStakeholderAddress(updateInput));
 
@@ -226,43 +228,45 @@ describe("Stakeholders Operations", () => {
   it("should handle setStakeholderAvatar operation", () => {
     const document = utils.createDocument();
     const stakeholderId = generateId();
-    
+
     // First add a stakeholder
     const addInput = {
       id: stakeholderId,
       name: "Bob",
       ethAddress: null,
-      avatar: "https://old.com/avatar.png"
+      avatar: "https://old.com/avatar.png",
     };
     const doc1 = reducer(document, addStakeholder(addInput));
-    
+
     // Update the avatar
     const updateInput = {
       id: stakeholderId,
-      avatar: "https://new.com/avatar.png"
+      avatar: "https://new.com/avatar.png",
     };
     const updatedDocument = reducer(doc1, setStakeholderAvatar(updateInput));
 
-    expect(updatedDocument.state.global.stakeholders[0].avatar).toBe("https://new.com/avatar.png");
+    expect(updatedDocument.state.global.stakeholders[0].avatar).toBe(
+      "https://new.com/avatar.png",
+    );
   });
 
   it("should clear stakeholder avatar when null provided", () => {
     const document = utils.createDocument();
     const stakeholderId = generateId();
-    
+
     // First add a stakeholder with avatar
     const addInput = {
       id: stakeholderId,
       name: "Bob",
       ethAddress: null,
-      avatar: "https://example.com/avatar.png"
+      avatar: "https://example.com/avatar.png",
     };
     const doc1 = reducer(document, addStakeholder(addInput));
-    
+
     // Clear the avatar
     const updateInput = {
       id: stakeholderId,
-      avatar: null
+      avatar: null,
     };
     const updatedDocument = reducer(doc1, setStakeholderAvatar(updateInput));
 
@@ -273,16 +277,35 @@ describe("Stakeholders Operations", () => {
     const id1 = generateId();
     const id2 = generateId();
     const id3 = generateId();
-    
+
     // Add three stakeholders
-    let doc = reducer(document, addStakeholder({ id: id1, name: "Alice", ethAddress: null, avatar: null }));
-    doc = reducer(doc, addStakeholder({ id: id2, name: "Bob", ethAddress: null, avatar: null }));
-    doc = reducer(doc, addStakeholder({ id: id3, name: "Charlie", ethAddress: null, avatar: null }));
-    
+    let doc = reducer(
+      document,
+      addStakeholder({
+        id: id1,
+        name: "Alice",
+        ethAddress: null,
+        avatar: null,
+      }),
+    );
+    doc = reducer(
+      doc,
+      addStakeholder({ id: id2, name: "Bob", ethAddress: null, avatar: null }),
+    );
+    doc = reducer(
+      doc,
+      addStakeholder({
+        id: id3,
+        name: "Charlie",
+        ethAddress: null,
+        avatar: null,
+      }),
+    );
+
     // Move Charlie before Alice
     const moveInput = {
       id: id3,
-      insertBefore: id1
+      insertBefore: id1,
     };
     const updatedDocument = reducer(doc, moveStakeholder(moveInput));
 
@@ -297,15 +320,34 @@ describe("Stakeholders Operations", () => {
     const id1 = generateId();
     const id2 = generateId();
     const id3 = generateId();
-    
+
     // Add three stakeholders
-    let doc = reducer(document, addStakeholder({ id: id1, name: "Alice", ethAddress: null, avatar: null }));
-    doc = reducer(doc, addStakeholder({ id: id2, name: "Bob", ethAddress: null, avatar: null }));
-    doc = reducer(doc, addStakeholder({ id: id3, name: "Charlie", ethAddress: null, avatar: null }));
-    
+    let doc = reducer(
+      document,
+      addStakeholder({
+        id: id1,
+        name: "Alice",
+        ethAddress: null,
+        avatar: null,
+      }),
+    );
+    doc = reducer(
+      doc,
+      addStakeholder({ id: id2, name: "Bob", ethAddress: null, avatar: null }),
+    );
+    doc = reducer(
+      doc,
+      addStakeholder({
+        id: id3,
+        name: "Charlie",
+        ethAddress: null,
+        avatar: null,
+      }),
+    );
+
     // Move Alice to end (omit insertBefore)
     const moveInput = {
-      id: id1
+      id: id1,
       // insertBefore omitted
     };
     const updatedDocument = reducer(doc, moveStakeholder(moveInput));
@@ -320,12 +362,12 @@ describe("Stakeholders Operations", () => {
     const document = utils.createDocument();
     const nonExistentId = generateId();
     const input = {
-      id: nonExistentId
+      id: nonExistentId,
       // insertBefore omitted
     };
-    
+
     const updatedDocument = reducer(document, moveStakeholder(input));
-    
+
     const lastOp = updatedDocument.operations.global[0];
     expect(lastOp.error).toBeDefined();
     expect(lastOp.error).toContain("Stakeholder with ID");

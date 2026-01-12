@@ -451,7 +451,10 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
         {/* Notes Section */}
         <div>
           <h4 className="text-base font-semibold text-gray-700 mb-2">Notes</h4>
-          <div ref={notesListRef} className="space-y-2 max-h-[480px] overflow-y-auto mb-3">
+          <div
+            ref={notesListRef}
+            className="space-y-2 max-h-[480px] overflow-y-auto mb-3"
+          >
             {goal.notes.length === 0 ? (
               <div className="text-sm text-gray-400 p-3 bg-gray-50 rounded text-center">
                 No notes yet. Add your first note below.

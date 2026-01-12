@@ -266,13 +266,19 @@ export function WBSSidebar() {
                 </div>
                 <div className="p-2 bg-white border border-gray-200 rounded">
                   <pre className="text-xs text-gray-600 whitespace-pre-wrap break-all">
-                    {metadata.format === "JSON" ? (() => {
-                      try {
-                        return JSON.stringify(JSON.parse(metadata.data), null, 2);
-                      } catch {
-                        return metadata.data;
-                      }
-                    })() : metadata.data}
+                    {metadata.format === "JSON"
+                      ? (() => {
+                          try {
+                            return JSON.stringify(
+                              JSON.parse(metadata.data),
+                              null,
+                              2,
+                            );
+                          } catch {
+                            return metadata.data;
+                          }
+                        })()
+                      : metadata.data}
                   </pre>
                 </div>
               </div>
