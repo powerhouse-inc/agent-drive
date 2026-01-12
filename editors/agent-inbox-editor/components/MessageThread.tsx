@@ -141,8 +141,7 @@ export function MessageThread({
     unreadAgentMessages.forEach((msg) => {
       dispatch(
         markMessageRead({
-          threadId: thread.id,
-          messageId: msg.id,
+          id: msg.id,
         })
       );
     });
