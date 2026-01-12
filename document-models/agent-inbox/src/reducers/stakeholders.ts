@@ -37,6 +37,15 @@ export const agentInboxStakeholdersOperations: AgentInboxStakeholdersOperations 
 
       // Soft delete - set removed flag to true
       stakeholder.removed = true;
+
+      // Archive all threads associated with this stakeholder
+      const stakeholderThreads = state.threads.filter(
+        (t) => t.stakeholder === action.input.id,
+      );
+      
+      stakeholderThreads.forEach((thread) => {
+        thread.status = "Archived";
+      });
     },
     setStakeholderNameOperation(state, action) {
       const stakeholder = state.stakeholders.find(

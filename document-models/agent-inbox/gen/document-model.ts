@@ -131,7 +131,7 @@ export const documentModel: DocumentModelGlobalState = {
               id: "7dee272a-f19e-4bfb-90e6-9efe5edf1414",
               name: "REMOVE_STAKEHOLDER",
               reducer:
-                "const stakeholder = state.stakeholders.find(s => s.id === action.input.id);\nif (!stakeholder) {\n    throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);\n}\n\n// Soft delete - set removed flag to true\nstakeholder.removed = true;",
+                'const stakeholder = state.stakeholders.find(s => s.id === action.input.id);\nif (!stakeholder) {\n    throw new StakeholderNotFoundError(`Stakeholder with ID ${action.input.id} not found`);\n}\n\n// Soft delete - set removed flag to true\nstakeholder.removed = true;\n\n// Archive all threads associated with this stakeholder\nconst stakeholderThreads = state.threads.filter(t => t.stakeholder === action.input.id);\n\nstakeholderThreads.forEach(thread => {\n    thread.status = "Archived";\n});',
               schema:
                 'input RemoveStakeholderInput {\n  """ID of the stakeholder to remove"""\n  id: OID!\n}',
               scope: "global",

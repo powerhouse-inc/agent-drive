@@ -21,6 +21,7 @@ import {
   SetStakeholderAvatarInputSchema,
   moveStakeholder,
   MoveStakeholderInputSchema,
+  createThread,
 } from "powerhouse-agent/document-models/agent-inbox";
 
 describe("Stakeholders Operations", () => {
@@ -373,5 +374,66 @@ describe("Stakeholders Operations", () => {
     expect(lastOp.error).toContain("Stakeholder with ID");
     expect(lastOp.error).toContain(nonExistentId);
     expect(lastOp.error).toContain("not found");
+  });
+
+  it("should auto-archive all threads when stakeholder is removed", () => {
+    const document = utils.createDocument();
+    const stakeholderId = generateId();
+    const threadId1 = generateId();
+    const threadId2 = generateId();
+    const messageId1 = generateId();
+    const messageId2 = generateId();
+
+    // First add a stakeholder
+    const addInput = {
+      id: stakeholderId,
+      name: "Test Stakeholder",
+      ethAddress: null,
+      avatar: null,
+    };
+    let doc = reducer(document, addStakeholder(addInput));
+
+    // Create two threads for this stakeholder
+    const thread1Input = {
+      id: threadId1,
+      stakeholder: stakeholderId,
+      topic: "Thread 1",
+      initialMessage: {
+        id: messageId1,
+        flow: "Incoming" as const,
+        when: new Date().toISOString(),
+        content: "First thread message",
+      },
+    };
+    doc = reducer(doc, createThread(thread1Input));
+
+    const thread2Input = {
+      id: threadId2,
+      stakeholder: stakeholderId,
+      topic: "Thread 2",
+      initialMessage: {
+        id: messageId2,
+        flow: "Incoming" as const,
+        when: new Date().toISOString(),
+        content: "Second thread message",
+      },
+    };
+    doc = reducer(doc, createThread(thread2Input));
+
+    // Verify threads are created with Open status
+    expect(doc.state.global.threads).toHaveLength(2);
+    expect(doc.state.global.threads[0].status).toBe("Open");
+    expect(doc.state.global.threads[1].status).toBe("Open");
+
+    // Now remove the stakeholder
+    const removeInput = { id: stakeholderId };
+    const updatedDocument = reducer(doc, removeStakeholder(removeInput));
+
+    // Check that stakeholder is marked as removed
+    expect(updatedDocument.state.global.stakeholders[0].removed).toBe(true);
+
+    // Check that all threads are automatically archived
+    expect(updatedDocument.state.global.threads[0].status).toBe("Archived");
+    expect(updatedDocument.state.global.threads[1].status).toBe("Archived");
   });
 });

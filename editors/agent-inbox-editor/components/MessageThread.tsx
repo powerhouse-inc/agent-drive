@@ -24,6 +24,7 @@ interface Stakeholder {
   id: string;
   name: string;
   avatar: string | null;
+  removed: boolean;
 }
 
 interface Agent {

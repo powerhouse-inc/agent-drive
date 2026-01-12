@@ -7,7 +7,7 @@ import {
   documentModel,
   reducer,
   utils,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "./index.js";
 
 /** Document model module for the Todo List document type */
 export const AgentInbox: DocumentModelModule<AgentInboxPHState> = {
