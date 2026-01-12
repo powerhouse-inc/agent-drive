@@ -45,6 +45,13 @@
             "documentTypes": [
                 "powerhouse/work-breakdown-structure"
             ]
+        },
+        {
+            "id": "agent-inbox-editor",
+            "name": "Agent Inbox Editor",
+            "documentTypes": [
+                "powerhouse/agent-inbox"
+            ]
         }
     ],
     "apps": [],
