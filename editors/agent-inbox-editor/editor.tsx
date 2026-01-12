@@ -50,7 +50,7 @@ export default function Editor() {
       lastMessageTime: lastMessage
         ? new Date(lastMessage.when).toLocaleString()
         : "",
-      unreadCount: thread.messages.filter((m) => !m.read).length,
+      unreadCount: thread.messages.filter((m) => m.flow === "Outgoing" && !m.read).length,
     };
   });
 
