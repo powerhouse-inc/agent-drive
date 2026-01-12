@@ -5,6 +5,10 @@ import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-in
 import {
   sendStakeholderMessage,
   setThreadTopic,
+  proposeThreadResolved,
+  confirmThreadResolved,
+  archiveThread,
+  reopenThread,
 } from "../../../document-models/agent-inbox/gen/creators.js";
 
 interface Message {
@@ -130,35 +134,86 @@ export function MessageThread({
     }
   };
 
+  const handleProposeResolved = () => {
+    dispatch(
+      proposeThreadResolved({
+        threadId: thread.id,
+        proposedBy: "Agent",
+      }),
+    );
+  };
+
+  const handleConfirmResolved = () => {
+    dispatch(
+      confirmThreadResolved({
+        threadId: thread.id,
+        confirmedBy: "Agent",
+      }),
+    );
+  };
+
+  const handleArchiveThread = () => {
+    dispatch(
+      archiveThread({
+        threadId: thread.id,
+        archivedBy: "Agent",
+      }),
+    );
+  };
+
+  const handleReopenThread = () => {
+    dispatch(
+      reopenThread({
+        threadId: thread.id,
+        reopenedBy: "Agent",
+      }),
+    );
+  };
+
   const getStatusActions = () => {
     switch (thread.status) {
       case "Open":
         return (
-          <button className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+          <button
+            onClick={handleProposeResolved}
+            className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
             Propose Resolved
           </button>
         );
       case "ProposedResolvedByStakeholder":
         return (
-          <button className="px-3 py-1.5 text-sm font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+          <button
+            onClick={handleConfirmResolved}
+            className="px-3 py-1.5 text-sm font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+          >
             Confirm Resolved
           </button>
         );
       case "ProposedResolvedByAgent":
         return (
-          <button className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+          <button
+            disabled
+            className="px-3 py-1.5 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed"
+          >
             Awaiting Confirmation
           </button>
         );
       case "ConfirmedResolved":
         return (
-          <button className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+          <button
+            onClick={handleArchiveThread}
+            className="px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+          >
             Archive Thread
           </button>
         );
       case "Archived":
         return (
-          <button className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+          <button
+            onClick={handleReopenThread}
+            className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          >
             Reopen Thread
           </button>
         );
