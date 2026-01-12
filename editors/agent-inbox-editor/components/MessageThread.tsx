@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
@@ -10,14 +10,6 @@ interface Message {
   when: string;
   content: string;
   read: boolean;
-}
-
-interface Thread {
-  id: string;
-  topic: string | null;
-  stakeholder: string;
-  status: string;
-  messages: Message[];
 }
 
 interface Stakeholder {
@@ -34,8 +26,16 @@ interface Agent {
   avatar: string | null;
 }
 
+interface Thread {
+  id: string;
+  topic: string | null;
+  stakeholder: string;
+  status: string;
+  messages: Message[];
+}
+
 interface MessageThreadProps {
-  thread: any; // Using any for now since the actual thread type from document model is complex
+  thread: Thread;
   stakeholder: Stakeholder;
   agent: Agent;
   dispatch: DocumentDispatch<AgentInboxAction>;

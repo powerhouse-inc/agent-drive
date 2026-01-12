@@ -19,9 +19,15 @@ interface AgentPanelProps {
   };
   dispatch: DocumentDispatch<AgentInboxAction>;
   onCollapse?: () => void;
+  onNewChat?: () => void;
 }
 
-export function AgentPanel({ agent, dispatch, onCollapse }: AgentPanelProps) {
+export function AgentPanel({
+  agent,
+  dispatch,
+  onCollapse,
+  onNewChat,
+}: AgentPanelProps) {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState("");
   const [showAvatarPopover, setShowAvatarPopover] = useState(false);
@@ -212,6 +218,7 @@ export function AgentPanel({ agent, dispatch, onCollapse }: AgentPanelProps) {
 
         <div className="flex items-center space-x-2">
           <button
+            onClick={onNewChat}
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             title="New Chat"
           >

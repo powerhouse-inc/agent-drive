@@ -1,160 +1,10 @@
 import { useState, useEffect } from "react";
-import { generateId } from "document-model/core";
 import { AgentPanel } from "./components/AgentPanel.js";
 import { ThreadsList } from "./components/ThreadsList.js";
 import { MessageThread } from "./components/MessageThread.js";
+import { NewChatModal } from "./components/NewChatModal.js";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect/index";
 import { useSelectedAgentInboxDocument } from "../../document-models/agent-inbox/hooks.js";
-import {
-  setAgentName,
-  setAgentAddress,
-  setAgentRole,
-  setAgentDescription,
-  setAgentAvatar,
-  sendStakeholderMessage,
-  sendAgentMessage,
-} from "../../document-models/agent-inbox/gen/creators.js";
-
-// Dummy data for the agent
-const dummyAgent = {
-  name: "Alex Thompson",
-  role: "Senior Project Manager",
-  ethAddress: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb3",
-  description:
-    "Experienced project manager specializing in DeFi protocols and governance systems. Available for consultation on tokenomics, DAO structure, and protocol design.",
-  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-};
-
-// Dummy stakeholders
-const dummyStakeholders = [
-  {
-    id: "s1",
-    name: "Maria Chen",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
-  },
-  {
-    id: "s2",
-    name: "John Davis",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-  },
-  {
-    id: "s3",
-    name: "Sarah Wilson",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-  },
-  {
-    id: "s4",
-    name: "Robert Kim",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert",
-  },
-  {
-    id: "s5",
-    name: "Emma Johnson",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
-  },
-];
-
-// Dummy threads with longer messages
-const dummyThreads = [
-  {
-    id: "t1",
-    stakeholderId: "s1",
-    stakeholderName: "Maria Chen",
-    topic: "Treasury Management Proposal Review",
-    status: "Open",
-    lastMessage:
-      "I've completed the initial review of the treasury management proposal...",
-    lastMessageTime: "2 hours ago",
-    unreadCount: 2,
-    messages: [
-      {
-        id: "m1",
-        sender: "Maria Chen",
-        content:
-          "Hi Alex,\n\nI hope this message finds you well. I've been reviewing the treasury management proposal you sent last week, and I have some thoughts I'd like to share.\n\nFirst, I think the overall structure is solid. The multi-sig approach you've outlined makes sense, especially with the 3-of-5 threshold for major transactions. However, I'm wondering if we should consider implementing a timelock mechanism for particularly large withdrawals - say anything over $1M USD equivalent.\n\nThe yield farming strategies you've proposed are interesting, but I think we need to be more conservative with our risk allocation. Currently, you have 40% allocated to high-risk strategies. Given the current market volatility and recent protocol exploits we've seen in the space, I'd recommend reducing this to no more than 20%, with the remainder going into more stable, battle-tested protocols.\n\nI also noticed that the proposal doesn't address how we'll handle treasury diversification across different chains. With the multi-chain future becoming reality, shouldn't we have a strategy for managing assets across Ethereum, Arbitrum, and perhaps Polygon?\n\nLooking forward to your thoughts on these points.",
-        time: "3 days ago",
-        isIncoming: true,
-      },
-      {
-        id: "m2",
-        sender: "Alex Thompson",
-        content:
-          "Hi Maria,\n\nThank you for the thorough review - these are excellent points that definitely need to be addressed.\n\nRegarding the timelock mechanism, I completely agree. In fact, I think we should implement a tiered timelock system:\n- Transactions under $100k: No timelock\n- $100k-$500k: 24-hour timelock\n- $500k-$1M: 48-hour timelock\n- Over $1M: 72-hour timelock with mandatory community notification\n\nThis would give the community time to react if something suspicious is happening, while not overly hampering day-to-day operations.\n\nYou're absolutely right about the risk allocation. I was perhaps too aggressive in my initial proposal. Let me revise the allocation:\n- 20% high-risk, high-reward strategies (as you suggested)\n- 40% medium-risk strategies (established DeFi protocols with good track records)\n- 40% low-risk strategies (stablecoin lending on Aave/Compound, ETH staking)\n\nFor multi-chain treasury management, I suggest we start with a 70/20/10 split between Ethereum/Arbitrum/Polygon initially, with quarterly rebalancing based on where we're seeing the most activity and best opportunities. We should also establish clear bridging protocols and use only audited bridge solutions.\n\nI'll update the proposal with these changes and add a section on emergency procedures - what happens if a protocol we're using gets exploited, how we execute emergency withdrawals, etc.\n\nDoes this address your concerns? Any other areas you think need attention?",
-        time: "2 days ago",
-        isIncoming: false,
-      },
-      {
-        id: "m3",
-        sender: "Maria Chen",
-        content:
-          "Alex,\n\nThe tiered timelock system is brilliant - much more nuanced than what I had in mind. The community notification for large transactions is particularly important for maintaining transparency.\n\nYour revised risk allocation looks much more balanced. I'd also suggest we explicitly define what constitutes each risk category. For example:\n\nHigh-risk: New protocols (<6 months), protocols with TVL under $100M, leveraged positions\nMedium-risk: Established protocols (6-24 months), TVL $100M-$1B, standard yield farming\nLow-risk: Blue-chip protocols (>24 months), TVL >$1B, simple lending/staking\n\nThe multi-chain split seems reasonable for a start. However, I think we should also consider having a small allocation (maybe 5%) on emerging L2s like zkSync or StarkNet once they're more mature. Being early on these chains could provide good opportunities.\n\nTwo additional points:\n\n1. We should establish clear KPIs for treasury performance. I'm thinking:\n   - Target APY (maybe 8-12% in current conditions?)\n   - Maximum drawdown tolerance (15%?)\n   - Minimum stablecoin reserves (always keep 20% liquid?)\n\n2. Insurance - should we consider getting coverage through something like Nexus Mutual for our largest positions?\n\nAlso, regarding the emergency procedures, we should have a clear escalation path and perhaps a 'war room' Discord channel that only key stakeholders can access during emergencies.\n\nOne last thing - when can we schedule a call with the broader finance committee to discuss these changes?",
-        time: "2 days ago",
-        isIncoming: true,
-      },
-      {
-        id: "m4",
-        sender: "Alex Thompson",
-        content:
-          "Maria,\n\nExcellent additions! Your risk categorization framework is exactly what we needed - clear, measurable criteria that remove ambiguity. I'll incorporate this verbatim into the proposal.\n\nRegarding emerging L2s, you're absolutely right about the opportunity. Let's revise to:\n- Ethereum: 65%\n- Arbitrum: 20%\n- Polygon: 10%\n- Emerging L2s reserve: 5%\n\nThis reserve can be deployed opportunistically as new chains mature.\n\nYour KPIs are spot-on. I'd suggest we review these quarterly and adjust based on market conditions. In bear markets, we might need to lower APY targets to 5-8% to maintain safety. The 20% liquid reserve is crucial - it ensures we can always meet operational needs without having to exit positions at inopportune times.\n\nInsurance is a great call. I'll research coverage options and costs. We should probably insure at least our top 3 positions, which would likely represent 60-70% of our treasury value. The cost-benefit analysis will be important here.\n\nFor the emergency procedures, I love the 'war room' concept. We should have:\n1. A private Discord channel with the 5 multi-sig holders\n2. A clear incident commander role (rotating monthly?)\n3. Pre-written emergency withdrawal transactions ready to execute\n4. A post-mortem process for any emergency event\n\nRegarding the finance committee meeting - how does next Thursday at 2 PM EST work? I can have the updated proposal ready by Tuesday for everyone to review.\n\nI'll also create a simple dashboard mockup showing how we'd track all these metrics in real-time. Transparency is key for maintaining community trust.",
-        time: "1 day ago",
-        isIncoming: false,
-      },
-      {
-        id: "m5",
-        sender: "Maria Chen",
-        content:
-          "Perfect! Thursday at 2 PM EST works for me. I'll coordinate with the other committee members to ensure we have quorum.\n\nThe dashboard mockup would be incredibly helpful. If we can show real-time treasury value, current allocations, and performance against our KPIs, it will go a long way toward building confidence in our management approach.\n\nLooking forward to seeing the updated proposal on Tuesday. This has shaped up really well - I think we have something solid to present to the DAO.\n\nThanks for being so receptive to the feedback, Alex. This is exactly the kind of collaborative approach we need.",
-        time: "2 hours ago",
-        isIncoming: true,
-      },
-    ],
-  },
-  {
-    id: "t2",
-    stakeholderId: "s2",
-    stakeholderName: "John Davis",
-    topic: "Smart Contract Audit Timeline",
-    status: "ProposedResolvedByStakeholder",
-    lastMessage:
-      "The audit schedule looks good. I think we can close this thread once you confirm.",
-    lastMessageTime: "5 hours ago",
-    unreadCount: 1,
-    messages: [],
-  },
-  {
-    id: "t3",
-    stakeholderId: "s3",
-    stakeholderName: "Sarah Wilson",
-    topic: "Governance Token Distribution Model",
-    status: "Open",
-    lastMessage: "I have some concerns about the vesting schedule...",
-    lastMessageTime: "1 day ago",
-    unreadCount: 0,
-    messages: [],
-  },
-  {
-    id: "t4",
-    stakeholderId: "s4",
-    stakeholderName: "Robert Kim",
-    topic: "Q4 Development Roadmap",
-    status: "ConfirmedResolved",
-    lastMessage: "Great! Let's move forward with this plan.",
-    lastMessageTime: "3 days ago",
-    unreadCount: 0,
-    messages: [],
-  },
-  {
-    id: "t5",
-    stakeholderId: "s5",
-    stakeholderName: "Emma Johnson",
-    topic: "Bug Bounty Program Setup",
-    status: "Archived",
-    lastMessage: "Program successfully launched. Closing this thread.",
-    lastMessageTime: "1 week ago",
-    unreadCount: 0,
-    messages: [],
-  },
-];
 
 export default function Editor() {
   const [document, dispatch] = useSelectedAgentInboxDocument();
@@ -162,6 +12,7 @@ export default function Editor() {
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLeftColumnCollapsed, setIsLeftColumnCollapsed] = useState(false);
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
 
   // Return early if no document
   if (!document || !dispatch) {
@@ -227,6 +78,11 @@ export default function Editor() {
     ? stakeholders.find((s) => s.id === selectedThread.stakeholder)
     : null;
 
+  const handleThreadCreated = (threadId: string) => {
+    setSelectedThreadId(threadId);
+    setActiveTab("inbox");
+  };
+
   return (
     <div
       className="flex flex-col"
@@ -267,6 +123,7 @@ export default function Editor() {
                   agent={agent}
                   dispatch={dispatch}
                   onCollapse={() => setIsLeftColumnCollapsed(true)}
+                  onNewChat={() => setIsNewChatModalOpen(true)}
                 />
               </div>
 
@@ -282,7 +139,10 @@ export default function Editor() {
                     }`}
                   >
                     Inbox (
-                    {threadsWithInfo.filter((t) => t.status !== "Archived").length}
+                    {
+                      threadsWithInfo.filter((t) => t.status !== "Archived")
+                        .length
+                    }
                     )
                   </button>
                   <button
@@ -294,7 +154,10 @@ export default function Editor() {
                     }`}
                   >
                     Archive (
-                    {threadsWithInfo.filter((t) => t.status === "Archived").length}
+                    {
+                      threadsWithInfo.filter((t) => t.status === "Archived")
+                        .length
+                    }
                     )
                   </button>
                 </div>
@@ -389,6 +252,15 @@ export default function Editor() {
           </div>
         </div>
       </div>
+
+      {/* New Chat Modal */}
+      <NewChatModal
+        isOpen={isNewChatModalOpen}
+        onClose={() => setIsNewChatModalOpen(false)}
+        stakeholders={stakeholders}
+        dispatch={dispatch}
+        onThreadCreated={handleThreadCreated}
+      />
     </div>
   );
 }
