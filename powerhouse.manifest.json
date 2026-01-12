@@ -18,6 +18,10 @@
         {
             "id": "powerhouse/work-breakdown-structure",
             "name": "Work Breakdown Structure"
+        },
+        {
+            "id": "powerhouse/agent-inbox",
+            "name": "Agent Inbox"
         }
     ],
     "editors": [
