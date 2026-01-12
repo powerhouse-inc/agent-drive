@@ -77,7 +77,7 @@ export function MessageThread({
     }
   };
 
-  // Find first unread agent message
+  // Find first unread agent message (outgoing messages that stakeholder hasn't read)
   const firstUnreadAgentMessageIndex = thread.messages.findIndex(
     (msg) => msg.flow === "Outgoing" && !msg.read
   );
@@ -129,13 +129,14 @@ export function MessageThread({
   const markAgentMessagesAsRead = () => {
     if (hasMarkedAsRead) return;
 
+    // Mark outgoing messages (from agent) as read by the stakeholder
     const unreadAgentMessages = thread.messages.filter(
       (msg) => msg.flow === "Outgoing" && !msg.read
     );
 
     if (unreadAgentMessages.length === 0) return;
 
-    console.log(`Marking ${unreadAgentMessages.length} agent messages as read`);
+    console.log(`Marking ${unreadAgentMessages.length} agent messages as read by stakeholder`);
     
     unreadAgentMessages.forEach((msg) => {
       dispatch(
@@ -180,13 +181,16 @@ export function MessageThread({
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
     const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 10;
 
-    // Check if there are unread agent messages
+    // Check if there are unread agent messages (that stakeholder needs to read)
     const hasUnreadAgentMessages = thread.messages.some(
       (msg) => msg.flow === "Outgoing" && !msg.read
     );
 
+    console.log('Scroll check:', { isAtBottom, hasUnreadAgentMessages, hasMarkedAsRead });
+
     // If at bottom (100% scroll) and there are unread messages, start timer
     if (isAtBottom && hasUnreadAgentMessages && !hasMarkedAsRead) {
+      console.log('Starting 2 second timer to mark messages as read');
       // Clear any existing timer
       if (markReadTimerRef.current) {
         clearTimeout(markReadTimerRef.current);
@@ -194,6 +198,7 @@ export function MessageThread({
       
       // Set new timer
       markReadTimerRef.current = setTimeout(() => {
+        console.log('Timer triggered, marking messages as read');
         markAgentMessagesAsRead();
       }, 2000);
     }
