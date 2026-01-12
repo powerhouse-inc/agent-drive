@@ -84,6 +84,7 @@ export function MessageThread({
 
   // Scroll to appropriate position when thread changes
   useEffect(() => {
+    // Reset the marked as read flag when thread changes
     setHasMarkedAsRead(false);
     
     // Clear any existing timer
@@ -132,6 +133,10 @@ export function MessageThread({
       (msg) => msg.flow === "Outgoing" && !msg.read
     );
 
+    if (unreadAgentMessages.length === 0) return;
+
+    console.log(`Marking ${unreadAgentMessages.length} agent messages as read`);
+    
     unreadAgentMessages.forEach((msg) => {
       dispatch(
         markMessageRead({
@@ -175,8 +180,13 @@ export function MessageThread({
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
     const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 10;
 
-    // If at bottom (100% scroll), start timer to mark messages as read
-    if (isAtBottom && !hasMarkedAsRead) {
+    // Check if there are unread agent messages
+    const hasUnreadAgentMessages = thread.messages.some(
+      (msg) => msg.flow === "Outgoing" && !msg.read
+    );
+
+    // If at bottom (100% scroll) and there are unread messages, start timer
+    if (isAtBottom && hasUnreadAgentMessages && !hasMarkedAsRead) {
       // Clear any existing timer
       if (markReadTimerRef.current) {
         clearTimeout(markReadTimerRef.current);
