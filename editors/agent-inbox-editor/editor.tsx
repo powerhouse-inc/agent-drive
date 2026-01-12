@@ -199,35 +199,15 @@ export default function Editor() {
           )}
 
           {/* Right Column - 2/3 width or full width when collapsed */}
-          <div className="flex-1 flex flex-col bg-white overflow-hidden relative">
-            {/* Expand button when collapsed */}
-            {isLeftColumnCollapsed && (
-              <button
-                onClick={() => setIsLeftColumnCollapsed(false)}
-                className="absolute top-4 left-4 z-10 p-1.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
-                title="Expand sidebar"
-              >
-                <svg
-                  className="w-5 h-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            )}
+          <div className="flex-1 flex flex-col bg-white overflow-hidden">
             {selectedThread && selectedStakeholder ? (
               <MessageThread
                 thread={selectedThread}
                 stakeholder={selectedStakeholder}
                 agent={agent}
                 dispatch={dispatch}
+                isCollapsed={isLeftColumnCollapsed}
+                onExpand={() => setIsLeftColumnCollapsed(false)}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center text-gray-400">

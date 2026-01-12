@@ -46,6 +46,8 @@ interface MessageThreadProps {
   stakeholder: Stakeholder;
   agent: Agent;
   dispatch: DocumentDispatch<AgentInboxAction>;
+  isCollapsed?: boolean;
+  onExpand?: () => void;
 }
 
 export function MessageThread({
@@ -53,6 +55,8 @@ export function MessageThread({
   stakeholder,
   agent,
   dispatch,
+  isCollapsed,
+  onExpand,
 }: MessageThreadProps) {
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -227,26 +231,52 @@ export function MessageThread({
       {/* Thread Header - Fixed */}
       <div className="px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex-1">
-            {isEditingTopic ? (
-              <input
-                ref={topicInputRef}
-                type="text"
-                value={tempTopic}
-                onChange={(e) => setTempTopic(e.target.value)}
-                onBlur={handleSaveTopic}
-                onKeyDown={handleTopicKeyDown}
-                placeholder="Enter topic..."
-                className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-lg"
-              />
-            ) : (
-              <h2
-                className="text-lg font-semibold text-gray-900 cursor-pointer hover:bg-gray-50 px-3 py-1 -ml-3 rounded inline-block"
-                onClick={handleStartEditTopic}
+          <div className="flex items-center flex-1 space-x-2">
+            {/* Expand button when sidebar is collapsed */}
+            {isCollapsed && onExpand && (
+              <button
+                onClick={onExpand}
+                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+                title="Expand sidebar"
               >
-                {thread.topic || "Click to add topic"}
-              </h2>
+                <svg
+                  className="w-5 h-5 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
             )}
+
+            {/* Topic */}
+            <div className="flex-1">
+              {isEditingTopic ? (
+                <input
+                  ref={topicInputRef}
+                  type="text"
+                  value={tempTopic}
+                  onChange={(e) => setTempTopic(e.target.value)}
+                  onBlur={handleSaveTopic}
+                  onKeyDown={handleTopicKeyDown}
+                  placeholder="Enter topic..."
+                  className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-lg"
+                />
+              ) : (
+                <h2
+                  className="text-lg font-semibold text-gray-900 cursor-pointer hover:bg-gray-50 px-3 py-1 -ml-3 rounded inline-block"
+                  onClick={handleStartEditTopic}
+                >
+                  {thread.topic || "Click to add topic"}
+                </h2>
+              )}
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             {getStatusActions()}
