@@ -232,22 +232,50 @@ export default function Editor() {
                 onExpand={() => setIsLeftColumnCollapsed(false)}
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-400">
-                <div className="text-center">
-                  <svg
-                    className="mx-auto h-12 w-12 mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4-4-4z"
-                    />
-                  </svg>
-                  <p className="text-lg">Select a thread to view messages</p>
+              <div className="flex-1 flex flex-col">
+                {/* Header with expand button when collapsed */}
+                {isLeftColumnCollapsed && (
+                  <div className="px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
+                    <button
+                      onClick={() => setIsLeftColumnCollapsed(false)}
+                      className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                      title="Expand sidebar"
+                    >
+                      <svg
+                        className="w-5 h-5 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 6h16M4 12h16M4 18h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                
+                {/* Empty state content */}
+                <div className="flex-1 flex items-center justify-center text-gray-400">
+                  <div className="text-center">
+                    <svg
+                      className="mx-auto h-12 w-12 mb-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4-4-4z"
+                      />
+                    </svg>
+                    <p className="text-lg">Select a thread to view messages</p>
+                  </div>
                 </div>
               </div>
             )}
