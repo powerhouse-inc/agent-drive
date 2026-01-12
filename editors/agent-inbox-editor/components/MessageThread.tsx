@@ -351,7 +351,7 @@ export function MessageThread({
                     <div
                       className={`flex ${
                         isFromAgent ? "flex-row" : "flex-row-reverse"
-                      } items-start space-x-3 max-w-[75%]`}
+                      } items-start space-x-1.5 max-w-[75%]`}
                     >
                       <img
                         src={avatarUrl}
@@ -359,7 +359,7 @@ export function MessageThread({
                         className="w-8 h-8 rounded-full flex-shrink-0"
                       />
                       <div
-                        className={`${isFromAgent ? "ml-3 mr-0" : "ml-0 mr-3"}`}
+                        className={`${isFromAgent ? "ml-1.5 mr-0" : "ml-0 mr-1.5"}`}
                       >
                         <div className="flex items-baseline space-x-2 mb-1">
                           <span className="text-sm font-medium text-gray-900">
@@ -388,7 +388,7 @@ export function MessageThread({
 
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="flex items-start space-x-3 max-w-[75%]">
+                  <div className="flex items-start space-x-1.5 max-w-[75%]">
                     <img
                       src={
                         stakeholder.avatar ||
@@ -397,7 +397,7 @@ export function MessageThread({
                       alt={stakeholder.name}
                       className="w-8 h-8 rounded-full"
                     />
-                    <div className="ml-3">
+                    <div className="ml-1.5">
                       <div className="bg-white border border-gray-200 rounded-lg px-4 py-3">
                         <div className="flex space-x-1">
                           <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -431,7 +431,7 @@ export function MessageThread({
               `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
             }
             alt={stakeholder.name}
-            className="w-10 h-10 rounded-full flex-shrink-0"
+            className="w-12 h-12 rounded-full flex-shrink-0"
           />
 
           {/* Message Input */}
