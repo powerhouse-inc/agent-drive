@@ -89,7 +89,7 @@ export function MessageThread({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -380,7 +380,7 @@ export function MessageThread({
         </div>
 
         <div className="mt-2 text-xs text-gray-500 text-right">
-          <span>Press Enter to send, Shift+Enter for new line</span>
+          <span>Press Ctrl+Enter to send</span>
         </div>
       </div>
     </div>
