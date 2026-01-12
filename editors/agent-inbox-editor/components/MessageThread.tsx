@@ -9,6 +9,7 @@ import {
   confirmThreadResolved,
   archiveThread,
   reopenThread,
+  markMessageRead,
 } from "../../../document-models/agent-inbox/gen/creators.js";
 
 interface Message {
@@ -62,9 +63,12 @@ export function MessageThread({
   const [isTyping, setIsTyping] = useState(false);
   const [isEditingTopic, setIsEditingTopic] = useState(false);
   const [tempTopic, setTempTopic] = useState("");
+  const [hasMarkedAsRead, setHasMarkedAsRead] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const newMessagesRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const topicInputRef = useRef<HTMLInputElement>(null);
+  const markReadTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
@@ -73,11 +77,70 @@ export function MessageThread({
     }
   };
 
-  // Scroll to bottom when thread changes or when first loaded
+  // Find first unread agent message
+  const firstUnreadAgentMessageIndex = thread.messages.findIndex(
+    (msg) => msg.flow === "Outgoing" && !msg.read
+  );
+
+  // Scroll to appropriate position when thread changes
   useEffect(() => {
+    setHasMarkedAsRead(false);
+    
+    // Clear any existing timer
+    if (markReadTimerRef.current) {
+      clearTimeout(markReadTimerRef.current);
+    }
+
     // Small delay to ensure DOM is updated
-    setTimeout(scrollToBottom, 100);
+    setTimeout(() => {
+      if (firstUnreadAgentMessageIndex !== -1 && newMessagesRef.current) {
+        // Scroll to new messages divider
+        newMessagesRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        // All messages are read, scroll to bottom
+        scrollToBottom();
+      }
+
+      // Start timer to mark messages as read
+      markReadTimerRef.current = setTimeout(() => {
+        markAgentMessagesAsRead();
+      }, 2000);
+    }, 100);
+
+    return () => {
+      if (markReadTimerRef.current) {
+        clearTimeout(markReadTimerRef.current);
+      }
+    };
   }, [thread.id]); // Trigger when thread ID changes
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (markReadTimerRef.current) {
+        clearTimeout(markReadTimerRef.current);
+      }
+    };
+  }, []);
+
+  const markAgentMessagesAsRead = () => {
+    if (hasMarkedAsRead) return;
+
+    const unreadAgentMessages = thread.messages.filter(
+      (msg) => msg.flow === "Outgoing" && !msg.read
+    );
+
+    unreadAgentMessages.forEach((msg) => {
+      dispatch(
+        markMessageRead({
+          threadId: thread.id,
+          messageId: msg.id,
+        })
+      );
+    });
+
+    setHasMarkedAsRead(true);
+  };
 
   const handleSendMessage = () => {
     if (newMessage.trim() && thread) {
@@ -100,6 +163,27 @@ export function MessageThread({
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSendMessage();
+    }
+  };
+
+  // Check if user is at bottom of scroll
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 10;
+
+    // If at bottom (100% scroll), start timer to mark messages as read
+    if (isAtBottom && !hasMarkedAsRead) {
+      // Clear any existing timer
+      if (markReadTimerRef.current) {
+        clearTimeout(markReadTimerRef.current);
+      }
+      
+      // Set new timer
+      markReadTimerRef.current = setTimeout(() => {
+        markAgentMessagesAsRead();
+      }, 2000);
     }
   };
 
@@ -303,6 +387,7 @@ export function MessageThread({
       <div
         className="flex-1 overflow-y-auto bg-gray-50"
         ref={scrollContainerRef}
+        onScroll={handleScroll}
       >
         <div className="px-6 py-4 space-y-6">
           {!thread.messages || thread.messages.length === 0 ? (
@@ -325,7 +410,7 @@ export function MessageThread({
             </div>
           ) : (
             <>
-              {thread.messages.map((message: Message) => {
+              {thread.messages.map((message: Message, index: number) => {
                 const isFromAgent = message.flow === "Outgoing";
                 const sender = isFromAgent
                   ? agent.name || "Agent"
@@ -344,6 +429,17 @@ export function MessageThread({
                 );
 
                 return (
+                  <>
+                    {/* New Messages Divider */}
+                    {index === firstUnreadAgentMessageIndex && (
+                      <div ref={newMessagesRef} className="flex items-center my-4">
+                        <div className="flex-1 border-t border-red-400"></div>
+                        <span className="px-3 text-xs font-medium text-red-500">
+                          NEW MESSAGES
+                        </span>
+                        <div className="flex-1 border-t border-red-400"></div>
+                      </div>
+                    )}
                   <div
                     key={message.id}
                     className={`flex ${isFromAgent ? "justify-start" : "justify-end"}`}
@@ -383,6 +479,7 @@ export function MessageThread({
                       </div>
                     </div>
                   </div>
+                  </>
                 );
               })}
 
