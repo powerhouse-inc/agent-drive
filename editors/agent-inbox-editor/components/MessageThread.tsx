@@ -94,8 +94,8 @@ export function MessageThread({
     // Small delay to ensure DOM is updated
     setTimeout(() => {
       if (firstUnreadAgentMessageIndex !== -1 && newMessagesRef.current) {
-        // Scroll to new messages divider
-        newMessagesRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Scroll to new messages divider - position at top of view
+        newMessagesRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
         // All messages are read, scroll to bottom
         scrollToBottom();
