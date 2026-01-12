@@ -1,8 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
-import { sendStakeholderMessage } from "../../../document-models/agent-inbox/gen/creators.js";
+import {
+  sendStakeholderMessage,
+  setThreadTopic,
+} from "../../../document-models/agent-inbox/gen/creators.js";
 
 interface Message {
   id: string;
@@ -49,8 +52,11 @@ export function MessageThread({
 }: MessageThreadProps) {
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isEditingTopic, setIsEditingTopic] = useState(false);
+  const [tempTopic, setTempTopic] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const topicInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
@@ -58,6 +64,12 @@ export function MessageThread({
         scrollContainerRef.current.scrollHeight;
     }
   };
+
+  // Scroll to bottom when thread changes or when first loaded
+  useEffect(() => {
+    // Small delay to ensure DOM is updated
+    setTimeout(scrollToBottom, 100);
+  }, [thread.id]); // Trigger when thread ID changes
 
   const handleSendMessage = () => {
     if (newMessage.trim() && thread) {
@@ -80,6 +92,41 @@ export function MessageThread({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
+    }
+  };
+
+  const handleStartEditTopic = () => {
+    setTempTopic(thread.topic || "");
+    setIsEditingTopic(true);
+    setTimeout(() => {
+      if (topicInputRef.current) {
+        topicInputRef.current.focus();
+        topicInputRef.current.select();
+      }
+    }, 0);
+  };
+
+  const handleSaveTopic = () => {
+    dispatch(
+      setThreadTopic({
+        id: thread.id,
+        topic: tempTopic.trim() || undefined,
+      }),
+    );
+    setIsEditingTopic(false);
+  };
+
+  const handleCancelEditTopic = () => {
+    setIsEditingTopic(false);
+    setTempTopic("");
+  };
+
+  const handleTopicKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSaveTopic();
+    } else if (e.key === "Escape") {
+      handleCancelEditTopic();
     }
   };
 
@@ -124,24 +171,27 @@ export function MessageThread({
     <div className="flex flex-col h-full overflow-hidden">
       {/* Thread Header - Fixed */}
       <div className="px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
-            <img
-              src={
-                stakeholder.avatar ||
-                `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
-              }
-              alt={stakeholder.name}
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {stakeholder.name}
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            {isEditingTopic ? (
+              <input
+                ref={topicInputRef}
+                type="text"
+                value={tempTopic}
+                onChange={(e) => setTempTopic(e.target.value)}
+                onBlur={handleSaveTopic}
+                onKeyDown={handleTopicKeyDown}
+                placeholder="Enter topic..."
+                className="text-lg font-semibold text-gray-900 bg-gray-50 px-3 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full max-w-lg"
+              />
+            ) : (
+              <h2
+                className="text-lg font-semibold text-gray-900 cursor-pointer hover:bg-gray-50 px-3 py-1 -ml-3 rounded inline-block"
+                onClick={handleStartEditTopic}
+              >
+                {thread.topic || "Click to add topic"}
               </h2>
-              <p className="text-sm text-gray-600">
-                {thread.topic || "No topic"}
-              </p>
-            </div>
+            )}
           </div>
           <div className="flex items-center space-x-2">
             {getStatusActions()}
@@ -288,31 +338,45 @@ export function MessageThread({
 
       {/* Message Input - Fixed at bottom */}
       <div className="px-6 py-4 border-t border-gray-200 bg-white flex-shrink-0">
-        <div className="flex items-end space-x-3">
-          <textarea
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            onFocus={() => {
-              setIsTyping(false);
-              scrollToBottom();
-            }}
-            placeholder="Type a message..."
-            className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={2}
+        <div className="flex items-center space-x-3">
+          {/* Stakeholder Avatar */}
+          <img
+            src={
+              stakeholder.avatar ||
+              `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
+            }
+            alt={stakeholder.name}
+            className="w-10 h-10 rounded-full flex-shrink-0"
           />
 
-          <button
-            onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
-            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-              newMessage.trim()
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-100 text-gray-400 cursor-not-allowed"
-            }`}
-          >
-            Send
-          </button>
+          {/* Message Input */}
+          <div className="flex-1 flex items-stretch space-x-3">
+            <textarea
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              onFocus={() => {
+                setIsTyping(false);
+                scrollToBottom();
+              }}
+              placeholder="Type a message..."
+              className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={3}
+              style={{ minHeight: "60px" }}
+            />
+
+            <button
+              onClick={handleSendMessage}
+              disabled={!newMessage.trim()}
+              className={`px-5 py-3 text-sm font-medium rounded-lg transition-colors self-stretch ${
+                newMessage.trim()
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              Send
+            </button>
+          </div>
         </div>
 
         <div className="mt-2 text-xs text-gray-500 text-right">
