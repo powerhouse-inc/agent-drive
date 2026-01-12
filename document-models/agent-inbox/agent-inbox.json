@@ -322,12 +322,19 @@
                                     "id": "thread-not-found-3",
                                     "name": "ThreadNotFoundError",
                                     "template": ""
+                                },
+                                {
+                                    "code": "STAKEHOLDER_REMOVED",
+                                    "description": "The stakeholder has been removed and cannot send messages",
+                                    "id": "removed-stakeholder-error",
+                                    "name": "StakeholderRemovedError",
+                                    "template": ""
                                 }
                             ],
                             "examples": [],
                             "id": "37b96297-dfaa-4904-a11c-f0b09671bef1",
                             "name": "SEND_STAKEHOLDER_MESSAGE",
-                            "reducer": "const thread = state.threads.find(t => t.id === action.input.threadId);\nif (!thread) {\n    throw new ThreadNotFoundError(`Thread with ID ${action.input.threadId} not found`);\n}\n\nconst newMessage = {\n    id: action.input.messageId,\n    flow: \"Incoming\" as const,\n    when: action.input.when,\n    content: action.input.content,\n    read: false\n};\n\nthread.messages.push(newMessage);",
+                            "reducer": "const thread = state.threads.find(t => t.id === action.input.threadId);\nif (!thread) {\n    throw new ThreadNotFoundError(`Thread with ID ${action.input.threadId} not found`);\n}\n\n// Check if the stakeholder associated with this thread is removed\nconst stakeholder = state.stakeholders.find(s => s.id === thread.stakeholder);\nif (!stakeholder) {\n    throw new StakeholderNotFoundError(`Stakeholder for thread ${action.input.threadId} not found`);\n}\n\nif (stakeholder.removed) {\n    throw new StakeholderRemovedError(`Stakeholder ${stakeholder.name} has been removed and cannot send messages`);\n}\n\nconst newMessage = {\n    id: action.input.messageId,\n    flow: \"Incoming\" as const,\n    when: action.input.when,\n    content: action.input.content,\n    read: false\n};\n\nthread.messages.push(newMessage);",
                             "schema": "input SendStakeholderMessageInput {\n  \"\"\"ID of the thread to send the message to\"\"\"\n  threadId: OID!\n  \"\"\"Unique identifier for the new message\"\"\"\n  messageId: OID!\n  \"\"\"Timestamp when the message is being sent\"\"\"\n  when: DateTime!\n  \"\"\"The message text content\"\"\"\n  content: String!\n}",
                             "scope": "global",
                             "template": ""

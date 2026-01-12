@@ -2,6 +2,7 @@ import {
   StakeholderNotFoundError,
   ThreadNotFoundError,
   MessageNotFoundError,
+  StakeholderRemovedError,
 } from "../../gen/threads/error.js";
 import type { AgentInboxThreadsOperations } from "powerhouse-agent/document-models/agent-inbox";
 
@@ -122,6 +123,22 @@ export const agentInboxThreadsOperations: AgentInboxThreadsOperations = {
     if (!thread) {
       throw new ThreadNotFoundError(
         `Thread with ID ${action.input.threadId} not found`,
+      );
+    }
+
+    // Check if the stakeholder associated with this thread is removed
+    const stakeholder = state.stakeholders.find(
+      (s) => s.id === thread.stakeholder,
+    );
+    if (!stakeholder) {
+      throw new StakeholderNotFoundError(
+        `Stakeholder for thread ${action.input.threadId} not found`,
+      );
+    }
+
+    if (stakeholder.removed) {
+      throw new StakeholderRemovedError(
+        `Stakeholder ${stakeholder.name} has been removed and cannot send messages`,
       );
     }
 

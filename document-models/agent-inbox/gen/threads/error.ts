@@ -1,7 +1,8 @@
 export type ErrorCode =
   | "StakeholderNotFoundError"
   | "ThreadNotFoundError"
-  | "MessageNotFoundError";
+  | "MessageNotFoundError"
+  | "StakeholderRemovedError";
 
 export interface ReducerError {
   errorCode: ErrorCode;
@@ -28,6 +29,13 @@ export class MessageNotFoundError extends Error implements ReducerError {
   }
 }
 
+export class StakeholderRemovedError extends Error implements ReducerError {
+  errorCode = "StakeholderRemovedError" as ErrorCode;
+  constructor(message = "StakeholderRemovedError") {
+    super(message);
+  }
+}
+
 export const errors = {
   CreateThread: {
     StakeholderNotFoundError,
@@ -49,5 +57,6 @@ export const errors = {
   },
   SendStakeholderMessage: {
     ThreadNotFoundError,
+    StakeholderRemovedError,
   },
 };
