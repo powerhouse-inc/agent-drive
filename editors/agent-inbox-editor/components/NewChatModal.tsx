@@ -199,7 +199,7 @@ export function NewChatModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={handleBackdropClick}
     >
       <div
@@ -275,7 +275,14 @@ export function NewChatModal({
                   {filteredStakeholders.map((stakeholder) => (
                     <div
                       key={stakeholder.id}
-                      className={`p-3 rounded-lg border transition-colors ${
+                      onClick={(e) => {
+                        // Only select if not clicking on edit/delete buttons
+                        const target = e.target as HTMLElement;
+                        if (!target.closest('button')) {
+                          setSelectedStakeholderId(stakeholder.id);
+                        }
+                      }}
+                      className={`p-3 rounded-lg border transition-colors cursor-pointer ${
                         selectedStakeholderId === stakeholder.id
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
@@ -290,7 +297,7 @@ export function NewChatModal({
                           onChange={() =>
                             setSelectedStakeholderId(stakeholder.id)
                           }
-                          className="text-blue-600"
+                          className="text-blue-600 pointer-events-none"
                         />
 
                         {/* Avatar */}
@@ -364,13 +371,14 @@ export function NewChatModal({
                         {/* Actions */}
                         <div className="flex items-center space-x-1">
                           <button
-                            onClick={() =>
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setEditingStakeholderId(
                                 editingStakeholderId === stakeholder.id
                                   ? null
                                   : stakeholder.id,
-                              )
-                            }
+                              );
+                            }}
                             className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
                             title="Edit"
                           >
@@ -389,9 +397,10 @@ export function NewChatModal({
                             </svg>
                           </button>
                           <button
-                            onClick={() =>
-                              handleRemoveStakeholder(stakeholder.id)
-                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveStakeholder(stakeholder.id);
+                            }}
                             className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded"
                             title="Remove"
                           >
