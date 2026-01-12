@@ -597,7 +597,7 @@ export function MessageThread({
                 setIsTyping(false);
                 scrollToBottom();
               }}
-              placeholder="Type a message..."
+              placeholder={`Leave a stakeholder message for ${agent.name || "the agent"}...`}
               className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={3}
               style={{ minHeight: "60px" }}
