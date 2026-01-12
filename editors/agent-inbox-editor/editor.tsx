@@ -123,7 +123,6 @@ export default function Editor() {
                   agent={agent}
                   dispatch={dispatch}
                   onCollapse={() => setIsLeftColumnCollapsed(true)}
-                  onNewChat={() => setIsNewChatModalOpen(true)}
                 />
               </div>
 
@@ -194,6 +193,29 @@ export default function Editor() {
                   selectedThreadId={selectedThreadId}
                   onThreadSelect={setSelectedThreadId}
                 />
+              </div>
+
+              {/* Footer with New Chat button */}
+              <div className="p-4 border-t border-gray-200 flex-shrink-0">
+                <button
+                  onClick={() => setIsNewChatModalOpen(true)}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span>New Chat</span>
+                </button>
               </div>
             </div>
           )}

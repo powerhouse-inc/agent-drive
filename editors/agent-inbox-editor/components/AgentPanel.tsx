@@ -19,15 +19,9 @@ interface AgentPanelProps {
   };
   dispatch: DocumentDispatch<AgentInboxAction>;
   onCollapse?: () => void;
-  onNewChat?: () => void;
 }
 
-export function AgentPanel({
-  agent,
-  dispatch,
-  onCollapse,
-  onNewChat,
-}: AgentPanelProps) {
+export function AgentPanel({ agent, dispatch, onCollapse }: AgentPanelProps) {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [tempValue, setTempValue] = useState("");
   const [showAvatarPopover, setShowAvatarPopover] = useState(false);
@@ -216,14 +210,14 @@ export function AgentPanel({
           )}
         </div>
 
-        <div className="flex items-center space-x-2">
+        {onCollapse && (
           <button
-            onClick={onNewChat}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-            title="New Chat"
+            onClick={onCollapse}
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            title="Collapse sidebar"
           >
             <svg
-              className="w-4 h-4"
+              className="w-5 h-5 text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -232,33 +226,11 @@ export function AgentPanel({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
               />
             </svg>
-            <span>New Chat</span>
           </button>
-          {onCollapse && (
-            <button
-              onClick={onCollapse}
-              className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-              title="Collapse sidebar"
-            >
-              <svg
-                className="w-5 h-5 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                />
-              </svg>
-            </button>
-          )}
-        </div>
+        )}
       </div>
 
       <div className="mt-3 space-y-2">
