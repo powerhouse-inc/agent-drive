@@ -46,6 +46,7 @@ export default function Editor() {
       ...thread,
       stakeholderId: thread.stakeholder,
       stakeholderName: stakeholder?.name || "Unknown",
+      stakeholderRemoved: stakeholder?.removed || false,
       lastMessage: lastMessage?.content || "",
       lastMessageTime: lastMessage
         ? new Date(lastMessage.when).toLocaleString()

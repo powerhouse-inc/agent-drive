@@ -59,6 +59,7 @@ export function MessageThread({
   isCollapsed,
   onExpand,
 }: MessageThreadProps) {
+  const isStakeholderRemoved = stakeholder.removed;
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isEditingTopic, setIsEditingTopic] = useState(false);
@@ -150,7 +151,7 @@ export function MessageThread({
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim() && thread) {
+    if (newMessage.trim() && thread && !isStakeholderRemoved) {
       // Dispatch stakeholder message (simulating stakeholder sending a message)
       dispatch(
         sendStakeholderMessage({
@@ -576,50 +577,74 @@ export function MessageThread({
 
       {/* Message Input - Fixed at bottom */}
       <div className="px-6 py-4 border-t border-gray-200 bg-white flex-shrink-0">
-        <div className="flex items-center space-x-3">
-          {/* Stakeholder Avatar */}
-          <img
-            src={
-              stakeholder.avatar ||
-              `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
-            }
-            alt={stakeholder.name}
-            className="w-12 h-12 rounded-full flex-shrink-0"
-          />
-
-          {/* Message Input */}
-          <div className="flex-1 flex items-stretch space-x-3">
-            <textarea
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              onFocus={() => {
-                setIsTyping(false);
-                scrollToBottom();
-              }}
-              placeholder={`Leave a stakeholder message for ${agent.name || "the agent"}...`}
-              className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={3}
-              style={{ minHeight: "60px" }}
-            />
-
-            <button
-              onClick={handleSendMessage}
-              disabled={!newMessage.trim()}
-              className={`px-5 py-3 text-sm font-medium rounded-lg transition-colors self-stretch ${
-                newMessage.trim()
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
-              }`}
+        {isStakeholderRemoved ? (
+          <div className="flex items-center justify-center py-2 text-gray-500">
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Send
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+              />
+            </svg>
+            <span className="text-sm font-medium">
+              This stakeholder has been removed and cannot send messages
+            </span>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="flex items-center space-x-3">
+              {/* Stakeholder Avatar */}
+              <img
+                src={
+                  stakeholder.avatar ||
+                  `https://api.dicebear.com/7.x/initials/svg?seed=${stakeholder.name}`
+                }
+                alt={stakeholder.name}
+                className="w-12 h-12 rounded-full flex-shrink-0"
+              />
 
-        <div className="mt-2 text-xs text-gray-500 text-right">
-          <span>Press Ctrl+Enter to send</span>
-        </div>
+              {/* Message Input */}
+              <div className="flex-1 flex items-stretch space-x-3">
+                <textarea
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  onFocus={() => {
+                    setIsTyping(false);
+                    scrollToBottom();
+                  }}
+                  placeholder={`Leave a stakeholder message for ${agent.name || "the agent"}...`}
+                  className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  style={{ minHeight: "60px" }}
+                  disabled={isStakeholderRemoved}
+                />
+
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!newMessage.trim() || isStakeholderRemoved}
+                  className={`px-5 py-3 text-sm font-medium rounded-lg transition-colors self-stretch ${
+                    newMessage.trim() && !isStakeholderRemoved
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-2 text-xs text-gray-500 text-right">
+              <span>Press Ctrl+Enter to send</span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ interface Thread {
   id: string;
   stakeholderId: string;
   stakeholderName: string;
+  stakeholderRemoved?: boolean;
   topic: string | null;
   status: string;
   lastMessage: string;
@@ -83,9 +84,16 @@ export function ThreadsList({
               <div className="flex items-start justify-between mb-1">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2">
-                    <h3 className="text-sm font-semibold text-gray-900 truncate">
+                    <h3 className={`text-sm font-semibold truncate ${
+                      thread.stakeholderRemoved ? "text-gray-500 line-through" : "text-gray-900"
+                    }`}>
                       {thread.stakeholderName}
                     </h3>
+                    {thread.stakeholderRemoved && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium text-red-700 bg-red-100 rounded">
+                        Removed
+                      </span>
+                    )}
                     {thread.unreadCount > 0 && (
                       <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-blue-500 rounded-full">
                         {thread.unreadCount}
