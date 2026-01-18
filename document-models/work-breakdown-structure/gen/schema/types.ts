@@ -96,7 +96,7 @@ export type CreateGoalInput = {
   id: Scalars["OID"]["input"];
   initialNote?: InputMaybe<InitialNoteInput>;
   insertBefore?: InputMaybe<Scalars["OID"]["input"]>;
-  instructions?: InputMaybe<Scalars["String"]["input"]>;
+  instructions?: InputMaybe<InitialInstructionsInput>;
   metaData?: InputMaybe<MetaDataInput>;
   parentId?: InputMaybe<Scalars["OID"]["input"]>;
 };
@@ -115,7 +115,7 @@ export type Goal = {
   isDraft: Scalars["Boolean"]["output"];
   notes: Array<Note>;
   parentId: Maybe<Scalars["OID"]["output"]>;
-  status: GoalStatus;
+  status: GoalStatus | `${GoalStatus}`;
 };
 
 export type GoalInstructions = {
@@ -142,6 +142,14 @@ export type InProgressNoteInput = {
   author?: InputMaybe<Scalars["String"]["input"]>;
   id: Scalars["OID"]["input"];
   note: Scalars["String"]["input"];
+};
+
+export type InitialInstructionsInput = {
+  comments: Scalars["String"]["input"];
+  contextJSON?: InputMaybe<Scalars["String"]["input"]>;
+  scenarioId?: InputMaybe<Scalars["String"]["input"]>;
+  skillId?: InputMaybe<Scalars["String"]["input"]>;
+  taskId?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type InitialNoteInput = {
@@ -187,14 +195,14 @@ export type MarkWontDoInput = {
 
 export type MetaData = {
   data: Scalars["String"]["output"];
-  format: MetaDataFormat;
+  format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
 export type MetaDataFormat = "JSON" | "OTHER" | "TEXT";
 
 export type MetaDataInput = {
   data?: InputMaybe<Scalars["String"]["input"]>;
-  format?: InputMaybe<MetaDataFormat>;
+  format?: InputMaybe<MetaDataFormat | `${MetaDataFormat}`>;
 };
 
 export type Note = {
@@ -240,7 +248,7 @@ export type ReportOnGoalInput = {
 
 export type SetMetaDataInput = {
   data: Scalars["String"]["input"];
-  format: MetaDataFormat;
+  format: MetaDataFormat | `${MetaDataFormat}`;
 };
 
 export type SetOwnerInput = {

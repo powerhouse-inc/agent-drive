@@ -39,7 +39,13 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Build a house",
-          instructions: "Step by step instructions",
+          instructions: {
+            comments: "Step by step instructions",
+            skillId: undefined,
+            scenarioId: undefined,
+            taskId: undefined,
+            contextJSON: undefined,
+          },
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -57,7 +63,13 @@ describe("Workflow Operations", () => {
       expect(goal.status).toBe("TODO");
       expect(goal.parentId).toBeNull();
       expect(goal.assignee).toBeNull();
-      expect(goal.instructions).toBe("Step by step instructions");
+      expect(goal.instructions).toEqual({
+        comments: "Step by step instructions",
+        skillId: null,
+        scenarioId: null,
+        taskId: null,
+        context: null,
+      });
       expect(goal.isDraft).toBe(false);
       expect(goal.dependencies).toEqual([]);
       expect(goal.notes).toEqual([]);
@@ -71,7 +83,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Design the architecture",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -96,7 +108,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -113,7 +125,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -140,7 +152,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal with note",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -171,7 +183,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "First goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -187,7 +199,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Second goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -204,7 +216,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-3",
           description: "Dependent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -230,7 +242,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "First goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -246,7 +258,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-3",
           description: "Third goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -263,7 +275,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Second goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: "goal-3",
@@ -288,7 +300,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Draft goal",
-          instructions: null,
+          instructions: undefined,
           draft: true,
           parentId: null,
           insertBefore: null,
@@ -312,7 +324,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "root-1",
           description: "Root goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -329,7 +341,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child of root",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "root-1",
           insertBefore: null,
@@ -346,7 +358,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "grandchild-1",
           description: "Grandchild of root",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "child-1",
           insertBefore: null,
@@ -386,7 +398,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "First goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -405,7 +417,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1", // Same ID as the first goal
           description: "Second goal with same ID",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -443,7 +455,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "First goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -460,7 +472,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-2", // Different ID
           description: "Second goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -487,7 +499,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -520,7 +532,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -559,7 +571,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -575,7 +587,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -615,7 +627,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "grandparent-1",
           description: "Grandparent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -631,7 +643,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "grandparent-1",
           insertBefore: null,
@@ -647,7 +659,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -691,7 +703,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -707,7 +719,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "First child",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -723,7 +735,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-2",
           description: "Second child",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -772,7 +784,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -788,7 +800,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -847,7 +859,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -863,7 +875,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -947,7 +959,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -980,7 +992,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1020,7 +1032,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1036,7 +1048,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1052,7 +1064,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-2",
           description: "Child goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1096,7 +1108,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "root-1",
           description: "Root goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1112,7 +1124,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "root-1",
           insertBefore: null,
@@ -1128,7 +1140,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "grandchild-1",
           description: "Grandchild goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "child-1",
           insertBefore: null,
@@ -1172,7 +1184,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1188,7 +1200,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1245,7 +1257,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1261,7 +1273,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Will complete",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1277,7 +1289,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-2",
           description: "Won't do this",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1326,7 +1338,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1368,7 +1380,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1415,7 +1427,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1431,7 +1443,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1481,7 +1493,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1497,7 +1509,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1539,7 +1551,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1555,7 +1567,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1604,7 +1616,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1636,7 +1648,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1652,7 +1664,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1668,7 +1680,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-2",
           description: "Child goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1711,7 +1723,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1727,7 +1739,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Completed child",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1743,7 +1755,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-2",
           description: "Unfinished child",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1794,7 +1806,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "root-1",
           description: "Root goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1810,7 +1822,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "root-1",
           insertBefore: null,
@@ -1826,7 +1838,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "grandchild-1",
           description: "Grandchild goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "child-1",
           insertBefore: null,
@@ -1871,7 +1883,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1905,7 +1917,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -1921,7 +1933,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -1983,7 +1995,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2025,7 +2037,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2066,7 +2078,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2106,7 +2118,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2182,7 +2194,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2226,7 +2238,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2242,7 +2254,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2306,7 +2318,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2361,7 +2373,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2377,7 +2389,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -2456,7 +2468,7 @@ describe("Workflow Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,

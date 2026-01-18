@@ -30,15 +30,15 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         dependencies: action.input.dependsOn || [],
         isDraft: action.input.draft || false,
         instructions: action.input.instructions
-          ? typeof action.input.instructions === "string"
-            ? {
-                comments: action.input.instructions,
-                skillId: null,
-                scenarioId: null,
-                taskId: null,
-                context: null,
-              }
-            : action.input.instructions
+          ? {
+              comments: action.input.instructions.comments,
+              skillId: action.input.instructions.skillId || null,
+              scenarioId: action.input.instructions.scenarioId || null,
+              taskId: action.input.instructions.taskId || null,
+              context: action.input.instructions.contextJSON
+                ? { format: "JSON", data: action.input.instructions.contextJSON }
+                : null,
+            }
           : null,
         notes: [] as Note[],
         assignee: action.input.assignee || null,

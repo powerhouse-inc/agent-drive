@@ -210,7 +210,7 @@ export const schema: DocumentNode = gql`
   input WorkBreakdownStructure_CreateGoalInput {
     id: OID!
     description: String!
-    instructions: String
+    instructions: WorkBreakdownStructure_InitialInstructionsInput
     draft: Boolean
     parentId: OID
     insertBefore: OID
@@ -218,6 +218,14 @@ export const schema: DocumentNode = gql`
     dependsOn: [OID!]
     initialNote: WorkBreakdownStructure_InitialNoteInput
     metaData: WorkBreakdownStructure_MetaDataInput
+  }
+
+  input WorkBreakdownStructure_InitialInstructionsInput {
+    comments: String!
+    skillId: String
+    scenarioId: String
+    taskId: String
+    contextJSON: String
   }
 
   input WorkBreakdownStructure_InitialNoteInput {

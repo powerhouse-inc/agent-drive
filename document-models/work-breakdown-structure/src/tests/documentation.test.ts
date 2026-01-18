@@ -29,7 +29,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Original description",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -80,7 +80,13 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: "Original instructions",
+          instructions: {
+            comments: "Original instructions",
+            skillId: undefined,
+            scenarioId: undefined,
+            taskId: undefined,
+            contextJSON: undefined,
+          },
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -125,7 +131,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -172,7 +178,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -210,7 +216,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -260,7 +266,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -309,7 +315,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -345,7 +351,13 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: "Some instructions",
+          instructions: {
+            comments: "Some instructions",
+            skillId: undefined,
+            scenarioId: undefined,
+            taskId: undefined,
+            contextJSON: undefined,
+          },
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -379,7 +391,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -438,7 +450,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -472,7 +484,7 @@ describe("Documentation Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Test goal",
-          instructions: null,
+          instructions: undefined,
           draft: true,
           parentId: null,
           insertBefore: null,

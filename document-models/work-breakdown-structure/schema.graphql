@@ -154,7 +154,7 @@ input RemoveDependenciesInput {
 input CreateGoalInput {
   id: OID!
   description: String!
-  instructions: String
+  instructions: InitialInstructionsInput
   draft: Boolean
   parentId: OID
   insertBefore: OID
@@ -162,6 +162,14 @@ input CreateGoalInput {
   dependsOn: [OID!]
   initialNote: InitialNoteInput
   metaData: MetaDataInput
+}
+
+input InitialInstructionsInput {
+  comments: String!
+  skillId: String
+  scenarioId: String
+  taskId: String
+  contextJSON: String
 }
 
 input InitialNoteInput {

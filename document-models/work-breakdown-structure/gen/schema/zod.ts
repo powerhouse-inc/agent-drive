@@ -12,6 +12,7 @@ import type {
   GoalInstructions,
   GoalStatus,
   InProgressNoteInput,
+  InitialInstructionsInput,
   InitialNoteInput,
   InstructionsUpdate,
   MarkAsDraftInput,
@@ -131,7 +132,7 @@ export function CreateGoalInputSchema(): z.ZodObject<
     id: z.string(),
     initialNote: z.lazy(() => InitialNoteInputSchema().nullish()),
     insertBefore: z.string().nullish(),
-    instructions: z.string().nullish(),
+    instructions: z.lazy(() => InitialInstructionsInputSchema().nullish()),
     metaData: z.lazy(() => MetaDataInputSchema().nullish()),
     parentId: z.string().nullish(),
   });
@@ -181,6 +182,18 @@ export function InProgressNoteInputSchema(): z.ZodObject<
     author: z.string().nullish(),
     id: z.string(),
     note: z.string(),
+  });
+}
+
+export function InitialInstructionsInputSchema(): z.ZodObject<
+  Properties<InitialInstructionsInput>
+> {
+  return z.object({
+    comments: z.string(),
+    contextJSON: z.string().nullish(),
+    scenarioId: z.string().nullish(),
+    skillId: z.string().nullish(),
+    taskId: z.string().nullish(),
   });
 }
 

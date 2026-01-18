@@ -29,7 +29,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -45,7 +45,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "parent-2",
           description: "Parent 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -62,7 +62,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -98,7 +98,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -114,7 +114,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -150,7 +150,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -166,7 +166,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -182,7 +182,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-3",
           description: "Goal 3",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -217,7 +217,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -233,7 +233,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -249,7 +249,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "grandchild-1",
           description: "Grandchild 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "child-1",
           insertBefore: null,
@@ -313,7 +313,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -358,7 +358,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -374,7 +374,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -390,7 +390,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-3",
           description: "Goal 3",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -427,7 +427,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -443,7 +443,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -479,7 +479,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "parent-1",
           description: "Parent 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -495,7 +495,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "child-1",
           description: "Child 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: "parent-1",
           insertBefore: null,
@@ -535,7 +535,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -575,7 +575,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -619,7 +619,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -635,7 +635,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -651,7 +651,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-3",
           description: "Goal 3",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -688,7 +688,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -704,7 +704,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -720,7 +720,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-3",
           description: "Goal 3",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -755,7 +755,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-1",
           description: "Goal 1",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
@@ -771,7 +771,7 @@ describe("Hierarchy Operations", () => {
         createGoal({
           id: "goal-2",
           description: "Goal 2",
-          instructions: null,
+          instructions: undefined,
           draft: false,
           parentId: null,
           insertBefore: null,
