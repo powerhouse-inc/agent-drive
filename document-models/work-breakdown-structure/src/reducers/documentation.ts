@@ -21,8 +21,16 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
         throw new Error(`Goal with ID ${action.input.goalId} not found`);
       }
 
-      // Update instructions field
-      goal.instructions = action.input.instructions;
+      // Update instructions field with the new GoalInstructions structure
+      goal.instructions = {
+        comments: action.input.instructions.comments,
+        skillId: action.input.instructions.skillId || null,
+        scenarioId: action.input.instructions.scenarioId || null,
+        taskId: action.input.instructions.taskId || null,
+        context: action.input.instructions.contextJSON
+          ? { format: "JSON", data: action.input.instructions.contextJSON }
+          : null,
+      };
     },
     addNoteOperation(state, action) {
       // Find target goal by ID

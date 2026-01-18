@@ -133,7 +133,7 @@ export function NewChatModal({
     value: string,
   ) => {
     const trimmedValue = value.trim();
-    
+
     switch (field) {
       case "name":
         // Only dispatch if name has changed and is not empty
@@ -291,7 +291,7 @@ export function NewChatModal({
                       onClick={(e) => {
                         // Only select if not clicking on edit/delete buttons
                         const target = e.target as HTMLElement;
-                        if (!target.closest('button')) {
+                        if (!target.closest("button")) {
                           setSelectedStakeholderId(stakeholder.id);
                         }
                       }}
@@ -445,9 +445,7 @@ export function NewChatModal({
                     <input
                       type="text"
                       value={newStakeholderName}
-                      onChange={(e) =>
-                        setNewStakeholderName(e.target.value)
-                      }
+                      onChange={(e) => setNewStakeholderName(e.target.value)}
                       placeholder="Name (required)"
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                       autoFocus
@@ -455,18 +453,14 @@ export function NewChatModal({
                     <input
                       type="text"
                       value={newStakeholderAddress}
-                      onChange={(e) =>
-                        setNewStakeholderAddress(e.target.value)
-                      }
+                      onChange={(e) => setNewStakeholderAddress(e.target.value)}
                       placeholder="ETH Address (optional)"
                       className="w-full px-3 py-2 text-sm font-mono border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                       type="url"
                       value={newStakeholderAvatar}
-                      onChange={(e) =>
-                        setNewStakeholderAvatar(e.target.value)
-                      }
+                      onChange={(e) => setNewStakeholderAvatar(e.target.value)}
                       placeholder="Avatar URL (optional)"
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />

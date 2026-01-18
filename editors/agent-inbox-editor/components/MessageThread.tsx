@@ -81,14 +81,14 @@ export function MessageThread({
 
   // Find first unread agent message (outgoing messages that stakeholder hasn't read)
   const firstUnreadAgentMessageIndex = thread.messages.findIndex(
-    (msg) => msg.flow === "Outgoing" && !msg.read
+    (msg) => msg.flow === "Outgoing" && !msg.read,
   );
 
   // Scroll to appropriate position when thread changes
   useEffect(() => {
     // Reset the marked as read flag when thread changes
     setHasMarkedAsRead(false);
-    
+
     // Clear any existing timer
     if (markReadTimerRef.current) {
       clearTimeout(markReadTimerRef.current);
@@ -96,7 +96,11 @@ export function MessageThread({
 
     // Small delay to ensure DOM is updated
     setTimeout(() => {
-      if (firstUnreadAgentMessageIndex !== -1 && newMessagesRef.current && scrollContainerRef.current) {
+      if (
+        firstUnreadAgentMessageIndex !== -1 &&
+        newMessagesRef.current &&
+        scrollContainerRef.current
+      ) {
         // Calculate position of new messages divider and scroll container to it
         const dividerTop = newMessagesRef.current.offsetTop;
         const containerTop = scrollContainerRef.current.offsetTop;
@@ -133,18 +137,20 @@ export function MessageThread({
 
     // Mark outgoing messages (from agent) as read by the stakeholder
     const unreadAgentMessages = thread.messages.filter(
-      (msg) => msg.flow === "Outgoing" && !msg.read
+      (msg) => msg.flow === "Outgoing" && !msg.read,
     );
 
     if (unreadAgentMessages.length === 0) return;
 
-    console.log(`Marking ${unreadAgentMessages.length} agent messages as read by stakeholder`);
-    
+    console.log(
+      `Marking ${unreadAgentMessages.length} agent messages as read by stakeholder`,
+    );
+
     unreadAgentMessages.forEach((msg) => {
       dispatch(
         markMessageRead({
           id: msg.id,
-        })
+        }),
       );
     });
 
@@ -178,28 +184,33 @@ export function MessageThread({
   // Check if user is at bottom of scroll
   const handleScroll = () => {
     if (!scrollContainerRef.current) return;
-    
-    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+
+    const { scrollTop, scrollHeight, clientHeight } =
+      scrollContainerRef.current;
     const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 10;
 
     // Check if there are unread agent messages (that stakeholder needs to read)
     const hasUnreadAgentMessages = thread.messages.some(
-      (msg) => msg.flow === "Outgoing" && !msg.read
+      (msg) => msg.flow === "Outgoing" && !msg.read,
     );
 
-    console.log('Scroll check:', { isAtBottom, hasUnreadAgentMessages, hasMarkedAsRead });
+    console.log("Scroll check:", {
+      isAtBottom,
+      hasUnreadAgentMessages,
+      hasMarkedAsRead,
+    });
 
     // If at bottom (100% scroll) and there are unread messages, start timer
     if (isAtBottom && hasUnreadAgentMessages && !hasMarkedAsRead) {
-      console.log('Starting 2 second timer to mark messages as read');
+      console.log("Starting 2 second timer to mark messages as read");
       // Clear any existing timer
       if (markReadTimerRef.current) {
         clearTimeout(markReadTimerRef.current);
       }
-      
+
       // Set new timer
       markReadTimerRef.current = setTimeout(() => {
-        console.log('Timer triggered, marking messages as read');
+        console.log("Timer triggered, marking messages as read");
         markAgentMessagesAsRead();
       }, 2000);
     }
@@ -219,7 +230,7 @@ export function MessageThread({
   const handleSaveTopic = () => {
     const newTopic = tempTopic.trim() || undefined;
     const currentTopic = thread.topic || undefined;
-    
+
     // Only dispatch if the topic has actually changed
     if (newTopic !== currentTopic) {
       dispatch(
@@ -456,7 +467,10 @@ export function MessageThread({
                   <>
                     {/* New Messages Divider */}
                     {index === firstUnreadAgentMessageIndex && (
-                      <div ref={newMessagesRef} className="flex items-center my-4">
+                      <div
+                        ref={newMessagesRef}
+                        className="flex items-center my-4"
+                      >
                         <div className="flex-1 border-t border-red-400"></div>
                         <span className="px-3 text-xs font-medium text-red-500">
                           NEW MESSAGES
@@ -464,87 +478,93 @@ export function MessageThread({
                         <div className="flex-1 border-t border-red-400"></div>
                       </div>
                     )}
-                  <div
-                    key={message.id}
-                    className={`flex ${isFromAgent ? "justify-start" : "justify-end"}`}
-                  >
                     <div
-                      className={`flex ${
-                        isFromAgent ? "flex-row" : "flex-row-reverse"
-                      } items-start space-x-1.5 max-w-[75%]`}
+                      key={message.id}
+                      className={`flex ${isFromAgent ? "justify-start" : "justify-end"}`}
                     >
-                      <img
-                        src={avatarUrl}
-                        alt={sender}
-                        className="w-8 h-8 rounded-full flex-shrink-0"
-                      />
                       <div
-                        className={`${isFromAgent ? "ml-1.5 mr-0" : "ml-0 mr-1.5"}`}
+                        className={`flex ${
+                          isFromAgent ? "flex-row" : "flex-row-reverse"
+                        } items-start space-x-1.5 max-w-[75%]`}
                       >
-                        <div className="flex items-baseline space-x-2 mb-1">
-                          <span className="text-sm font-medium text-gray-900">
-                            {sender}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {messageTime}
-                          </span>
-                        </div>
+                        <img
+                          src={avatarUrl}
+                          alt={sender}
+                          className="w-8 h-8 rounded-full flex-shrink-0"
+                        />
                         <div
-                          className={`rounded-lg px-4 py-3 ${
-                            isFromAgent
-                              ? "bg-blue-700"
-                              : "bg-white border border-gray-200"
-                          }`}
+                          className={`${isFromAgent ? "ml-1.5 mr-0" : "ml-0 mr-1.5"}`}
                         >
-                          <p className={`text-sm whitespace-pre-wrap ${
-                            isFromAgent ? "text-white" : "text-gray-900"
-                          }`}>
-                            {message.content}
-                          </p>
-                        </div>
-                        {/* Read/Unread indicator for stakeholder messages */}
-                        {!isFromAgent && (
-                          <div className="flex items-center mt-1">
-                            {message.read ? (
-                              <div className="flex items-center space-x-1">
-                                <svg
-                                  className="w-4 h-4 text-blue-500"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                  />
-                                </svg>
-                                <span className="text-xs text-gray-500">Read</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center space-x-1">
-                                <svg
-                                  className="w-4 h-4 text-gray-400"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                  />
-                                </svg>
-                                <span className="text-xs text-gray-400">Delivered</span>
-                              </div>
-                            )}
+                          <div className="flex items-baseline space-x-2 mb-1">
+                            <span className="text-sm font-medium text-gray-900">
+                              {sender}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {messageTime}
+                            </span>
                           </div>
-                        )}
+                          <div
+                            className={`rounded-lg px-4 py-3 ${
+                              isFromAgent
+                                ? "bg-blue-700"
+                                : "bg-white border border-gray-200"
+                            }`}
+                          >
+                            <p
+                              className={`text-sm whitespace-pre-wrap ${
+                                isFromAgent ? "text-white" : "text-gray-900"
+                              }`}
+                            >
+                              {message.content}
+                            </p>
+                          </div>
+                          {/* Read/Unread indicator for stakeholder messages */}
+                          {!isFromAgent && (
+                            <div className="flex items-center mt-1">
+                              {message.read ? (
+                                <div className="flex items-center space-x-1">
+                                  <svg
+                                    className="w-4 h-4 text-blue-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                  </svg>
+                                  <span className="text-xs text-gray-500">
+                                    Read
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-1">
+                                  <svg
+                                    className="w-4 h-4 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                  </svg>
+                                  <span className="text-xs text-gray-400">
+                                    Delivered
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
                   </>
                 );
               })}

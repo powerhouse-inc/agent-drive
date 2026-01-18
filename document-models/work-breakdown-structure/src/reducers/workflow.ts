@@ -29,7 +29,17 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         parentId: action.input.parentId || null,
         dependencies: action.input.dependsOn || [],
         isDraft: action.input.draft || false,
-        instructions: action.input.instructions || null,
+        instructions: action.input.instructions
+          ? typeof action.input.instructions === "string"
+            ? {
+                comments: action.input.instructions,
+                skillId: null,
+                scenarioId: null,
+                taskId: null,
+                context: null,
+              }
+            : action.input.instructions
+          : null,
         notes: [] as Note[],
         assignee: action.input.assignee || null,
       };

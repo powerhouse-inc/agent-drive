@@ -30,9 +30,17 @@ type Goal {
   dependencies: [OID!]!
   description: String!
   isDraft: Boolean!
-  instructions: String
+  instructions: GoalInstructions
   notes: [Note!]!
   assignee: String
+}
+
+type GoalInstructions {
+  comments: String!
+  skillId: String
+  scenarioId: String
+  taskId: String
+  context: MetaData
 }
 
 type MetaData {
@@ -78,7 +86,15 @@ input UpdateDescriptionInput {
 
 input UpdateInstructionsInput {
   goalId: OID!
-  instructions: String!
+  instructions: InstructionsUpdate!
+}
+
+input InstructionsUpdate {
+  comments: String!
+  skillId: String
+  scenarioId: String
+  taskId: String
+  contextJSON: String
 }
 
 input AddNoteInput {

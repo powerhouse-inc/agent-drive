@@ -96,12 +96,24 @@ describe("Documentation Operations", () => {
         updatedDocument,
         updateInstructions({
           goalId: "goal-1",
-          instructions: "Updated instructions",
+          instructions: {
+            comments: "Updated instructions",
+            skillId: undefined,
+            scenarioId: undefined,
+            taskId: undefined,
+            contextJSON: undefined,
+          },
         }),
       );
 
       const goal = updatedDocument.state.global.goals[0];
-      expect(goal.instructions).toBe("Updated instructions");
+      expect(goal.instructions).toEqual({
+        comments: "Updated instructions",
+        skillId: null,
+        scenarioId: null,
+        taskId: null,
+        context: null,
+      });
     });
 
     it("should set instructions when previously null", () => {
@@ -129,12 +141,24 @@ describe("Documentation Operations", () => {
         updatedDocument,
         updateInstructions({
           goalId: "goal-1",
-          instructions: "New instructions",
+          instructions: {
+            comments: "New instructions",
+            skillId: undefined,
+            scenarioId: undefined,
+            taskId: undefined,
+            contextJSON: undefined,
+          },
         }),
       );
 
       const goal = updatedDocument.state.global.goals[0];
-      expect(goal.instructions).toBe("New instructions");
+      expect(goal.instructions).toEqual({
+        comments: "New instructions",
+        skillId: null,
+        scenarioId: null,
+        taskId: null,
+        context: null,
+      });
     });
   });
 

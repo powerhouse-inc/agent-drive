@@ -51,7 +51,9 @@ export default function Editor() {
       lastMessageTime: lastMessage
         ? new Date(lastMessage.when).toLocaleString()
         : "",
-      unreadCount: thread.messages.filter((m) => m.flow === "Outgoing" && !m.read).length,
+      unreadCount: thread.messages.filter(
+        (m) => m.flow === "Outgoing" && !m.read,
+      ).length,
     };
   });
 
@@ -258,7 +260,7 @@ export default function Editor() {
                     </button>
                   </div>
                 )}
-                
+
                 {/* Empty state content */}
                 <div className="flex-1 flex items-center justify-center text-gray-400">
                   <div className="text-center">

@@ -37,7 +37,7 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const notesListRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
-  const [instructionsValue, setInstructionsValue] = useState("");
+  const [instructionsValue, setInstructionsValue] = useState<string>("");
   const [newNoteValue, setNewNoteValue] = useState("");
 
   // Scroll to bottom of notes list when adding a note
@@ -78,7 +78,13 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   useEffect(() => {
     if (goal) {
       setDescriptionValue(goal.description);
-      setInstructionsValue(goal.instructions || "");
+      setInstructionsValue(
+        goal.instructions
+          ? typeof goal.instructions === "string"
+            ? goal.instructions
+            : goal.instructions.comments || ""
+          : ""
+      );
     }
   }, [goal?.description, goal?.instructions]);
 
@@ -126,12 +132,24 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
 
   const handleInstructionsBlur = () => {
     const newInstructions = instructionsValue.trim();
-    if (newInstructions !== goal.instructions) {
+    const currentInstructions = goal.instructions
+      ? typeof goal.instructions === "string"
+        ? goal.instructions
+        : goal.instructions.comments || ""
+      : "";
+    
+    if (newInstructions !== currentInstructions) {
       if (newInstructions) {
         dispatch(
           updateInstructions({
             goalId: goal.id,
-            instructions: newInstructions,
+            instructions: {
+              comments: newInstructions,
+              skillId: undefined,
+              scenarioId: undefined,
+              taskId: undefined,
+              contextJSON: undefined,
+            },
           }),
         );
       } else {
@@ -147,7 +165,13 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     if (e.key === "Enter" && e.ctrlKey) {
       e.currentTarget.blur(); // Trigger onBlur to save
     } else if (e.key === "Escape") {
-      setInstructionsValue(goal.instructions || ""); // Reset to original
+      setInstructionsValue(
+        goal.instructions
+          ? typeof goal.instructions === "string"
+            ? goal.instructions
+            : goal.instructions.comments || ""
+          : ""
+      ); // Reset to original
       setEditingInstructions(false);
     }
   };
@@ -424,8 +448,11 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
               onClick={() => setEditingInstructions(true)}
               title="Click to edit instructions"
             >
-              {goal.instructions ||
-                "No instructions set. Click to add instructions."}
+              {goal.instructions
+                ? typeof goal.instructions === "string"
+                  ? goal.instructions
+                  : goal.instructions.comments || "No instructions set. Click to add instructions."
+                : "No instructions set. Click to add instructions."}
             </div>
           )}
         </div>

@@ -42,7 +42,7 @@ export const agentInboxStakeholdersOperations: AgentInboxStakeholdersOperations 
       const stakeholderThreads = state.threads.filter(
         (t) => t.stakeholder === action.input.id,
       );
-      
+
       stakeholderThreads.forEach((thread) => {
         thread.status = "Archived";
       });

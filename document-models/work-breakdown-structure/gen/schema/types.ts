@@ -111,11 +111,19 @@ export type Goal = {
   dependencies: Array<Scalars["OID"]["output"]>;
   description: Scalars["String"]["output"];
   id: Scalars["OID"]["output"];
-  instructions: Maybe<Scalars["String"]["output"]>;
+  instructions: Maybe<GoalInstructions>;
   isDraft: Scalars["Boolean"]["output"];
   notes: Array<Note>;
   parentId: Maybe<Scalars["OID"]["output"]>;
-  status: GoalStatus | `${GoalStatus}`;
+  status: GoalStatus;
+};
+
+export type GoalInstructions = {
+  comments: Scalars["String"]["output"];
+  context: Maybe<MetaData>;
+  scenarioId: Maybe<Scalars["String"]["output"]>;
+  skillId: Maybe<Scalars["String"]["output"]>;
+  taskId: Maybe<Scalars["String"]["output"]>;
 };
 
 export type GoalStatus =
@@ -140,6 +148,14 @@ export type InitialNoteInput = {
   author?: InputMaybe<Scalars["String"]["input"]>;
   id: Scalars["OID"]["input"];
   note: Scalars["String"]["input"];
+};
+
+export type InstructionsUpdate = {
+  comments: Scalars["String"]["input"];
+  contextJSON?: InputMaybe<Scalars["String"]["input"]>;
+  scenarioId?: InputMaybe<Scalars["String"]["input"]>;
+  skillId?: InputMaybe<Scalars["String"]["input"]>;
+  taskId?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type MarkAsDraftInput = {
@@ -171,14 +187,14 @@ export type MarkWontDoInput = {
 
 export type MetaData = {
   data: Scalars["String"]["output"];
-  format: MetaDataFormat | `${MetaDataFormat}`;
+  format: MetaDataFormat;
 };
 
 export type MetaDataFormat = "JSON" | "OTHER" | "TEXT";
 
 export type MetaDataInput = {
   data?: InputMaybe<Scalars["String"]["input"]>;
-  format?: InputMaybe<MetaDataFormat | `${MetaDataFormat}`>;
+  format?: InputMaybe<MetaDataFormat>;
 };
 
 export type Note = {
@@ -224,7 +240,7 @@ export type ReportOnGoalInput = {
 
 export type SetMetaDataInput = {
   data: Scalars["String"]["input"];
-  format: MetaDataFormat | `${MetaDataFormat}`;
+  format: MetaDataFormat;
 };
 
 export type SetOwnerInput = {
@@ -259,7 +275,7 @@ export type UpdateDescriptionInput = {
 
 export type UpdateInstructionsInput = {
   goalId: Scalars["OID"]["input"];
-  instructions: Scalars["String"]["input"];
+  instructions: InstructionsUpdate;
 };
 
 export type WorkBreakdownStructureState = {

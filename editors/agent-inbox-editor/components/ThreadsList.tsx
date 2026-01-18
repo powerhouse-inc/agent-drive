@@ -84,9 +84,13 @@ export function ThreadsList({
               <div className="flex items-start justify-between mb-1">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2">
-                    <h3 className={`text-sm font-semibold truncate ${
-                      thread.stakeholderRemoved ? "text-gray-500 line-through" : "text-gray-900"
-                    }`}>
+                    <h3
+                      className={`text-sm font-semibold truncate ${
+                        thread.stakeholderRemoved
+                          ? "text-gray-500 line-through"
+                          : "text-gray-900"
+                      }`}
+                    >
                       {thread.stakeholderName}
                     </h3>
                     {thread.stakeholderRemoved && (

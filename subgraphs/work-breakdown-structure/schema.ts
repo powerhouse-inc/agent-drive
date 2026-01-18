@@ -149,7 +149,15 @@ export const schema: DocumentNode = gql`
   }
   input WorkBreakdownStructure_UpdateInstructionsInput {
     goalId: OID!
-    instructions: String!
+    instructions: WorkBreakdownStructure_InstructionsUpdate!
+  }
+
+  input WorkBreakdownStructure_InstructionsUpdate {
+    comments: String!
+    skillId: String
+    scenarioId: String
+    taskId: String
+    contextJSON: String
   }
   input WorkBreakdownStructure_AddNoteInput {
     goalId: OID!

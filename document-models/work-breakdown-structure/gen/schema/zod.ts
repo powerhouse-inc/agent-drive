@@ -9,9 +9,11 @@ import type {
   CreateGoalInput,
   DelegateGoalInput,
   Goal,
+  GoalInstructions,
   GoalStatus,
   InProgressNoteInput,
   InitialNoteInput,
+  InstructionsUpdate,
   MarkAsDraftInput,
   MarkAsReadyInput,
   MarkCompletedInput,
@@ -151,11 +153,24 @@ export function GoalSchema(): z.ZodObject<Properties<Goal>> {
     dependencies: z.array(z.string()),
     description: z.string(),
     id: z.string(),
-    instructions: z.string().nullable(),
+    instructions: GoalInstructionsSchema().nullable(),
     isDraft: z.boolean(),
     notes: z.array(NoteSchema()),
     parentId: z.string().nullable(),
     status: GoalStatusSchema,
+  });
+}
+
+export function GoalInstructionsSchema(): z.ZodObject<
+  Properties<GoalInstructions>
+> {
+  return z.object({
+    __typename: z.literal("GoalInstructions").optional(),
+    comments: z.string(),
+    context: MetaDataSchema().nullable(),
+    scenarioId: z.string().nullable(),
+    skillId: z.string().nullable(),
+    taskId: z.string().nullable(),
   });
 }
 
@@ -176,6 +191,18 @@ export function InitialNoteInputSchema(): z.ZodObject<
     author: z.string().nullish(),
     id: z.string(),
     note: z.string(),
+  });
+}
+
+export function InstructionsUpdateSchema(): z.ZodObject<
+  Properties<InstructionsUpdate>
+> {
+  return z.object({
+    comments: z.string(),
+    contextJSON: z.string().nullish(),
+    scenarioId: z.string().nullish(),
+    skillId: z.string().nullish(),
+    taskId: z.string().nullish(),
   });
 }
 
@@ -371,7 +398,7 @@ export function UpdateInstructionsInputSchema(): z.ZodObject<
 > {
   return z.object({
     goalId: z.string(),
-    instructions: z.string(),
+    instructions: InstructionsUpdateSchema(),
   });
 }
 
