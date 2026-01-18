@@ -21,12 +21,58 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
         throw new Error(`Goal with ID ${action.input.goalId} not found`);
       }
 
+      // Helper function to determine work type from ID pattern
+      function getWorkTypeFromId(
+        id: string,
+      ): "SKILL" | "SCENARIO" | "TASK" | null {
+        if (!id) return null;
+
+        // Check if it's a skill (just words, no dots)
+        if (!/\./.test(id)) {
+          return "SKILL";
+        }
+
+        // Check if it's a scenario (skillId.XY pattern)
+        if (/^[^.]+\.[A-Z0-9]{2,}$/i.test(id)) {
+          return "SCENARIO";
+        }
+
+        // Check if it's a task (skillId.XY.numbers pattern)
+        if (/^[^.]+\.[A-Z0-9]{2,}\.[0-9.]+$/i.test(id)) {
+          return "TASK";
+        }
+
+        // Invalid format
+        throw new Error(
+          `Invalid work ID format: ${id}. Expected formats: 'skill' for skills, 'skill.XY' for scenarios, 'skill.XY.123' for tasks`,
+        );
+      }
+
+      // Validate workType matches workId pattern if both are provided
+      if (
+        action.input.instructions.workId &&
+        action.input.instructions.workType
+      ) {
+        const derivedType = getWorkTypeFromId(action.input.instructions.workId);
+        if (derivedType !== action.input.instructions.workType) {
+          throw new Error(
+            `Work type '${action.input.instructions.workType}' doesn't match ID pattern '${action.input.instructions.workId}' (expected ${derivedType})`,
+          );
+        }
+      }
+
+      // Auto-determine workType from workId if not provided
+      const workType =
+        action.input.instructions.workType ||
+        (action.input.instructions.workId
+          ? getWorkTypeFromId(action.input.instructions.workId)
+          : null);
+
       // Update instructions field with the new GoalInstructions structure
       goal.instructions = {
         comments: action.input.instructions.comments,
-        skillId: action.input.instructions.skillId || null,
-        scenarioId: action.input.instructions.scenarioId || null,
-        taskId: action.input.instructions.taskId || null,
+        workType: workType || null,
+        workId: action.input.instructions.workId || null,
         context: action.input.instructions.contextJSON
           ? { format: "JSON", data: action.input.instructions.contextJSON }
           : null,

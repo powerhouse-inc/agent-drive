@@ -40,6 +40,7 @@ import type {
   UpdateDescriptionInput,
   UpdateInstructionsInput,
   WorkBreakdownStructureState,
+  WorkType,
 } from "./types.js";
 
 type Properties<T> = Required<{
@@ -66,6 +67,8 @@ export const GoalStatusSchema = z.enum([
 ]);
 
 export const MetaDataFormatSchema = z.enum(["JSON", "OTHER", "TEXT"]);
+
+export const WorkTypeSchema = z.enum(["SCENARIO", "SKILL", "TASK"]);
 
 export function AddDependenciesInputSchema(): z.ZodObject<
   Properties<AddDependenciesInput>
@@ -169,9 +172,8 @@ export function GoalInstructionsSchema(): z.ZodObject<
     __typename: z.literal("GoalInstructions").optional(),
     comments: z.string(),
     context: MetaDataSchema().nullable(),
-    scenarioId: z.string().nullable(),
-    skillId: z.string().nullable(),
-    taskId: z.string().nullable(),
+    workId: z.string().nullable(),
+    workType: WorkTypeSchema.nullable(),
   });
 }
 
@@ -191,9 +193,8 @@ export function InitialInstructionsInputSchema(): z.ZodObject<
   return z.object({
     comments: z.string(),
     contextJSON: z.string().nullish(),
-    scenarioId: z.string().nullish(),
-    skillId: z.string().nullish(),
-    taskId: z.string().nullish(),
+    workId: z.string().nullish(),
+    workType: WorkTypeSchema.nullish(),
   });
 }
 
@@ -213,9 +214,8 @@ export function InstructionsUpdateSchema(): z.ZodObject<
   return z.object({
     comments: z.string(),
     contextJSON: z.string().nullish(),
-    scenarioId: z.string().nullish(),
-    skillId: z.string().nullish(),
-    taskId: z.string().nullish(),
+    workId: z.string().nullish(),
+    workType: WorkTypeSchema.nullish(),
   });
 }
 

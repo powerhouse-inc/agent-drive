@@ -38,6 +38,11 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const [copied, setCopied] = useState(false);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState<string>("");
+  const [workTypeValue, setWorkTypeValue] = useState<
+    "SKILL" | "SCENARIO" | "TASK" | ""
+  >("");
+  const [workIdValue, setWorkIdValue] = useState<string>("");
+  const [contextJSONValue, setContextJSONValue] = useState<string>("");
   const [newNoteValue, setNewNoteValue] = useState("");
 
   // Scroll to bottom of notes list when adding a note
@@ -78,13 +83,26 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   useEffect(() => {
     if (goal) {
       setDescriptionValue(goal.description);
-      setInstructionsValue(
-        goal.instructions
-          ? typeof goal.instructions === "string"
-            ? goal.instructions
-            : goal.instructions.comments || ""
-          : ""
-      );
+      if (goal.instructions) {
+        if (typeof goal.instructions === "string") {
+          setInstructionsValue(goal.instructions);
+          setWorkTypeValue("");
+          setWorkIdValue("");
+          setContextJSONValue("");
+        } else {
+          setInstructionsValue(goal.instructions.comments || "");
+          setWorkTypeValue(goal.instructions.workType || "");
+          setWorkIdValue(goal.instructions.workId || "");
+          setContextJSONValue(
+            goal.instructions.context ? goal.instructions.context.data : "",
+          );
+        }
+      } else {
+        setInstructionsValue("");
+        setWorkTypeValue("");
+        setWorkIdValue("");
+        setContextJSONValue("");
+      }
     }
   }, [goal?.description, goal?.instructions]);
 
@@ -130,50 +148,61 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
     }
   };
 
-  const handleInstructionsBlur = () => {
-    const newInstructions = instructionsValue.trim();
-    const currentInstructions = goal.instructions
-      ? typeof goal.instructions === "string"
-        ? goal.instructions
-        : goal.instructions.comments || ""
-      : "";
-    
-    if (newInstructions !== currentInstructions) {
-      if (newInstructions) {
-        dispatch(
-          updateInstructions({
-            goalId: goal.id,
-            instructions: {
-              comments: newInstructions,
-              skillId: undefined,
-              scenarioId: undefined,
-              taskId: undefined,
-              contextJSON: undefined,
-            },
-          }),
-        );
-      } else {
-        dispatch(clearInstructions({ goalId: goal.id }));
+  const handleInstructionsSave = () => {
+    const hasContent =
+      instructionsValue.trim() || workIdValue.trim() || contextJSONValue.trim();
+
+    if (hasContent) {
+      // Validate JSON if provided
+      if (contextJSONValue.trim()) {
+        try {
+          JSON.parse(contextJSONValue.trim());
+        } catch (e) {
+          alert("Invalid JSON in context field. Please fix it before saving.");
+          return;
+        }
       }
+
+      dispatch(
+        updateInstructions({
+          goalId: goal.id,
+          instructions: {
+            comments: instructionsValue.trim(),
+            workType: workTypeValue || undefined,
+            workId: workIdValue.trim() || undefined,
+            contextJSON: contextJSONValue.trim() || undefined,
+          },
+        }),
+      );
+    } else {
+      dispatch(clearInstructions({ goalId: goal.id }));
     }
     setEditingInstructions(false);
   };
 
-  const handleInstructionsKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    if (e.key === "Enter" && e.ctrlKey) {
-      e.currentTarget.blur(); // Trigger onBlur to save
-    } else if (e.key === "Escape") {
-      setInstructionsValue(
-        goal.instructions
-          ? typeof goal.instructions === "string"
-            ? goal.instructions
-            : goal.instructions.comments || ""
-          : ""
-      ); // Reset to original
-      setEditingInstructions(false);
+  const handleInstructionsCancel = () => {
+    // Reset to original values
+    if (goal.instructions) {
+      if (typeof goal.instructions === "string") {
+        setInstructionsValue(goal.instructions);
+        setWorkTypeValue("");
+        setWorkIdValue("");
+        setContextJSONValue("");
+      } else {
+        setInstructionsValue(goal.instructions.comments || "");
+        setWorkTypeValue(goal.instructions.workType || "");
+        setWorkIdValue(goal.instructions.workId || "");
+        setContextJSONValue(
+          goal.instructions.context ? goal.instructions.context.data : "",
+        );
+      }
+    } else {
+      setInstructionsValue("");
+      setWorkTypeValue("");
+      setWorkIdValue("");
+      setContextJSONValue("");
     }
+    setEditingInstructions(false);
   };
 
   const handleToggleDraft = () => {
@@ -432,27 +461,181 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
             Instructions
           </h4>
           {editingInstructions ? (
-            <textarea
-              value={instructionsValue}
-              onChange={(e) => setInstructionsValue(e.target.value)}
-              onBlur={handleInstructionsBlur}
-              onKeyDown={handleInstructionsKeyDown}
-              onFocus={(e) => e.target.select()}
-              className="w-full text-sm text-gray-600 bg-white border-2 border-blue-500 focus:outline-none focus:border-blue-600 p-2 rounded resize-vertical min-h-[80px]"
-              placeholder="Enter instructions for this goal"
-              autoFocus
-            />
+            <div className="space-y-3 border-2 border-blue-500 bg-white p-3 rounded">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Comments
+                </label>
+                <textarea
+                  value={instructionsValue}
+                  onChange={(e) => setInstructionsValue(e.target.value)}
+                  className="w-full text-sm text-gray-600 bg-white border border-gray-300 focus:border-blue-500 focus:outline-none p-2 rounded resize-vertical min-h-[60px]"
+                  placeholder="Enter instructions for this goal"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Work Type
+                </label>
+                <select
+                  value={workTypeValue}
+                  onChange={(e) =>
+                    setWorkTypeValue(
+                      e.target.value as "SKILL" | "SCENARIO" | "TASK" | "",
+                    )
+                  }
+                  className="w-full text-sm text-gray-600 bg-white border border-gray-300 focus:border-blue-500 focus:outline-none p-2 rounded"
+                >
+                  <option value="">None</option>
+                  <option value="SKILL">Skill</option>
+                  <option value="SCENARIO">Scenario</option>
+                  <option value="TASK">Task</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Work ID
+                </label>
+                <input
+                  type="text"
+                  value={workIdValue}
+                  onChange={(e) => setWorkIdValue(e.target.value)}
+                  className="w-full text-sm text-gray-600 bg-white border border-gray-300 focus:border-blue-500 focus:outline-none p-2 rounded"
+                  placeholder="e.g., skill, skill.S01, skill.S01.001"
+                />
+                {workIdValue && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Format: skill (no dots), skill.XY (scenario), skill.XY.123
+                    (task)
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Context (JSON)
+                </label>
+                <textarea
+                  value={contextJSONValue}
+                  onChange={(e) => setContextJSONValue(e.target.value)}
+                  className={`w-full text-sm text-gray-600 bg-white border focus:outline-none p-2 rounded resize-vertical min-h-[60px] font-mono ${
+                    (contextJSONValue.trim() &&
+                      (() => {
+                        try {
+                          JSON.parse(contextJSONValue.trim());
+                          return "border-green-400 focus:border-green-500";
+                        } catch {
+                          return "border-red-400 focus:border-red-500";
+                        }
+                      })()) ||
+                    "border-gray-300 focus:border-blue-500"
+                  }`}
+                  placeholder='e.g., {"type": "party", "theme": "superhero"}'
+                />
+                {contextJSONValue.trim() && (
+                  <div className="mt-1">
+                    {(() => {
+                      try {
+                        JSON.parse(contextJSONValue.trim());
+                        return (
+                          <p className="text-xs text-green-600">✓ Valid JSON</p>
+                        );
+                      } catch (e) {
+                        return (
+                          <p className="text-xs text-red-600">
+                            ✗ Invalid JSON:{" "}
+                            {e instanceof Error ? e.message : "Invalid format"}
+                          </p>
+                        );
+                      }
+                    })()}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  onClick={handleInstructionsCancel}
+                  className="px-3 py-1 text-xs text-gray-600 bg-gray-100 hover:bg-gray-200 rounded transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleInstructionsSave}
+                  className="px-3 py-1 text-xs text-white bg-blue-500 hover:bg-blue-600 rounded transition-colors duration-200"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
           ) : (
             <div
-              className="text-sm text-gray-600 p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200 min-h-[80px] border-2 border-transparent hover:border-gray-300 whitespace-pre-wrap"
+              className="text-sm text-gray-600 p-3 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-2 border-transparent hover:border-gray-300"
               onClick={() => setEditingInstructions(true)}
               title="Click to edit instructions"
             >
-              {goal.instructions
-                ? typeof goal.instructions === "string"
-                  ? goal.instructions
-                  : goal.instructions.comments || "No instructions set. Click to add instructions."
-                : "No instructions set. Click to add instructions."}
+              {goal.instructions ? (
+                <div className="space-y-2">
+                  {typeof goal.instructions === "string" ? (
+                    <div className="whitespace-pre-wrap">
+                      {goal.instructions}
+                    </div>
+                  ) : (
+                    <>
+                      {goal.instructions.comments && (
+                        <div className="whitespace-pre-wrap">
+                          {goal.instructions.comments}
+                        </div>
+                      )}
+                      {(goal.instructions.workType ||
+                        goal.instructions.workId) && (
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {goal.instructions.workType && (
+                            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                              Type: {goal.instructions.workType}
+                            </span>
+                          )}
+                          {goal.instructions.workId && (
+                            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">
+                              ID: {goal.instructions.workId}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {goal.instructions.context && (
+                        <div className="mt-2">
+                          <div className="text-xs font-medium text-gray-600 mb-1">
+                            Context:
+                          </div>
+                          <div className="text-xs text-gray-700 font-mono bg-gray-100 p-2 rounded overflow-x-auto">
+                            <pre className="whitespace-pre-wrap">
+                              {(() => {
+                                try {
+                                  // Try to parse and prettify if it's JSON
+                                  const parsed = JSON.parse(
+                                    goal.instructions.context.data,
+                                  );
+                                  return JSON.stringify(parsed, null, 2);
+                                } catch {
+                                  // If not valid JSON, display as-is
+                                  return goal.instructions.context.data;
+                                }
+                              })()}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="text-gray-400">
+                  No instructions set. Click to add instructions.
+                </div>
+              )}
             </div>
           )}
         </div>

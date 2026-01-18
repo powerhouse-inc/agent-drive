@@ -82,9 +82,8 @@ describe("Documentation Operations", () => {
           description: "Test goal",
           instructions: {
             comments: "Original instructions",
-            skillId: undefined,
-            scenarioId: undefined,
-            taskId: undefined,
+            workType: undefined,
+            workId: undefined,
             contextJSON: undefined,
           },
           draft: false,
@@ -104,9 +103,8 @@ describe("Documentation Operations", () => {
           goalId: "goal-1",
           instructions: {
             comments: "Updated instructions",
-            skillId: undefined,
-            scenarioId: undefined,
-            taskId: undefined,
+            workType: undefined,
+            workId: undefined,
             contextJSON: undefined,
           },
         }),
@@ -115,9 +113,8 @@ describe("Documentation Operations", () => {
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.instructions).toEqual({
         comments: "Updated instructions",
-        skillId: null,
-        scenarioId: null,
-        taskId: null,
+        workType: null,
+        workId: null,
         context: null,
       });
     });
@@ -149,9 +146,8 @@ describe("Documentation Operations", () => {
           goalId: "goal-1",
           instructions: {
             comments: "New instructions",
-            skillId: undefined,
-            scenarioId: undefined,
-            taskId: undefined,
+            workType: undefined,
+            workId: undefined,
             contextJSON: undefined,
           },
         }),
@@ -160,9 +156,8 @@ describe("Documentation Operations", () => {
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.instructions).toEqual({
         comments: "New instructions",
-        skillId: null,
-        scenarioId: null,
-        taskId: null,
+        workType: null,
+        workId: null,
         context: null,
       });
     });
@@ -353,9 +348,8 @@ describe("Documentation Operations", () => {
           description: "Test goal",
           instructions: {
             comments: "Some instructions",
-            skillId: undefined,
-            scenarioId: undefined,
-            taskId: undefined,
+            workType: undefined,
+            workId: undefined,
             contextJSON: undefined,
           },
           draft: false,

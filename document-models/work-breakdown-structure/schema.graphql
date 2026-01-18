@@ -37,10 +37,15 @@ type Goal {
 
 type GoalInstructions {
   comments: String!
-  skillId: String
-  scenarioId: String
-  taskId: String
+  workType: WorkType
+  workId: String
   context: MetaData
+}
+
+enum WorkType {
+  SKILL
+  SCENARIO
+  TASK
 }
 
 type MetaData {
@@ -91,10 +96,15 @@ input UpdateInstructionsInput {
 
 input InstructionsUpdate {
   comments: String!
-  skillId: String
-  scenarioId: String
-  taskId: String
+  workType: WorkType
+  workId: String
   contextJSON: String
+}
+
+enum WorkType {
+  SKILL
+  SCENARIO
+  TASK
 }
 
 input AddNoteInput {
@@ -166,9 +176,8 @@ input CreateGoalInput {
 
 input InitialInstructionsInput {
   comments: String!
-  skillId: String
-  scenarioId: String
-  taskId: String
+  workType: WorkType
+  workId: String
   contextJSON: String
 }
 
@@ -181,6 +190,12 @@ input InitialNoteInput {
 input MetaDataInput {
   format: MetaDataFormat
   data: String
+}
+
+enum WorkType {
+  SKILL
+  SCENARIO
+  TASK
 }
 
 input DelegateGoalInput {

@@ -154,10 +154,15 @@ export const schema: DocumentNode = gql`
 
   input WorkBreakdownStructure_InstructionsUpdate {
     comments: String!
-    skillId: String
-    scenarioId: String
-    taskId: String
+    workType: WorkBreakdownStructure_WorkType
+    workId: String
     contextJSON: String
+  }
+
+  enum WorkBreakdownStructure_WorkType {
+    SKILL
+    SCENARIO
+    TASK
   }
   input WorkBreakdownStructure_AddNoteInput {
     goalId: OID!
@@ -222,9 +227,8 @@ export const schema: DocumentNode = gql`
 
   input WorkBreakdownStructure_InitialInstructionsInput {
     comments: String!
-    skillId: String
-    scenarioId: String
-    taskId: String
+    workType: WorkBreakdownStructure_WorkType
+    workId: String
     contextJSON: String
   }
 
@@ -237,6 +241,12 @@ export const schema: DocumentNode = gql`
   input WorkBreakdownStructure_MetaDataInput {
     format: WorkBreakdownStructure_MetaDataFormat
     data: String
+  }
+
+  enum WorkBreakdownStructure_WorkType {
+    SKILL
+    SCENARIO
+    TASK
   }
   input WorkBreakdownStructure_DelegateGoalInput {
     id: OID!

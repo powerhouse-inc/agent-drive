@@ -41,9 +41,8 @@ describe("Workflow Operations", () => {
           description: "Build a house",
           instructions: {
             comments: "Step by step instructions",
-            skillId: undefined,
-            scenarioId: undefined,
-            taskId: undefined,
+            workType: undefined,
+            workId: undefined,
             contextJSON: undefined,
           },
           draft: false,
@@ -65,9 +64,8 @@ describe("Workflow Operations", () => {
       expect(goal.assignee).toBeNull();
       expect(goal.instructions).toEqual({
         comments: "Step by step instructions",
-        skillId: null,
-        scenarioId: null,
-        taskId: null,
+        workType: null,
+        workId: null,
         context: null,
       });
       expect(goal.isDraft).toBe(false);
