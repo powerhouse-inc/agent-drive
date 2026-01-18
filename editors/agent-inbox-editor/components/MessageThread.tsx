@@ -217,12 +217,18 @@ export function MessageThread({
   };
 
   const handleSaveTopic = () => {
-    dispatch(
-      setThreadTopic({
-        id: thread.id,
-        topic: tempTopic.trim() || undefined,
-      }),
-    );
+    const newTopic = tempTopic.trim() || undefined;
+    const currentTopic = thread.topic || undefined;
+    
+    // Only dispatch if the topic has actually changed
+    if (newTopic !== currentTopic) {
+      dispatch(
+        setThreadTopic({
+          id: thread.id,
+          topic: newTopic,
+        }),
+      );
+    }
     setIsEditingTopic(false);
   };
 
@@ -486,11 +492,13 @@ export function MessageThread({
                         <div
                           className={`rounded-lg px-4 py-3 ${
                             isFromAgent
-                              ? "bg-blue-600 text-white"
+                              ? "bg-blue-700"
                               : "bg-white border border-gray-200"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap">
+                          <p className={`text-sm whitespace-pre-wrap ${
+                            isFromAgent ? "text-white" : "text-gray-900"
+                          }`}>
                             {message.content}
                           </p>
                         </div>
@@ -632,7 +640,7 @@ export function MessageThread({
                   disabled={!newMessage.trim() || isStakeholderRemoved}
                   className={`px-5 py-3 text-sm font-medium rounded-lg transition-colors self-stretch ${
                     newMessage.trim() && !isStakeholderRemoved
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      ? "bg-blue-700 text-white hover:bg-blue-800"
                       : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   }`}
                 >

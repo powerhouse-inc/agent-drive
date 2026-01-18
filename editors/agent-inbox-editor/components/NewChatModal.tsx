@@ -132,29 +132,42 @@ export function NewChatModal({
     field: string,
     value: string,
   ) => {
+    const trimmedValue = value.trim();
+    
     switch (field) {
       case "name":
-        if (value.trim()) {
+        // Only dispatch if name has changed and is not empty
+        if (trimmedValue && trimmedValue !== stakeholder.name) {
           dispatch(
-            setStakeholderName({ id: stakeholder.id, name: value.trim() }),
+            setStakeholderName({ id: stakeholder.id, name: trimmedValue }),
           );
         }
         break;
       case "ethAddress":
-        dispatch(
-          setStakeholderAddress({
-            id: stakeholder.id,
-            ethAddress: value.trim() || undefined,
-          }),
-        );
+        // Only dispatch if address has changed
+        const newAddress = trimmedValue || undefined;
+        const currentAddress = stakeholder.ethAddress || undefined;
+        if (newAddress !== currentAddress) {
+          dispatch(
+            setStakeholderAddress({
+              id: stakeholder.id,
+              ethAddress: newAddress,
+            }),
+          );
+        }
         break;
       case "avatar":
-        dispatch(
-          setStakeholderAvatar({
-            id: stakeholder.id,
-            avatar: value.trim() || undefined,
-          }),
-        );
+        // Only dispatch if avatar URL has changed
+        const newAvatar = trimmedValue || undefined;
+        const currentAvatar = stakeholder.avatar || undefined;
+        if (newAvatar !== currentAvatar) {
+          dispatch(
+            setStakeholderAvatar({
+              id: stakeholder.id,
+              avatar: newAvatar,
+            }),
+          );
+        }
         break;
     }
     setEditingStakeholderId(null);
