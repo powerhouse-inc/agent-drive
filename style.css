@@ -106,6 +106,21 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.markdown-chat-message h1,
+.markdown-chat-message h2,
+.markdown-chat-message h3,
+.markdown-chat-message h4 {
+  color: white !important;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-chat-message h1 { font-size: 1.5rem; }
+.markdown-chat-message h2 { font-size: 1.25rem; }
+.markdown-chat-message h3 { font-size: 1.125rem; }
+.markdown-chat-message h4 { font-size: 1rem; }
+
 /* Stakeholder message markdown styling */
 .markdown-chat-message.stakeholder {
   color: #111827 !important; /* gray-900 */
@@ -144,6 +159,16 @@
 .markdown-chat-message.stakeholder blockquote {
   border-left-color: #9ca3af; /* gray-400 */
   color: #4b5563; /* gray-600 */
+}
+
+.markdown-chat-message.stakeholder h1,
+.markdown-chat-message.stakeholder h2,
+.markdown-chat-message.stakeholder h3,
+.markdown-chat-message.stakeholder h4 {
+  color: #111827 !important; /* gray-900 */
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 /* WBS Notes markdown styling */
