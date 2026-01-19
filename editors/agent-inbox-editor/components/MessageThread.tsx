@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
+import MarkdownIt from "markdown-it";
 import {
   sendStakeholderMessage,
   setThreadTopic,
@@ -61,6 +62,28 @@ export function MessageThread({
   onExpand,
 }: MessageThreadProps) {
   const isStakeholderRemoved = stakeholder.removed;
+  const md = useMemo(() => {
+    const markdown = new MarkdownIt({ 
+      html: false,
+      linkify: true,
+      typographer: true,
+      breaks: true
+    });
+    
+    // Configure links to open in new tab
+    const defaultRender = markdown.renderer.rules.link_open || 
+      function(tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+      };
+    
+    markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+      tokens[idx].attrSet('target', '_blank');
+      tokens[idx].attrSet('rel', 'noopener noreferrer');
+      return defaultRender(tokens, idx, options, env, self);
+    };
+    
+    return markdown;
+  }, []);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isEditingTopic, setIsEditingTopic] = useState(false);
@@ -510,13 +533,12 @@ export function MessageThread({
                                 : "bg-white border border-gray-200"
                             }`}
                           >
-                            <p
-                              className={`text-sm whitespace-pre-wrap ${
-                                isFromAgent ? "text-white" : "text-gray-900"
+                            <div
+                              className={`markdown-chat-message ${
+                                isFromAgent ? "" : "stakeholder"
                               }`}
-                            >
-                              {message.content}
-                            </p>
+                              dangerouslySetInnerHTML={{ __html: md.render(message.content) }}
+                            />
                           </div>
                           {/* Read/Unread indicator for stakeholder messages */}
                           {!isFromAgent && (

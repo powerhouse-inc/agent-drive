@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
+import MarkdownIt from "markdown-it";
 import {
   updateDescription,
   updateInstructions,
@@ -36,6 +37,28 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
   const [addingNote, setAddingNote] = useState(false);
   const notesListRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+  const md = useMemo(() => {
+    const markdown = new MarkdownIt({
+      html: false,
+      linkify: true,
+      typographer: true,
+      breaks: true
+    });
+    
+    // Configure links to open in new tab
+    const defaultRender = markdown.renderer.rules.link_open || 
+      function(tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+      };
+    
+    markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+      tokens[idx].attrSet('target', '_blank');
+      tokens[idx].attrSet('rel', 'noopener noreferrer');
+      return defaultRender(tokens, idx, options, env, self);
+    };
+    
+    return markdown;
+  }, []);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState<string>("");
   const [workTypeValue, setWorkTypeValue] = useState<
@@ -677,7 +700,10 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="whitespace-pre-wrap">{note.note}</div>
+                      <div 
+                        className="markdown-note"
+                        dangerouslySetInnerHTML={{ __html: md.render(note.note) }}
+                      />
                       {note.author && (
                         <div className="text-xs text-gray-400 mt-2">
                           — {note.author}
