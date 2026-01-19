@@ -63,25 +63,32 @@ export function MessageThread({
 }: MessageThreadProps) {
   const isStakeholderRemoved = stakeholder.removed;
   const md = useMemo(() => {
-    const markdown = new MarkdownIt({ 
+    const markdown = new MarkdownIt({
       html: false,
       linkify: true,
       typographer: true,
-      breaks: true
+      breaks: true,
     });
-    
+
     // Configure links to open in new tab
-    const defaultRender = markdown.renderer.rules.link_open || 
-      function(tokens, idx, options, env, self) {
+    const defaultRender =
+      markdown.renderer.rules.link_open ||
+      function (tokens, idx, options, env, self) {
         return self.renderToken(tokens, idx, options);
       };
-    
-    markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-      tokens[idx].attrSet('target', '_blank');
-      tokens[idx].attrSet('rel', 'noopener noreferrer');
+
+    markdown.renderer.rules.link_open = function (
+      tokens,
+      idx,
+      options,
+      env,
+      self,
+    ) {
+      tokens[idx].attrSet("target", "_blank");
+      tokens[idx].attrSet("rel", "noopener noreferrer");
       return defaultRender(tokens, idx, options, env, self);
     };
-    
+
     return markdown;
   }, []);
   const [newMessage, setNewMessage] = useState("");
@@ -537,7 +544,9 @@ export function MessageThread({
                               className={`markdown-chat-message ${
                                 isFromAgent ? "" : "stakeholder"
                               }`}
-                              dangerouslySetInnerHTML={{ __html: md.render(message.content) }}
+                              dangerouslySetInnerHTML={{
+                                __html: md.render(message.content),
+                              }}
                             />
                           </div>
                           {/* Read/Unread indicator for stakeholder messages */}

@@ -1650,6 +1650,541 @@ describe("Workflow Operations", () => {
     });
   });
 
+  describe("Auto-Complete Parent Goals", () => {
+    it("should auto-complete parent when all children are finished (COMPLETED)", () => {
+      const document = utils.createDocument();
+
+      // Create parent with two children
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "First child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Second child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Complete first child - parent should remain TODO
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-1",
+          note: null,
+        }),
+      );
+
+      let parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      expect(parent?.status).toBe("TODO");
+
+      // Complete second child - parent should auto-complete
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-2",
+          note: null,
+        }),
+      );
+
+      parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      expect(parent?.status).toBe("COMPLETED");
+    });
+
+    it("should auto-complete parent when all children are finished (mix of COMPLETED and WONT_DO)", () => {
+      const document = utils.createDocument();
+
+      // Create parent with two children
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "First child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Second child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark first child as WONT_DO
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "child-1",
+        }),
+      );
+
+      let parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      expect(parent?.status).toBe("TODO");
+
+      // Complete second child - parent should auto-complete
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-2",
+          note: null,
+        }),
+      );
+
+      parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      expect(parent?.status).toBe("COMPLETED");
+    });
+
+    it("should recursively auto-complete grandparents when all descendants are finished", () => {
+      const document = utils.createDocument();
+
+      // Create three-level hierarchy
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "grandparent-1",
+          description: "Grandparent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "parent-1",
+          description: "Parent 1",
+          instructions: undefined,
+          draft: false,
+          parentId: "grandparent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "parent-2",
+          description: "Parent 2",
+          instructions: undefined,
+          draft: false,
+          parentId: "grandparent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1-1",
+          description: "Child of parent 1",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2-1",
+          description: "Child of parent 2",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-2",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Complete first grandchild - nothing should auto-complete
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-1-1",
+          note: null,
+        }),
+      );
+
+      let grandparent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "grandparent-1",
+      );
+      const parent1 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      let parent2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-2",
+      );
+
+      expect(parent1?.status).toBe("COMPLETED"); // Auto-completed (only child finished)
+      expect(parent2?.status).toBe("TODO");
+      expect(grandparent?.status).toBe("TODO");
+
+      // Complete second grandchild - should cascade up
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-2-1",
+          note: null,
+        }),
+      );
+
+      grandparent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "grandparent-1",
+      );
+      parent2 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-2",
+      );
+
+      expect(parent2?.status).toBe("COMPLETED"); // Auto-completed
+      expect(grandparent?.status).toBe("COMPLETED"); // Auto-completed recursively
+    });
+
+    it("should not auto-complete parent if any child is not finished", () => {
+      const document = utils.createDocument();
+
+      // Create parent with three children
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "First child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Second child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-3",
+          description: "Third child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Complete first child
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-1",
+          note: null,
+        }),
+      );
+
+      // Mark second child as WONT_DO
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "child-2",
+        }),
+      );
+
+      // Third child is still TODO
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const child3 = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-3",
+      );
+
+      expect(child3?.status).toBe("TODO");
+      expect(parent?.status).toBe("TODO"); // Should NOT auto-complete
+    });
+
+    it("should not auto-complete parent if child is IN_PROGRESS", () => {
+      const document = utils.createDocument();
+
+      // Create parent with two children
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "First child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Second child",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Complete first child
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "child-1",
+          note: null,
+        }),
+      );
+
+      // Mark second child as IN_PROGRESS
+      updatedDocument = reducer(
+        updatedDocument,
+        markInProgress({
+          id: "child-2",
+          note: null,
+        }),
+      );
+
+      const parent = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      expect(parent?.status).toBe("IN_PROGRESS"); // Should NOT auto-complete
+    });
+
+    it("should not change parent status if already COMPLETED", () => {
+      const document = utils.createDocument();
+
+      // Create parent with child
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-1",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child goal",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark parent as completed (which also completes child)
+      updatedDocument = reducer(
+        updatedDocument,
+        markCompleted({
+          id: "parent-1",
+          note: null,
+        }),
+      );
+
+      const parentBefore = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const childBefore = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      expect(parentBefore?.status).toBe("COMPLETED");
+      expect(childBefore?.status).toBe("COMPLETED");
+
+      // Now mark child as WONT_DO - parent should stay COMPLETED
+      updatedDocument = reducer(
+        updatedDocument,
+        markWontDo({
+          id: "child-1",
+        }),
+      );
+
+      const parentAfter = updatedDocument.state.global.goals.find(
+        (g) => g.id === "parent-1",
+      );
+      const childAfter = updatedDocument.state.global.goals.find(
+        (g) => g.id === "child-1",
+      );
+      expect(childAfter?.status).toBe("WONT_DO");
+      expect(parentAfter?.status).toBe("COMPLETED"); // Should remain COMPLETED
+    });
+  });
+
   describe("MARK_WONT_DO", () => {
     it("should mark a goal as WONT_DO", () => {
       const document = utils.createDocument();

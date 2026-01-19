@@ -42,21 +42,28 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
       html: false,
       linkify: true,
       typographer: true,
-      breaks: true
+      breaks: true,
     });
-    
+
     // Configure links to open in new tab
-    const defaultRender = markdown.renderer.rules.link_open || 
-      function(tokens, idx, options, env, self) {
+    const defaultRender =
+      markdown.renderer.rules.link_open ||
+      function (tokens, idx, options, env, self) {
         return self.renderToken(tokens, idx, options);
       };
-    
-    markdown.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-      tokens[idx].attrSet('target', '_blank');
-      tokens[idx].attrSet('rel', 'noopener noreferrer');
+
+    markdown.renderer.rules.link_open = function (
+      tokens,
+      idx,
+      options,
+      env,
+      self,
+    ) {
+      tokens[idx].attrSet("target", "_blank");
+      tokens[idx].attrSet("rel", "noopener noreferrer");
       return defaultRender(tokens, idx, options, env, self);
     };
-    
+
     return markdown;
   }, []);
   const [descriptionValue, setDescriptionValue] = useState("");
@@ -700,9 +707,11 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div 
+                      <div
                         className="markdown-note"
-                        dangerouslySetInnerHTML={{ __html: md.render(note.note) }}
+                        dangerouslySetInnerHTML={{
+                          __html: md.render(note.note),
+                        }}
                       />
                       {note.author && (
                         <div className="text-xs text-gray-400 mt-2">

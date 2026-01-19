@@ -6,6 +6,7 @@ import {
   getDescendants,
   isLeafGoal,
   hasBlockedGoals,
+  getChildren,
 } from "../utils.js";
 import { DuplicateGoalIdError } from "../../gen/workflow/error.js";
 import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
@@ -237,6 +238,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
           descendant.assignee = null;
         }
       }
+
+      // Auto-complete parent if all siblings are finished
+      autoCompleteParentIfAllChildrenFinished(state.goals, action.input.id);
     },
     markTodoOperation(state, action) {
       // Find the target goal
@@ -350,5 +354,43 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
           descendant.assignee = null;
         }
       }
+
+      // Auto-complete parent if all siblings are finished
+      autoCompleteParentIfAllChildrenFinished(state.goals, action.input.id);
     },
   };
+
+/**
+ * Helper function to check if all children of a parent are finished (COMPLETED or WONT_DO)
+ * and if so, mark the parent as COMPLETED recursively
+ */
+function autoCompleteParentIfAllChildrenFinished(
+  goals: Goal[],
+  childId: string,
+): void {
+  const child = findGoal(goals, childId);
+  if (!child || !child.parentId) return;
+
+  const parent = findGoal(goals, child.parentId);
+  if (!parent) return;
+
+  // Don't auto-complete if parent is already finished
+  if (parent.status === "COMPLETED" || parent.status === "WONT_DO") {
+    return;
+  }
+
+  // Check if all children of the parent are finished
+  const children = getChildren(goals, parent.id);
+  const allChildrenFinished = children.every(
+    (c) => c.status === "COMPLETED" || c.status === "WONT_DO",
+  );
+
+  if (allChildrenFinished) {
+    // Mark parent as COMPLETED
+    parent.status = "COMPLETED";
+    parent.assignee = null;
+
+    // Recursively check parent's parent
+    autoCompleteParentIfAllChildrenFinished(goals, parent.id);
+  }
+}
