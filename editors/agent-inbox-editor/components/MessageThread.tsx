@@ -197,7 +197,7 @@ export function MessageThread({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSendMessage();
@@ -665,7 +665,7 @@ export function MessageThread({
                 <textarea
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   onFocus={() => {
                     setIsTyping(false);
                     scrollToBottom();
