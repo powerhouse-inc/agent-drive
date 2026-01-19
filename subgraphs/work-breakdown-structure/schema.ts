@@ -158,12 +158,6 @@ export const schema: DocumentNode = gql`
     workId: String
     contextJSON: String
   }
-
-  enum WorkBreakdownStructure_WorkType {
-    SKILL
-    SCENARIO
-    TASK
-  }
   input WorkBreakdownStructure_AddNoteInput {
     goalId: OID!
     noteId: OID!
@@ -239,14 +233,8 @@ export const schema: DocumentNode = gql`
   }
 
   input WorkBreakdownStructure_MetaDataInput {
-    format: WorkBreakdownStructure_MetaDataFormat
-    data: String
-  }
-
-  enum WorkBreakdownStructure_WorkType {
-    SKILL
-    SCENARIO
-    TASK
+    format: WorkBreakdownStructure_MetaDataFormat!
+    data: String!
   }
   input WorkBreakdownStructure_DelegateGoalInput {
     id: OID!

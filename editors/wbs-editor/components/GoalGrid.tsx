@@ -113,6 +113,18 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         },
       },
       {
+        id: "workId",
+        header: "Work ID",
+        width: 180,
+        template: (value: any, row: any) => {
+          // Get work ID from instructions if available
+          if (row.instructions?.workId) {
+            return row.instructions.workId;
+          }
+          return "";
+        },
+      },
+      {
         id: "status",
         header: "Status",
         width: 140,

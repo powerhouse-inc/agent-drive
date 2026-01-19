@@ -278,8 +278,8 @@ export function MetaDataSchema(): z.ZodObject<Properties<MetaData>> {
 
 export function MetaDataInputSchema(): z.ZodObject<Properties<MetaDataInput>> {
   return z.object({
-    data: z.string().nullish(),
-    format: MetaDataFormatSchema.nullish(),
+    data: z.string(),
+    format: MetaDataFormatSchema,
   });
 }
 

@@ -101,12 +101,6 @@ input InstructionsUpdate {
   contextJSON: String
 }
 
-enum WorkType {
-  SKILL
-  SCENARIO
-  TASK
-}
-
 input AddNoteInput {
   goalId: OID!
   noteId: OID!
@@ -188,14 +182,8 @@ input InitialNoteInput {
 }
 
 input MetaDataInput {
-  format: MetaDataFormat
-  data: String
-}
-
-enum WorkType {
-  SKILL
-  SCENARIO
-  TASK
+  format: MetaDataFormat!
+  data: String!
 }
 
 input DelegateGoalInput {

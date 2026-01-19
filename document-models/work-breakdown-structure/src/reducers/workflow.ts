@@ -93,7 +93,7 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         status: action.input.assignee ? "DELEGATED" : "TODO", // Status based on assignee
         parentId: action.input.parentId || null,
         dependencies: action.input.dependsOn || [],
-        isDraft: action.input.draft || false,
+        isDraft: action.input.draft !== false, // Default to true unless explicitly set to false
         instructions: instructionsObj,
         notes: [] as Note[],
         assignee: action.input.assignee || null,

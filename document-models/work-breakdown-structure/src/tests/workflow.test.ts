@@ -97,6 +97,52 @@ describe("Workflow Operations", () => {
       expect(goal.assignee).toBe("john.doe@example.com");
     });
 
+    it("should default to draft=true when draft is not specified", () => {
+      const document = utils.createDocument();
+
+      const updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Draft goal by default",
+          instructions: undefined,
+          draft: undefined, // Not specified, should default to true
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.isDraft).toBe(true);
+    });
+
+    it("should respect draft=false when explicitly set", () => {
+      const document = utils.createDocument();
+
+      const updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "goal-1",
+          description: "Non-draft goal",
+          instructions: undefined,
+          draft: false, // Explicitly set to false
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      const goal = updatedDocument.state.global.goals[0];
+      expect(goal.isDraft).toBe(false);
+    });
+
     it("should create a child goal with parent relationship", () => {
       const document = utils.createDocument();
 
