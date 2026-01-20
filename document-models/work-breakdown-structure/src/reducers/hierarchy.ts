@@ -1,5 +1,10 @@
 import type { Goal } from "../../gen/index.js";
-import { findGoal, findGoalIndex, isDescendant } from "../utils.js";
+import {
+  findGoal,
+  findGoalIndex,
+  isDescendant,
+  sortGoalsDepthFirst,
+} from "../utils.js";
 import type { WorkBreakdownStructureHierarchyOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHierarchyOperations =
@@ -66,6 +71,9 @@ export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHi
           }
         }
       }
+
+      // Sort to maintain depth-first traversal order
+      state.goals = sortGoalsDepthFirst(state.goals);
     },
     addDependenciesOperation(state, action) {
       // Find target goal by ID

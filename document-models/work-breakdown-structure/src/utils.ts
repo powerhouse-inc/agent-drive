@@ -122,3 +122,58 @@ export function insertGoalAtPosition(
   result.splice(insertIndex, 0, newGoal);
   return result;
 }
+
+/**
+ * Sort goals array to maintain depth-first traversal order.
+ * This ensures parents always appear before their children in the flat array.
+ * Within the same level, the original relative order is preserved.
+ */
+export function sortGoalsDepthFirst(goals: Goal[]): Goal[] {
+  const result: Goal[] = [];
+  const visited = new Set<string>();
+
+  // Build a map for quick lookups
+  const goalMap = new Map<string, Goal>();
+  goals.forEach((goal) => goalMap.set(goal.id, goal));
+
+  // Build children map for efficient traversal
+  const childrenMap = new Map<string | null, Goal[]>();
+  goals.forEach((goal) => {
+    const parentKey = goal.parentId;
+    if (!childrenMap.has(parentKey)) {
+      childrenMap.set(parentKey, []);
+    }
+    childrenMap.get(parentKey)!.push(goal);
+  });
+
+  // Depth-first traversal starting from roots
+  function traverse(parentId: string | null) {
+    const children = childrenMap.get(parentId) || [];
+
+    // Process children in their current order (preserves relative positions)
+    for (const child of children) {
+      if (!visited.has(child.id)) {
+        visited.add(child.id);
+        result.push(child);
+        // Recursively traverse this goal's children
+        traverse(child.id);
+      }
+    }
+  }
+
+  // Start traversal from root goals (parentId === null)
+  traverse(null);
+
+  // Handle any orphaned goals (whose parents don't exist in the array)
+  // This shouldn't happen in well-formed data but we handle it defensively
+  goals.forEach((goal) => {
+    if (!visited.has(goal.id)) {
+      // This goal's parent doesn't exist, treat it as a root
+      visited.add(goal.id);
+      result.push(goal);
+      traverse(goal.id);
+    }
+  });
+
+  return result;
+}

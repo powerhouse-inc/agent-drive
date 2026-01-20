@@ -7,6 +7,7 @@ import {
   isLeafGoal,
   hasBlockedGoals,
   getChildren,
+  sortGoalsDepthFirst,
 } from "../utils.js";
 import { DuplicateGoalIdError } from "../../gen/workflow/error.js";
 import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
@@ -116,6 +117,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         newGoal,
         action.input.insertBefore || undefined,
       );
+
+      // Sort to maintain depth-first traversal order
+      state.goals = sortGoalsDepthFirst(state.goals);
     },
     delegateGoalOperation(state, action) {
       // Find target goal by ID
