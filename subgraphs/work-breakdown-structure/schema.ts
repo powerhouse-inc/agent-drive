@@ -264,12 +264,18 @@ export const schema: DocumentNode = gql`
   input WorkBreakdownStructure_MarkCompletedInput {
     id: OID!
     note: WorkBreakdownStructure_CompletedNoteInput
+    outcome: WorkBreakdownStructure_OutcomeInput
   }
 
   input WorkBreakdownStructure_CompletedNoteInput {
     id: OID!
     note: String!
     author: String
+  }
+
+  input WorkBreakdownStructure_OutcomeInput {
+    format: WorkBreakdownStructure_MetaDataFormat!
+    data: String!
   }
   input WorkBreakdownStructure_MarkTodoInput {
     id: OID!
@@ -283,13 +289,8 @@ export const schema: DocumentNode = gql`
   }
   input WorkBreakdownStructure_ReportBlockedInput {
     id: OID!
-    question: WorkBreakdownStructure_BlockedNoteInput!
-  }
-
-  input WorkBreakdownStructure_BlockedNoteInput {
-    id: OID!
-    note: String!
-    author: String
+    type: WorkBreakdownStructure_GoalBlockType!
+    comment: String
   }
   input WorkBreakdownStructure_UnblockGoalInput {
     id: OID!

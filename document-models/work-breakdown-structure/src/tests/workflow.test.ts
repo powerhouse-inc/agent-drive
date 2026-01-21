@@ -2789,21 +2789,18 @@ describe("Workflow Operations", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-1",
-          question: {
-            id: "note-1",
-            note: "What is the API endpoint for this service?",
-            author: "Developer",
-          },
+          type: "MISSING_INFORMATION",
+          comment: "What is the API endpoint for this service?",
         }),
       );
 
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.status).toBe("BLOCKED");
-      expect(goal.notes).toHaveLength(1);
-      expect(goal.notes[0].note).toBe(
-        "BLOCKED: What is the API endpoint for this service?",
+      expect(goal.block).toBeDefined();
+      expect(goal.block?.type).toBe("MISSING_INFORMATION");
+      expect(goal.block?.comment).toBe(
+        "What is the API endpoint for this service?",
       );
-      expect(goal.notes[0].author).toBe("Developer");
       expect(updatedDocument.state.global.isBlocked).toBe(true);
     });
 
@@ -2849,11 +2846,8 @@ describe("Workflow Operations", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-1",
-          question: {
-            id: "note-1",
-            note: "Need clarification",
-            author: null,
-          },
+          type: "MISSING_INFORMATION",
+          comment: "Need clarification",
         }),
       );
 
@@ -2867,11 +2861,8 @@ describe("Workflow Operations", () => {
         document,
         reportBlocked({
           id: "nonexistent",
-          question: {
-            id: "note-1",
-            note: "Question",
-            author: null,
-          },
+          type: "OTHER",
+          comment: "Question",
         }),
       );
 
@@ -2912,11 +2903,8 @@ describe("Workflow Operations", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-1",
-          question: {
-            id: "note-1",
-            note: "What is the API endpoint?",
-            author: "Developer",
-          },
+          type: "MISSING_INFORMATION",
+          comment: "What is the API endpoint?",
         }),
       );
 
@@ -2935,11 +2923,12 @@ describe("Workflow Operations", () => {
 
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.status).toBe("TODO");
-      expect(goal.notes).toHaveLength(2);
-      expect(goal.notes[1].note).toBe(
+      expect(goal.block).toBeNull();
+      expect(goal.notes).toHaveLength(1);
+      expect(goal.notes[0].note).toBe(
         "UNBLOCKED: Use https://api.example.com/v1",
       );
-      expect(goal.notes[1].author).toBe("Tech Lead");
+      expect(goal.notes[0].author).toBe("Tech Lead");
       expect(updatedDocument.state.global.isBlocked).toBe(false);
     });
 
@@ -2983,11 +2972,8 @@ describe("Workflow Operations", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-1",
-          question: {
-            id: "note-1",
-            note: "Question 1",
-            author: null,
-          },
+          type: "MISSING_INFORMATION",
+          comment: "Question 1",
         }),
       );
 
@@ -2995,11 +2981,8 @@ describe("Workflow Operations", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-2",
-          question: {
-            id: "note-2",
-            note: "Question 2",
-            author: null,
-          },
+          type: "MISSING_INFORMATION",
+          comment: "Question 2",
         }),
       );
 

@@ -26,6 +26,7 @@ type WorkBreakdownStructureState {
 type Goal {
   id: OID!
   status: GoalStatus!
+  block: GoalBlockReason
   parentId: OID
   dependencies: [OID!]!
   description: String!
@@ -33,6 +34,19 @@ type Goal {
   instructions: GoalInstructions
   notes: [Note!]!
   assignee: String
+  outcome: MetaData
+}
+
+type GoalBlockReason {
+  type: GoalBlockType!
+  comment: String
+}
+
+enum GoalBlockType {
+  AWAITING_APPROVAL
+  MISSING_INFORMATION
+  UNFINISHED_DEPENDENCIES
+  OTHER
 }
 
 type GoalInstructions {
@@ -217,12 +231,18 @@ input InProgressNoteInput {
 input MarkCompletedInput {
   id: OID!
   note: CompletedNoteInput
+  outcome: OutcomeInput
 }
 
 input CompletedNoteInput {
   id: OID!
   note: String!
   author: String
+}
+
+input OutcomeInput {
+  format: MetaDataFormat!
+  data: String!
 }
 
 input MarkTodoInput {
@@ -238,13 +258,8 @@ input TodoNoteInput {
 
 input ReportBlockedInput {
   id: OID!
-  question: BlockedNoteInput!
-}
-
-input BlockedNoteInput {
-  id: OID!
-  note: String!
-  author: String
+  type: GoalBlockType!
+  comment: String
 }
 
 input UnblockGoalInput {

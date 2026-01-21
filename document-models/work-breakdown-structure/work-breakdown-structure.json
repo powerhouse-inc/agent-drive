@@ -221,7 +221,7 @@
                             "id": "7f2ebf1a-369e-4c53-ae28-c41bcdaaf75d",
                             "name": "MARK_COMPLETED",
                             "reducer": "",
-                            "schema": "input MarkCompletedInput {\n  id: OID!\n  note: CompletedNoteInput\n}\n\ninput CompletedNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
+                            "schema": "input MarkCompletedInput {\n  id: OID!\n  note: CompletedNoteInput\n  outcome: OutcomeInput\n}\n\ninput CompletedNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}\n\ninput OutcomeInput {\n  format: MetaDataFormat!\n  data: String!\n}",
                             "scope": "global",
                             "template": "Mark goal completed"
                         },
@@ -237,13 +237,13 @@
                             "template": "Mark goal as todo"
                         },
                         {
-                            "description": "Reports a goal as blocked indicating it requires stakeholder input to proceed. ",
+                            "description": "Reports a goal as blocked indicating it requires stakeholder approval, input, or its dependencies need to be resolved in order to proceed.",
                             "errors": [],
                             "examples": [],
                             "id": "d5b3de4b-a611-4d01-a86f-71b3447d7d00",
                             "name": "REPORT_BLOCKED",
                             "reducer": "",
-                            "schema": "input ReportBlockedInput {\n  id: OID!\n  question: BlockedNoteInput!\n}\n\ninput BlockedNoteInput {\n  id: OID!\n  note: String!\n  author: String\n}",
+                            "schema": "input ReportBlockedInput {\n  id: OID!\n  type: GoalBlockType!\n  comment: String\n}",
                             "scope": "global",
                             "template": "Report goal blocked"
                         },
@@ -305,7 +305,7 @@
                 "global": {
                     "examples": [],
                     "initialValue": "{\n  \"owner\": null,\n  \"isBlocked\": false,\n  \"goals\": [],\n  \"references\": [],\n  \"metaData\": null\n}",
-                    "schema": "type WorkBreakdownStructureState {\n  owner: String\n  isBlocked: Boolean!\n  goals: [Goal!]!\n  references: [URL!]!\n  metaData: MetaData  \n}\n\ntype Goal {\n  id: OID!\n  status: GoalStatus!\n  parentId: OID\n  dependencies: [OID!]!\n  description: String!\n  isDraft: Boolean!\n  instructions: GoalInstructions\n  notes: [Note!]!\n  assignee: String\n}\n\ntype GoalInstructions {\n  comments: String!\n  workType: WorkType\n  workId: String\n  context: MetaData\n}\n\nenum WorkType {\n  SKILL\n  SCENARIO\n  TASK\n}\n\ntype MetaData {\n  format: MetaDataFormat!\n  data: String!\n}\n\nenum MetaDataFormat {\n  TEXT\n  JSON\n  OTHER\n}\n\ntype Note {\n  id: OID!\n  note: String!\n  author: String\n}\n\nenum GoalStatus {\n  \"Waiting statuses\"\n  TODO\n  BLOCKED\n\n  \"Active statuses\"\n  IN_PROGRESS\n  DELEGATED\n  IN_REVIEW\n\n  \"Finished statuses\"\n  COMPLETED\n  WONT_DO\n}"
+                    "schema": "type WorkBreakdownStructureState {\n  owner: String\n  isBlocked: Boolean!\n  goals: [Goal!]!\n  references: [URL!]!\n  metaData: MetaData  \n}\n\ntype Goal {\n  id: OID!\n  status: GoalStatus!\n  block: GoalBlockReason\n  parentId: OID\n  dependencies: [OID!]!\n  description: String!\n  isDraft: Boolean!\n  instructions: GoalInstructions\n  notes: [Note!]!\n  assignee: String\n  outcome: MetaData\n}\n\ntype GoalBlockReason {\n  type: GoalBlockType!\n  comment: String\n}\n\nenum GoalBlockType {\n  AWAITING_APPROVAL\n  MISSING_INFORMATION\n  UNFINISHED_DEPENDENCIES\n  OTHER\n}\n\ntype GoalInstructions {\n  comments: String!\n  workType: WorkType\n  workId: String\n  context: MetaData\n}\n\nenum WorkType {\n  SKILL\n  SCENARIO\n  TASK\n}\n\ntype MetaData {\n  format: MetaDataFormat!\n  data: String!\n}\n\nenum MetaDataFormat {\n  TEXT\n  JSON\n  OTHER\n}\n\ntype Note {\n  id: OID!\n  note: String!\n  author: String\n}\n\nenum GoalStatus {\n  \"Waiting statuses\"\n  TODO\n  BLOCKED\n\n  \"Active statuses\"\n  IN_PROGRESS\n  DELEGATED\n  IN_REVIEW\n\n  \"Finished statuses\"\n  COMPLETED\n  WONT_DO\n}"
                 },
                 "local": {
                     "examples": [],

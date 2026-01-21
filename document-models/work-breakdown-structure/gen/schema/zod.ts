@@ -2,13 +2,14 @@ import { z } from "zod";
 import type {
   AddDependenciesInput,
   AddNoteInput,
-  BlockedNoteInput,
   ClearInstructionsInput,
   ClearNotesInput,
   CompletedNoteInput,
   CreateGoalInput,
   DelegateGoalInput,
   Goal,
+  GoalBlockReason,
+  GoalBlockType,
   GoalInstructions,
   GoalStatus,
   InProgressNoteInput,
@@ -25,6 +26,7 @@ import type {
   MetaDataFormat,
   MetaDataInput,
   Note,
+  OutcomeInput,
   RemoveDependenciesInput,
   RemoveNoteInput,
   ReorderInput,
@@ -56,6 +58,13 @@ export const definedNonNullAnySchema = z
   .any()
   .refine((v) => isDefinedNonNullAny(v));
 
+export const GoalBlockTypeSchema = z.enum([
+  "AWAITING_APPROVAL",
+  "MISSING_INFORMATION",
+  "OTHER",
+  "UNFINISHED_DEPENDENCIES",
+]);
+
 export const GoalStatusSchema = z.enum([
   "BLOCKED",
   "COMPLETED",
@@ -85,16 +94,6 @@ export function AddNoteInputSchema(): z.ZodObject<Properties<AddNoteInput>> {
     goalId: z.string(),
     note: z.string(),
     noteId: z.string(),
-  });
-}
-
-export function BlockedNoteInputSchema(): z.ZodObject<
-  Properties<BlockedNoteInput>
-> {
-  return z.object({
-    author: z.string().nullish(),
-    id: z.string(),
-    note: z.string(),
   });
 }
 
@@ -154,14 +153,26 @@ export function GoalSchema(): z.ZodObject<Properties<Goal>> {
   return z.object({
     __typename: z.literal("Goal").optional(),
     assignee: z.string().nullable(),
+    block: GoalBlockReasonSchema().nullable(),
     dependencies: z.array(z.string()),
     description: z.string(),
     id: z.string(),
     instructions: GoalInstructionsSchema().nullable(),
     isDraft: z.boolean(),
     notes: z.array(NoteSchema()),
+    outcome: MetaDataSchema().nullable(),
     parentId: z.string().nullable(),
     status: GoalStatusSchema,
+  });
+}
+
+export function GoalBlockReasonSchema(): z.ZodObject<
+  Properties<GoalBlockReason>
+> {
+  return z.object({
+    __typename: z.literal("GoalBlockReason").optional(),
+    comment: z.string().nullable(),
+    type: GoalBlockTypeSchema,
   });
 }
 
@@ -241,6 +252,7 @@ export function MarkCompletedInputSchema(): z.ZodObject<
   return z.object({
     id: z.string(),
     note: z.lazy(() => CompletedNoteInputSchema().nullish()),
+    outcome: z.lazy(() => OutcomeInputSchema().nullish()),
   });
 }
 
@@ -292,6 +304,13 @@ export function NoteSchema(): z.ZodObject<Properties<Note>> {
   });
 }
 
+export function OutcomeInputSchema(): z.ZodObject<Properties<OutcomeInput>> {
+  return z.object({
+    data: z.string(),
+    format: MetaDataFormatSchema,
+  });
+}
+
 export function RemoveDependenciesInputSchema(): z.ZodObject<
   Properties<RemoveDependenciesInput>
 > {
@@ -322,8 +341,9 @@ export function ReportBlockedInputSchema(): z.ZodObject<
   Properties<ReportBlockedInput>
 > {
   return z.object({
+    comment: z.string().nullish(),
     id: z.string(),
-    question: z.lazy(() => BlockedNoteInputSchema()),
+    type: GoalBlockTypeSchema,
   });
 }
 

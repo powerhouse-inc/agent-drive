@@ -1,5 +1,5 @@
 import type { Note } from "../../gen/index.js";
-import { findGoal } from "../utils.js";
+import { findGoal, getDescendants } from "../utils.js";
 import type { WorkBreakdownStructureDocumentationOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructureDocumentationOperations =
@@ -136,8 +136,14 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
         throw new Error(`Goal with ID ${action.input.goalId} not found`);
       }
 
-      // Set isDraft to true
+      // Set isDraft to true for the goal
       goal.isDraft = true;
+
+      // Recursively set isDraft to true for all descendants
+      const descendants = getDescendants(state.goals, action.input.goalId);
+      for (const descendant of descendants) {
+        descendant.isDraft = true;
+      }
     },
     markAsReadyOperation(state, action) {
       // Find target goal by ID
@@ -146,8 +152,14 @@ export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructu
         throw new Error(`Goal with ID ${action.input.goalId} not found`);
       }
 
-      // Set isDraft to false
+      // Set isDraft to false for the goal
       goal.isDraft = false;
+
+      // Recursively set isDraft to false for all descendants
+      const descendants = getDescendants(state.goals, action.input.goalId);
+      for (const descendant of descendants) {
+        descendant.isDraft = false;
+      }
     },
     setOwnerOperation(state, action) {
       // Set the owner field in the global state

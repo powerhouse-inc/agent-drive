@@ -161,11 +161,8 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
       dispatch(
         reportBlocked({
           id: blockedPopup.goalId,
-          question: {
-            id: generateId(),
-            note,
-            author: author || undefined,
-          },
+          type: "MISSING_INFORMATION",
+          comment: note,
         }),
       );
     },

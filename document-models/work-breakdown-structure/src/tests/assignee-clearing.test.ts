@@ -112,10 +112,8 @@ describe("Assignee Clearing on Status Changes", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-1",
-          question: {
-            id: "note-1",
-            note: "Need clarification",
-          },
+          type: "MISSING_INFORMATION",
+          comment: "Need clarification",
         }),
       );
 
@@ -263,7 +261,8 @@ describe("Assignee Clearing on Status Changes", () => {
         updatedDocument,
         reportBlocked({
           id: "goal-1",
-          question: { id: "q-1", note: "Blocked" },
+          type: "OTHER",
+          comment: "Blocked",
         }),
       );
 

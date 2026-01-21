@@ -93,12 +93,14 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         id: action.input.id,
         description: action.input.description,
         status: action.input.assignee ? "DELEGATED" : "TODO", // Status based on assignee
+        block: null,
         parentId: action.input.parentId || null,
         dependencies: action.input.dependsOn || [],
         isDraft: action.input.draft !== false, // Default to true unless explicitly set to false
         instructions: instructionsObj,
         notes: [] as Note[],
         assignee: action.input.assignee || null,
+        outcome: null,
       };
 
       // Add initial note if provided
@@ -230,6 +232,14 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
         goal.notes.push(note);
       }
 
+      // Set optional outcome if provided
+      if (action.input.outcome) {
+        goal.outcome = {
+          format: action.input.outcome.format,
+          data: action.input.outcome.data,
+        };
+      }
+
       // Mark all unfinished child goals as COMPLETED
       const descendants = getDescendants(state.goals, action.input.id);
       for (const descendant of descendants) {
@@ -291,13 +301,11 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
 
-      // Store blocking question as a note
-      const note: Note = {
-        id: action.input.question.id,
-        note: `BLOCKED: ${action.input.question.note}`,
-        author: action.input.question.author || null,
+      // Set the block reason with type and optional comment
+      goal.block = {
+        type: action.input.type,
+        comment: action.input.comment || null,
       };
-      goal.notes.push(note);
 
       // Update global isBlocked flag if this is the first blocked goal
       if (!state.isBlocked) {
@@ -329,6 +337,9 @@ export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWor
 
       // Clear assignee since status is not DELEGATED or IN_REVIEW
       goal.assignee = null;
+
+      // Clear the block reason
+      goal.block = null;
 
       // Check if any goals remain blocked and update global isBlocked flag
       state.isBlocked = hasBlockedGoals(state.goals);

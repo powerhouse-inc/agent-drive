@@ -68,12 +68,6 @@ export type AddNoteInput = {
   noteId: Scalars["OID"]["input"];
 };
 
-export type BlockedNoteInput = {
-  author?: InputMaybe<Scalars["String"]["input"]>;
-  id: Scalars["OID"]["input"];
-  note: Scalars["String"]["input"];
-};
-
 export type ClearInstructionsInput = {
   goalId: Scalars["OID"]["input"];
 };
@@ -108,21 +102,34 @@ export type DelegateGoalInput = {
 
 export type Goal = {
   assignee: Maybe<Scalars["String"]["output"]>;
+  block: Maybe<GoalBlockReason>;
   dependencies: Array<Scalars["OID"]["output"]>;
   description: Scalars["String"]["output"];
   id: Scalars["OID"]["output"];
   instructions: Maybe<GoalInstructions>;
   isDraft: Scalars["Boolean"]["output"];
   notes: Array<Note>;
+  outcome: Maybe<MetaData>;
   parentId: Maybe<Scalars["OID"]["output"]>;
-  status: GoalStatus | `${GoalStatus}`;
+  status: GoalStatus;
 };
+
+export type GoalBlockReason = {
+  comment: Maybe<Scalars["String"]["output"]>;
+  type: GoalBlockType;
+};
+
+export type GoalBlockType =
+  | "AWAITING_APPROVAL"
+  | "MISSING_INFORMATION"
+  | "OTHER"
+  | "UNFINISHED_DEPENDENCIES";
 
 export type GoalInstructions = {
   comments: Scalars["String"]["output"];
   context: Maybe<MetaData>;
   workId: Maybe<Scalars["String"]["output"]>;
-  workType: Maybe<WorkType | `${WorkType}`>;
+  workType: Maybe<WorkType>;
 };
 
 export type GoalStatus =
@@ -147,7 +154,7 @@ export type InitialInstructionsInput = {
   comments: Scalars["String"]["input"];
   contextJSON?: InputMaybe<Scalars["String"]["input"]>;
   workId?: InputMaybe<Scalars["String"]["input"]>;
-  workType?: InputMaybe<WorkType | `${WorkType}`>;
+  workType?: InputMaybe<WorkType>;
 };
 
 export type InitialNoteInput = {
@@ -160,7 +167,7 @@ export type InstructionsUpdate = {
   comments: Scalars["String"]["input"];
   contextJSON?: InputMaybe<Scalars["String"]["input"]>;
   workId?: InputMaybe<Scalars["String"]["input"]>;
-  workType?: InputMaybe<WorkType | `${WorkType}`>;
+  workType?: InputMaybe<WorkType>;
 };
 
 export type MarkAsDraftInput = {
@@ -174,6 +181,7 @@ export type MarkAsReadyInput = {
 export type MarkCompletedInput = {
   id: Scalars["OID"]["input"];
   note?: InputMaybe<CompletedNoteInput>;
+  outcome?: InputMaybe<OutcomeInput>;
 };
 
 export type MarkInProgressInput = {
@@ -192,20 +200,25 @@ export type MarkWontDoInput = {
 
 export type MetaData = {
   data: Scalars["String"]["output"];
-  format: MetaDataFormat | `${MetaDataFormat}`;
+  format: MetaDataFormat;
 };
 
 export type MetaDataFormat = "JSON" | "OTHER" | "TEXT";
 
 export type MetaDataInput = {
   data: Scalars["String"]["input"];
-  format: MetaDataFormat | `${MetaDataFormat}`;
+  format: MetaDataFormat;
 };
 
 export type Note = {
   author: Maybe<Scalars["String"]["output"]>;
   id: Scalars["OID"]["output"];
   note: Scalars["String"]["output"];
+};
+
+export type OutcomeInput = {
+  data: Scalars["String"]["input"];
+  format: MetaDataFormat;
 };
 
 export type RemoveDependenciesInput = {
@@ -227,8 +240,9 @@ export type ReorderInput = {
 };
 
 export type ReportBlockedInput = {
+  comment?: InputMaybe<Scalars["String"]["input"]>;
   id: Scalars["OID"]["input"];
-  question: BlockedNoteInput;
+  type: GoalBlockType;
 };
 
 export type ReportNoteInput = {
@@ -245,7 +259,7 @@ export type ReportOnGoalInput = {
 
 export type SetMetaDataInput = {
   data: Scalars["String"]["input"];
-  format: MetaDataFormat | `${MetaDataFormat}`;
+  format: MetaDataFormat;
 };
 
 export type SetOwnerInput = {

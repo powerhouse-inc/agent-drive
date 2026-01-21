@@ -466,6 +466,97 @@ describe("Documentation Operations", () => {
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.isDraft).toBe(true);
     });
+
+    it("should recursively mark all child goals as draft", () => {
+      const document = utils.createDocument();
+
+      // Create parent goal
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-goal",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: false,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Create child goals
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child 1",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-goal",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Child 2",
+          instructions: undefined,
+          draft: false,
+          parentId: "parent-goal",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Create grandchild
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "grandchild-1",
+          description: "Grandchild 1",
+          instructions: undefined,
+          draft: false,
+          parentId: "child-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark parent as draft
+      updatedDocument = reducer(
+        updatedDocument,
+        markAsDraft({
+          goalId: "parent-goal",
+        }),
+      );
+
+      const goals = updatedDocument.state.global.goals;
+      const parent = goals.find(g => g.id === "parent-goal");
+      const child1 = goals.find(g => g.id === "child-1");
+      const child2 = goals.find(g => g.id === "child-2");
+      const grandchild = goals.find(g => g.id === "grandchild-1");
+
+      // All goals should be marked as draft
+      expect(parent?.isDraft).toBe(true);
+      expect(child1?.isDraft).toBe(true);
+      expect(child2?.isDraft).toBe(true);
+      expect(grandchild?.isDraft).toBe(true);
+    });
   });
 
   describe("MARK_AS_READY", () => {
@@ -499,6 +590,97 @@ describe("Documentation Operations", () => {
 
       const goal = updatedDocument.state.global.goals[0];
       expect(goal.isDraft).toBe(false);
+    });
+
+    it("should recursively mark all child goals as ready", () => {
+      const document = utils.createDocument();
+
+      // Create parent goal as draft
+      let updatedDocument = reducer(
+        document,
+        createGoal({
+          id: "parent-goal",
+          description: "Parent goal",
+          instructions: undefined,
+          draft: true,
+          parentId: null,
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Create child goals as draft
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-1",
+          description: "Child 1",
+          instructions: undefined,
+          draft: true,
+          parentId: "parent-goal",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "child-2",
+          description: "Child 2",
+          instructions: undefined,
+          draft: true,
+          parentId: "parent-goal",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Create grandchild as draft
+      updatedDocument = reducer(
+        updatedDocument,
+        createGoal({
+          id: "grandchild-1",
+          description: "Grandchild 1",
+          instructions: undefined,
+          draft: true,
+          parentId: "child-1",
+          insertBefore: null,
+          assignee: null,
+          dependsOn: [],
+          initialNote: null,
+          metaData: null,
+        }),
+      );
+
+      // Mark parent as ready
+      updatedDocument = reducer(
+        updatedDocument,
+        markAsReady({
+          goalId: "parent-goal",
+        }),
+      );
+
+      const goals = updatedDocument.state.global.goals;
+      const parent = goals.find(g => g.id === "parent-goal");
+      const child1 = goals.find(g => g.id === "child-1");
+      const child2 = goals.find(g => g.id === "child-2");
+      const grandchild = goals.find(g => g.id === "grandchild-1");
+
+      // All goals should be marked as ready (not draft)
+      expect(parent?.isDraft).toBe(false);
+      expect(child1?.isDraft).toBe(false);
+      expect(child2?.isDraft).toBe(false);
+      expect(grandchild?.isDraft).toBe(false);
     });
   });
 });
