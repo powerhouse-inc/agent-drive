@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import type { FormEventHandler } from "react";
 import { generateId } from "document-model/core";
-import { useSelectedClaudeChatDocument } from "powerhouse-agent/document-models/claude-chat";
+import { useSelectedClaudeChatDocument } from "@powerhousedao/agent-manager/document-models/claude-chat";
 import {
   addUserMessage,
   addAgentMessage,
   setSelectedAgent,
-} from "powerhouse-agent/document-models/claude-chat";
+} from "@powerhousedao/agent-manager/document-models/claude-chat";
 import { MessageItem } from "./MessageItem.js";
 import { createClaudeService } from "../services/ClaudeService.js";
 

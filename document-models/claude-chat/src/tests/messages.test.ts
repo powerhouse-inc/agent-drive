@@ -15,7 +15,7 @@ import {
   addAgent,
   AddUserMessageInputSchema,
   AddAgentMessageInputSchema,
-} from "powerhouse-agent/document-models/claude-chat";
+} from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 describe("Messages Operations", () => {
   describe("User Messages", () => {

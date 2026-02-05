@@ -17,7 +17,7 @@ import {
   assertIsAgentInboxDocument,
   isAgentInboxState,
   assertIsAgentInboxState,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 import { ZodError } from "zod";
 
 describe("AgentInbox Document Model", () => {

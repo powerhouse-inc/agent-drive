@@ -1,7 +1,7 @@
 import type { DocumentModelModule } from "document-model";
 import { createState } from "document-model";
 import { defaultBaseState } from "document-model/core";
-import type { WorkBreakdownStructurePHState } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { WorkBreakdownStructurePHState } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import {
   actions,
   documentModel,

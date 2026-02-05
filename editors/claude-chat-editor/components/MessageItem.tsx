@@ -1,7 +1,7 @@
 import type {
   Message,
   Agent,
-} from "powerhouse-agent/document-models/claude-chat";
+} from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 interface MessageItemProps {
   message: Message;

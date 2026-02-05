@@ -1,5 +1,5 @@
 {
-  "name": "powerhouse-agent",
+  "name": "@powerhousedao/agent-manager",
   "description": "Document models and editors for Powerhouse AI agents inbox and WBS.",
   "version": "1.0.0",
   "license": "AGPL-3.0-only",

@@ -26,7 +26,7 @@ import {
   SendStakeholderMessageInputSchema,
   addStakeholder,
   removeStakeholder,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 describe("Threads Operations", () => {
   it("should handle createThread operation", () => {

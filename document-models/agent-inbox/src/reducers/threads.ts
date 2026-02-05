@@ -4,7 +4,7 @@ import {
   MessageNotFoundError,
   StakeholderRemovedError,
 } from "../../gen/threads/error.js";
-import type { AgentInboxThreadsOperations } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxThreadsOperations } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 export const agentInboxThreadsOperations: AgentInboxThreadsOperations = {
   createThreadOperation(state, action) {

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useRef } from "react";
 import { Grid, Willow } from "@svar-ui/react-grid";
-import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
+import { useSelectedWorkBreakdownStructureDocument } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import { flatToTree, countGoalsInTree } from "../utils/treeTransform.js";
 import EditableStatusChip from "./EditableStatusChip.js";
 import { BlockedStatusPopup } from "./BlockedStatusPopup.js";
@@ -15,7 +15,7 @@ import {
   reportBlocked,
   reportOnGoal,
   markWontDo,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import { generateId } from "document-model/core";
 
 interface GoalGridProps {

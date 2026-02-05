@@ -10,7 +10,7 @@ import {
   sortGoalsDepthFirst,
 } from "../utils.js";
 import { DuplicateGoalIdError } from "../../gen/workflow/error.js";
-import type { WorkBreakdownStructureWorkflowOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { WorkBreakdownStructureWorkflowOperations } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureWorkflowOperations: WorkBreakdownStructureWorkflowOperations =
   {

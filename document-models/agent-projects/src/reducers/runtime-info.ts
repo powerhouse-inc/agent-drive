@@ -1,5 +1,5 @@
 import { ProjectNotFoundError } from "../../gen/runtime-info/error.js";
-import type { AgentProjectsRuntimeInfoOperations } from "powerhouse-agent/document-models/agent-projects";
+import type { AgentProjectsRuntimeInfoOperations } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 export const agentProjectsRuntimeInfoOperations: AgentProjectsRuntimeInfoOperations =
   {

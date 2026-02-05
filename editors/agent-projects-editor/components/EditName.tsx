@@ -1,7 +1,7 @@
 import { setName } from "document-model";
 import type { FormEventHandler, MouseEventHandler } from "react";
 import { useState } from "react";
-import { useSelectedAgentProjectsDocument } from "powerhouse-agent/document-models/agent-projects";
+import { useSelectedAgentProjectsDocument } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 /** Displays the name of the selected AgentProjects document and allows editing it */
 export function EditAgentProjectsName() {

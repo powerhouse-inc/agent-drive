@@ -1,4 +1,4 @@
-import type { WorkBreakdownStructureMetadataOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { WorkBreakdownStructureMetadataOperations } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureMetadataOperations: WorkBreakdownStructureMetadataOperations =
   {

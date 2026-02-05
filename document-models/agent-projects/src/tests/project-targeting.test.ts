@@ -12,7 +12,7 @@ import {
   runProject,
   stopProject,
   deleteProject,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 describe("ProjectTargeting Operations", () => {
   describe("createProject", () => {
@@ -325,7 +325,7 @@ describe("ProjectTargeting Operations", () => {
 
       // Manually update status to STOPPED (simulating it exists on filesystem)
       const { updateProjectStatus } =
-        await import("powerhouse-agent/document-models/agent-projects");
+        await import("@powerhousedao/agent-manager/document-models/agent-projects");
       document = reducer(
         document,
         updateProjectStatus({
@@ -364,7 +364,7 @@ describe("ProjectTargeting Operations", () => {
 
       // Import necessary function
       const { updateProjectStatus } =
-        await import("powerhouse-agent/document-models/agent-projects");
+        await import("@powerhousedao/agent-manager/document-models/agent-projects");
 
       // Update status with path
       document = reducer(
@@ -413,7 +413,7 @@ describe("ProjectTargeting Operations", () => {
 
       // Import necessary functions
       const { updateRuntimeInfo, updateProjectStatus } =
-        await import("powerhouse-agent/document-models/agent-projects");
+        await import("@powerhousedao/agent-manager/document-models/agent-projects");
 
       // Simulate project running with runtime info
       document = reducer(

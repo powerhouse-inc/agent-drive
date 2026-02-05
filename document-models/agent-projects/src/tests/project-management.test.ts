@@ -15,7 +15,7 @@ import {
   UpdateProjectConfigInputSchema,
   updateProjectStatus,
   UpdateProjectStatusInputSchema,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 describe("ProjectManagement Operations", () => {
   it("should handle registerProject operation", () => {

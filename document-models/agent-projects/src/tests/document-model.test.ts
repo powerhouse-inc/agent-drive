@@ -17,7 +17,7 @@ import {
   assertIsAgentProjectsDocument,
   isAgentProjectsState,
   assertIsAgentProjectsState,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 import { ZodError } from "zod";
 
 describe("AgentProjects Document Model", () => {

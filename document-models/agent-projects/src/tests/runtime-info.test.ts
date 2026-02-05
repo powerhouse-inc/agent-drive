@@ -11,7 +11,7 @@ import {
   isAgentProjectsDocument,
   updateRuntimeInfo,
   UpdateRuntimeInfoInputSchema,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 describe("RuntimeInfo Operations", () => {
   it("should handle updateRuntimeInfo operation", () => {

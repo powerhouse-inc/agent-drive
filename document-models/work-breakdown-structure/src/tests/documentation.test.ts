@@ -16,7 +16,7 @@ import {
   removeNote,
   markAsDraft,
   markAsReady,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 describe("Documentation Operations", () => {
   describe("UPDATE_DESCRIPTION", () => {

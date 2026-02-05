@@ -1,4 +1,4 @@
-import type { Project } from "powerhouse-agent/document-models/agent-projects";
+import type { Project } from "@powerhousedao/agent-manager/document-models/agent-projects";
 import { ProjectStatusDisplay } from "./ProjectStatusDisplay.js";
 import { TargetedStatusControls } from "./TargetedStatusControls.js";
 

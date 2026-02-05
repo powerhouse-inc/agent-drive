@@ -1,5 +1,5 @@
 import { ProjectNotFoundError } from "../../gen/logs/error.js";
-import type { AgentProjectsLogsOperations } from "powerhouse-agent/document-models/agent-projects";
+import type { AgentProjectsLogsOperations } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 export const agentProjectsLogsOperations: AgentProjectsLogsOperations = {
   addLogEntryOperation(state, action) {

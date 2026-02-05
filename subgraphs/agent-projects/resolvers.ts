@@ -4,7 +4,7 @@ import { setName } from "document-model";
 import {
   actions,
   agentProjectsDocumentType,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 import type {
   AgentProjectsDocument,
@@ -18,7 +18,7 @@ import type {
   UpdateRuntimeInfoInput,
   AddLogEntryInput,
   ClearProjectLogsInput,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 export const getResolvers = (
   subgraph: BaseSubgraph,

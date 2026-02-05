@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { AgentProjectsPHState } from "powerhouse-agent/document-models/agent-projects";
+import type { AgentProjectsPHState } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 import { agentProjectsProjectTargetingOperations } from "../src/reducers/project-targeting.js";
 import { agentProjectsProjectManagementOperations } from "../src/reducers/project-management.js";

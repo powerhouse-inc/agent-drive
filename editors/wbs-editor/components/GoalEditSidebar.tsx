@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
+import { useSelectedWorkBreakdownStructureDocument } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import MarkdownIt from "markdown-it";
 import {
   updateDescription,
@@ -16,7 +16,7 @@ import {
   reportBlocked,
   delegateGoal,
   reportOnGoal,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import { generateId } from "document-model/core";
 import { findGoalInTree } from "../utils/treeTransform.js";
 import { Tooltip } from "./Tooltip.js";

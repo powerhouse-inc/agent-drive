@@ -5,7 +5,7 @@ import {
   runProject,
   stopProject,
   deleteProject,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 import { ProjectList } from "./components/ProjectList.js";
 import { CreateProjectForm } from "./components/CreateProjectForm.js";
 import { ProjectStats } from "./components/ProjectStats.js";

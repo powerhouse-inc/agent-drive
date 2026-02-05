@@ -1,4 +1,4 @@
-import type { ClaudeChatAgentsOperations } from "powerhouse-agent/document-models/claude-chat";
+import type { ClaudeChatAgentsOperations } from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 export const claudeChatAgentsOperations: ClaudeChatAgentsOperations = {
   addAgentOperation(state, action) {

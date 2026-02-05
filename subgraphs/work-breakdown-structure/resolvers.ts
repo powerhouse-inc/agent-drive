@@ -4,7 +4,7 @@ import { setName } from "document-model";
 import {
   actions,
   workBreakdownStructureDocumentType,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 import type {
   WorkBreakdownStructureDocument,
@@ -31,7 +31,7 @@ import type {
   MarkWontDoInput,
   SetReferencesInput,
   SetMetaDataInput,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export const getResolvers = (
   subgraph: BaseSubgraph,

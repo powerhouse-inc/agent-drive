@@ -1,4 +1,4 @@
-import type { Project } from "powerhouse-agent/document-models/agent-projects";
+import type { Project } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 interface TargetedStatusControlsProps {
   project: Project;

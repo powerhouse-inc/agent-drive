@@ -22,7 +22,7 @@ import {
   moveStakeholder,
   MoveStakeholderInputSchema,
   createThread,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 describe("Stakeholders Operations", () => {
   it("should handle addStakeholder operation", () => {

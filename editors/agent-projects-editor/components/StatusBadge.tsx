@@ -1,7 +1,7 @@
 import type {
   CurrentStatus,
   TargetedStatus,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 interface StatusBadgeProps {
   status: CurrentStatus | TargetedStatus;

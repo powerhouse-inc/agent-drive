@@ -4,7 +4,7 @@ import { setName } from "document-model";
 import {
   actions,
   agentInboxDocumentType,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 import type {
   AgentInboxDocument,
@@ -30,7 +30,7 @@ import type {
   ConfirmThreadResolvedInput,
   ArchiveThreadInput,
   ReopenThreadInput,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 export const getResolvers = (
   subgraph: BaseSubgraph,

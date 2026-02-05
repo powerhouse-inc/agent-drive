@@ -1,7 +1,7 @@
 import { setName } from "document-model";
 import type { FormEventHandler, MouseEventHandler } from "react";
 import { useState } from "react";
-import { useSelectedClaudeChatDocument } from "powerhouse-agent/document-models/claude-chat";
+import { useSelectedClaudeChatDocument } from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 /** Displays the name of the selected ClaudeChat document and allows editing it */
 export function EditClaudeChatName() {

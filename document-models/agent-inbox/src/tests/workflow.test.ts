@@ -17,7 +17,7 @@ import {
   ArchiveThreadInputSchema,
   reopenThread,
   ReopenThreadInputSchema,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 describe("Workflow Operations", () => {
   it("should handle proposeThreadResolved operation", () => {

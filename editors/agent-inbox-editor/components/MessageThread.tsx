@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
-import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxAction } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 import MarkdownIt from "markdown-it";
 import {
   sendStakeholderMessage,

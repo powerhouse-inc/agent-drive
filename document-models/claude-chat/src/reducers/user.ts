@@ -1,4 +1,4 @@
-import type { ClaudeChatUserOperations } from "powerhouse-agent/document-models/claude-chat";
+import type { ClaudeChatUserOperations } from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 export const claudeChatUserOperations: ClaudeChatUserOperations = {
   setUsernameOperation(state, action) {

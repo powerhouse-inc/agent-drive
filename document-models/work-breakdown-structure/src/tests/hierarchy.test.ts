@@ -16,7 +16,7 @@ import {
   AddDependenciesInputSchema,
   removeDependencies,
   RemoveDependenciesInputSchema,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 describe("Hierarchy Operations", () => {
   describe("REORDER", () => {

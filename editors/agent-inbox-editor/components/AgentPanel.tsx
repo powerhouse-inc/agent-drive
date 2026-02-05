@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
-import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxAction } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 import {
   setAgentName,
   setAgentAddress,

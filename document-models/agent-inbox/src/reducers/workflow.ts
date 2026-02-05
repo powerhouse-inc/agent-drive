@@ -2,7 +2,7 @@ import {
   ThreadNotFoundError,
   InvalidStatusError,
 } from "../../gen/workflow/error.js";
-import type { AgentInboxWorkflowOperations } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxWorkflowOperations } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 export const agentInboxWorkflowOperations: AgentInboxWorkflowOperations = {
   proposeThreadResolvedOperation(state, action) {

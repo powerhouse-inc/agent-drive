@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { ClaudeChatPHState } from "powerhouse-agent/document-models/claude-chat";
+import type { ClaudeChatPHState } from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 import { claudeChatAgentsOperations } from "../src/reducers/agents.js";
 import { claudeChatMessagesOperations } from "../src/reducers/messages.js";

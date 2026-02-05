@@ -1,7 +1,7 @@
 import { setName } from "document-model";
 import type { FormEventHandler, MouseEventHandler } from "react";
 import { useState } from "react";
-import { useSelectedAgentInboxDocument } from "powerhouse-agent/document-models/agent-inbox";
+import { useSelectedAgentInboxDocument } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 /** Displays the name of the selected AgentInbox document and allows editing it */
 export function EditAgentInboxName() {

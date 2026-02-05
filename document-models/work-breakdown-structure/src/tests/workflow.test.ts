@@ -27,7 +27,7 @@ import {
   UnblockGoalInputSchema,
   markWontDo,
   MarkWontDoInputSchema,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 describe("Workflow Operations", () => {
   describe("CREATE_GOAL", () => {

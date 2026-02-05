@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
-import type { AgentInboxAction } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxAction } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 import type { Stakeholder as DocumentStakeholder } from "../../../document-models/agent-inbox/gen/schema/types.js";
 import {
   addStakeholder,

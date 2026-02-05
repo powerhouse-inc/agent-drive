@@ -1,6 +1,6 @@
 import type { Note } from "../../gen/index.js";
 import { findGoal, getDescendants } from "../utils.js";
-import type { WorkBreakdownStructureDocumentationOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { WorkBreakdownStructureDocumentationOperations } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructureDocumentationOperations =
   {

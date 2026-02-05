@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { WorkBreakdownStructurePHState } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { WorkBreakdownStructurePHState } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 import { workBreakdownStructureDocumentationOperations } from "../src/reducers/documentation.js";
 import { workBreakdownStructureHierarchyOperations } from "../src/reducers/hierarchy.js";

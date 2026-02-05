@@ -2,7 +2,7 @@ import {
   DuplicateStakeholderError,
   StakeholderNotFoundError,
 } from "../../gen/stakeholders/error.js";
-import type { AgentInboxStakeholdersOperations } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxStakeholdersOperations } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 export const agentInboxStakeholdersOperations: AgentInboxStakeholdersOperations =
   {

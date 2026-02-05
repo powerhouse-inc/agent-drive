@@ -5,7 +5,7 @@ import {
   isDescendant,
   sortGoalsDepthFirst,
 } from "../utils.js";
-import type { WorkBreakdownStructureHierarchyOperations } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { WorkBreakdownStructureHierarchyOperations } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export const workBreakdownStructureHierarchyOperations: WorkBreakdownStructureHierarchyOperations =
   {

@@ -19,7 +19,7 @@ import {
   SetAgentDescriptionInputSchema,
   setAgentAvatar,
   SetAgentAvatarInputSchema,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 describe("Agent Operations", () => {
   it("should handle setAgentName operation", () => {

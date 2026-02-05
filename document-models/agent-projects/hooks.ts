@@ -8,7 +8,7 @@ import {
 import type {
   AgentProjectsDocument,
   AgentProjectsAction,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 import { isAgentProjectsDocument } from "./gen/document-schema.js";
 
 /** Hook to get a AgentProjects document by its id */

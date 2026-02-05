@@ -1,4 +1,4 @@
-import type { AgentInboxAgentOperations } from "powerhouse-agent/document-models/agent-inbox";
+import type { AgentInboxAgentOperations } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 export const agentInboxAgentOperations: AgentInboxAgentOperations = {
   setAgentNameOperation(state, action) {

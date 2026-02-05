@@ -13,7 +13,7 @@ import {
   SetUsernameInputSchema,
   setSelectedAgent,
   SetSelectedAgentInputSchema,
-} from "powerhouse-agent/document-models/claude-chat";
+} from "@powerhousedao/agent-manager/document-models/claude-chat";
 
 describe("User Operations", () => {
   it("should handle setUsername operation", () => {

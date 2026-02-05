@@ -1,5 +1,5 @@
 import { ProjectNotFoundError } from "../../gen/project-targeting/error.js";
-import type { AgentProjectsProjectTargetingOperations } from "powerhouse-agent/document-models/agent-projects";
+import type { AgentProjectsProjectTargetingOperations } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 export const agentProjectsProjectTargetingOperations: AgentProjectsProjectTargetingOperations =
   {

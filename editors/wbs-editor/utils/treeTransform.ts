@@ -1,4 +1,4 @@
-import type { Goal } from "powerhouse-agent/document-models/work-breakdown-structure";
+import type { Goal } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export interface TreeGoal extends Goal {
   data?: TreeGoal[];

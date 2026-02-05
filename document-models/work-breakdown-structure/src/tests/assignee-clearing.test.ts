@@ -15,7 +15,7 @@ import {
   unblockGoal,
   markWontDo,
   reportOnGoal,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 describe("Assignee Clearing on Status Changes", () => {
   describe("when changing from DELEGATED status", () => {

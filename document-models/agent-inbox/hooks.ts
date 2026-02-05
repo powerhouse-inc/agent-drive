@@ -8,7 +8,7 @@ import {
 import type {
   AgentInboxDocument,
   AgentInboxAction,
-} from "powerhouse-agent/document-models/agent-inbox";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 import { isAgentInboxDocument } from "./gen/document-schema.js";
 
 /** Hook to get a AgentInbox document by its id */

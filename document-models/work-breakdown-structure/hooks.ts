@@ -8,7 +8,7 @@ import {
 import type {
   WorkBreakdownStructureDocument,
   WorkBreakdownStructureAction,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import { isWorkBreakdownStructureDocument } from "./gen/document-schema.js";
 
 /** Hook to get a WorkBreakdownStructure document by its id */

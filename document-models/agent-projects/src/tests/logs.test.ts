@@ -13,7 +13,7 @@ import {
   AddLogEntryInputSchema,
   clearProjectLogs,
   ClearProjectLogsInputSchema,
-} from "powerhouse-agent/document-models/agent-projects";
+} from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 describe("Logs Operations", () => {
   it("should handle addLogEntry operation", () => {

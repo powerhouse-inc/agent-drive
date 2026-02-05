@@ -9,7 +9,7 @@ import {
   utils,
   setReferences,
   setMetaData,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 describe("Metadata Operations", () => {
   describe("SET_REFERENCES", () => {

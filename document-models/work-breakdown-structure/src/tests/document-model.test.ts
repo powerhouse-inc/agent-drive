@@ -17,7 +17,7 @@ import {
   assertIsWorkBreakdownStructureDocument,
   isWorkBreakdownStructureState,
   assertIsWorkBreakdownStructureState,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import { ZodError } from "zod";
 
 describe("WorkBreakdownStructure Document Model", () => {

@@ -8,7 +8,7 @@ import {
 import type {
   ClaudeChatDocument,
   ClaudeChatAction,
-} from "powerhouse-agent/document-models/claude-chat";
+} from "@powerhousedao/agent-manager/document-models/claude-chat";
 import { isClaudeChatDocument } from "./gen/document-schema.js";
 
 /** Hook to get a ClaudeChat document by its id */

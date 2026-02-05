@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
 import { generateId } from "document-model/core";
-import { useSelectedWorkBreakdownStructureDocument } from "powerhouse-agent/document-models/work-breakdown-structure";
+import { useSelectedWorkBreakdownStructureDocument } from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 import {
   setOwner,
   setReferences,
   setMetaData,
-} from "powerhouse-agent/document-models/work-breakdown-structure";
+} from "@powerhousedao/agent-manager/document-models/work-breakdown-structure";
 
 export function WBSSidebar() {
   const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();

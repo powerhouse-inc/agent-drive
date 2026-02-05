@@ -2,7 +2,7 @@ import {
   DuplicateProjectError,
   ProjectNotFoundError,
 } from "../../gen/project-management/error.js";
-import type { AgentProjectsProjectManagementOperations } from "powerhouse-agent/document-models/agent-projects";
+import type { AgentProjectsProjectManagementOperations } from "@powerhousedao/agent-manager/document-models/agent-projects";
 
 export const agentProjectsProjectManagementOperations: AgentProjectsProjectManagementOperations =
   {

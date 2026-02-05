@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 /**
  * Patches imports in document-models module.ts files
- * Replaces regular imports from "powerhouse-agent/document-models/*" with "./index.js"
+ * Replaces regular imports from "@powerhousedao/agent-manager/document-models/*" with "./index.js"
  * Preserves type imports as-is
  */
 
@@ -51,10 +51,10 @@ async function patchImports() {
     // Extract the document model name from the path
     const modelName = path.basename(path.dirname(filePath));
 
-    // Pattern to match regular imports (not type imports) from powerhouse-agent/document-models/*
+    // Pattern to match regular imports (not type imports) from @powerhousedao/agent-manager/document-models/*
     // This regex matches the entire import statement including the 'from' part
     const importRegex =
-      /^(\s*import\s+)(?!type\s+)(\{[^}]+\})\s+from\s+["']powerhouse-agent\/document-models\/[^"']+["'];?$/gm;
+      /^(\s*import\s+)(?!type\s+)(\{[^}]+\})\s+from\s+["']@powerhousedao\/agent-manager\/document-models\/[^"']+["'];?$/gm;
 
     // Replace regular imports with ./index.js
     content = content.replace(
