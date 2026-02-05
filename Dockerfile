@@ -45,8 +45,8 @@ COPY processors/ ./processors/
 COPY subgraphs/ ./subgraphs/
 COPY index.ts style.css ./
 
-# Install dependencies
-RUN pnpm install
+# Install dependencies (--ignore-scripts to skip broken postinstall in @powerhousedao/agent-manager)
+RUN pnpm install --ignore-scripts
 
 # Build the project
 RUN pnpm build
