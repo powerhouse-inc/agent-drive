@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Build and Publish Docker Images
 
 on:
   push:
@@ -16,7 +16,8 @@ on:
 
 env:
   VETRA_REGISTRY: cr.vetra.io
-  VETRA_IMAGE: cr.vetra.io/rupert/agent-drive
+  SWITCHBOARD_IMAGE: cr.vetra.io/rupert/switchboard
+  CONNECT_IMAGE: cr.vetra.io/rupert/connect
 
 jobs:
   build-and-push:
@@ -59,25 +60,42 @@ jobs:
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push Switchboard image
         uses: docker/build-push-action@v5
         with:
           context: .
           target: switchboard
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.VETRA_IMAGE }}:${{ steps.version.outputs.tag }}
-            ${{ env.VETRA_IMAGE }}:${{ steps.version.outputs.branch }}
-            ${{ github.ref == 'refs/heads/main' && format('{0}:latest', env.VETRA_IMAGE) || '' }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ env.SWITCHBOARD_IMAGE }}:${{ steps.version.outputs.tag }}
+            ${{ env.SWITCHBOARD_IMAGE }}:${{ steps.version.outputs.branch }}
+            ${{ github.ref == 'refs/heads/main' && format('{0}:latest', env.SWITCHBOARD_IMAGE) || '' }}
+          cache-from: type=gha,scope=switchboard
+          cache-to: type=gha,mode=max,scope=switchboard
+
+      - name: Build and push Connect image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: connect
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.CONNECT_IMAGE }}:${{ steps.version.outputs.tag }}
+            ${{ env.CONNECT_IMAGE }}:${{ steps.version.outputs.branch }}
+            ${{ github.ref == 'refs/heads/main' && format('{0}:latest', env.CONNECT_IMAGE) || '' }}
+          cache-from: type=gha,scope=connect
+          cache-to: type=gha,mode=max,scope=connect
 
       - name: Output image info
         if: github.event_name != 'pull_request'
         run: |
-          echo "## Docker Image Published" >> $GITHUB_STEP_SUMMARY
+          echo "## Docker Images Published" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.VETRA_IMAGE }}:${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "### Switchboard" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.SWITCHBOARD_IMAGE }}:${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Connect" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.CONNECT_IMAGE }}:${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY

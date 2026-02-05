@@ -57,6 +57,8 @@
     "connect": "ph-cli connect",
     "reactor": "ph-cli reactor",
     "service": "ph-cli service",
+    "switchboard": "ph-cli switchboard",
+    "switchboard:migrate": "ph-cli switchboard --migrate",
     "vetra": "ph-cli vetra",
     "service-startup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-startup.sh",
     "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh",

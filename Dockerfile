@@ -1,9 +1,10 @@
 # =============================================================================
 # Multi-stage Dockerfile for Agent Drive
-# Produces switchboard image for deployment
+# Produces two images: connect (frontend) and switchboard (backend)
 #
-# Build command:
-#   docker build -t cr.vetra.io/rupert/agent-drive:<tag> .
+# Build commands:
+#   docker build --target connect -t cr.vetra.io/rupert/connect:<tag> .
+#   docker build --target switchboard -t cr.vetra.io/rupert/switchboard:<tag> .
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -25,8 +26,11 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # Configure JSR registry
 RUN pnpm config set @jsr:registry https://npm.jsr.io
 
-# Install prisma globally
-RUN pnpm add -g prisma@5.17.0
+# Build arguments
+ARG PH_CONNECT_BASE_PATH="/"
+
+# Install prisma and prettier globally
+RUN pnpm add -g prisma@5.17.0 prettier
 
 WORKDIR /app/project
 
@@ -44,7 +48,7 @@ COPY editors/ ./editors/
 COPY processors/ ./processors/
 COPY subgraphs/ ./subgraphs/
 COPY scripts/ ./scripts/
-COPY index.ts style.css ./
+COPY index.ts index.html style.css ./
 
 # Install dependencies (--ignore-scripts to skip broken postinstall in @powerhousedao/agent-manager)
 RUN pnpm install --ignore-scripts
@@ -54,6 +58,45 @@ RUN pnpm build
 
 # Regenerate Prisma client for Alpine Linux
 RUN prisma generate --schema node_modules/document-drive/dist/prisma/schema.prisma || true
+
+# -----------------------------------------------------------------------------
+# Connect build stage
+# -----------------------------------------------------------------------------
+FROM base AS connect-builder
+
+ARG PH_CONNECT_BASE_PATH="/"
+
+# Build connect
+RUN pnpm run connect build --base ${PH_CONNECT_BASE_PATH}
+
+# -----------------------------------------------------------------------------
+# Connect final stage - nginx
+# -----------------------------------------------------------------------------
+FROM nginx:alpine AS connect
+
+# Install envsubst for config templating
+RUN apk add --no-cache gettext
+
+# Copy nginx config template
+COPY docker/nginx.conf /etc/nginx/nginx.conf.template
+
+# Copy built static files from build stage
+COPY --from=connect-builder /app/project/.ph/connect-build/dist /var/www/html/project
+
+# Environment variables for nginx config
+ENV PORT=3001
+ENV PH_CONNECT_BASE_PATH="/"
+
+# Copy and setup entrypoint
+COPY docker/connect-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+EXPOSE ${PORT}
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD wget -q --spider http://localhost:${PORT}/health || exit 1
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # -----------------------------------------------------------------------------
 # Switchboard final stage - node runtime
@@ -82,7 +125,7 @@ COPY --from=base /app/project /app/project
 WORKDIR /app/project
 
 # Copy entrypoint script
-COPY docker/entrypoint.sh /app/entrypoint.sh
+COPY docker/switchboard-entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # Environment variables
