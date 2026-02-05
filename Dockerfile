@@ -43,6 +43,7 @@ COPY document-models/ ./document-models/
 COPY editors/ ./editors/
 COPY processors/ ./processors/
 COPY subgraphs/ ./subgraphs/
+COPY scripts/ ./scripts/
 COPY index.ts style.css ./
 
 # Install dependencies (--ignore-scripts to skip broken postinstall in @powerhousedao/agent-manager)
