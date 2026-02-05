@@ -7,7 +7,7 @@ import {
   documentModel,
   reducer,
   utils,
-} from "./index.js";
+} from "powerhouse-agent/document-models/work-breakdown-structure";
 
 /** Document model module for the Todo List document type */
 export const WorkBreakdownStructure: DocumentModelModule<WorkBreakdownStructurePHState> =

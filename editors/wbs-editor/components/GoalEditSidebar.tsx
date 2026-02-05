@@ -663,6 +663,40 @@ export function GoalEditSidebar({ goalId, onClose }: GoalEditSidebarProps) {
                   No instructions set. Click to add instructions.
                 </div>
               )}
+
+              {/* Outcome Data Section */}
+              {goal.outcome && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="text-xs font-medium text-gray-600 mb-1">
+                    Outcome:
+                  </div>
+                  <div className="text-xs text-gray-700 font-mono bg-gray-100 p-2 rounded overflow-x-auto">
+                    {goal.outcome.format === "JSON" ? (
+                      <pre className="whitespace-pre-wrap">
+                        {(() => {
+                          try {
+                            // Try to parse and prettify if it's JSON
+                            const parsed = JSON.parse(goal.outcome.data);
+                            return JSON.stringify(parsed, null, 2);
+                          } catch {
+                            // If not valid JSON, display as-is
+                            return goal.outcome.data;
+                          }
+                        })()}
+                      </pre>
+                    ) : (
+                      <div className="whitespace-pre-wrap font-sans">
+                        {goal.outcome.data}
+                      </div>
+                    )}
+                    {goal.outcome.format !== "TEXT" && (
+                      <div className="mt-1 text-xs text-gray-500 font-sans">
+                        Format: {goal.outcome.format}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

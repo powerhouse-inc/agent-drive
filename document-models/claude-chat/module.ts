@@ -7,7 +7,7 @@ import {
   documentModel,
   reducer,
   utils,
-} from "./index.js";
+} from "powerhouse-agent/document-models/claude-chat";
 
 /** Document model module for the Todo List document type */
 export const ClaudeChat: DocumentModelModule<ClaudeChatPHState> = {

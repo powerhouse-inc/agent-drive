@@ -25,6 +25,7 @@ interface GoalGridProps {
 export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();
   const apiRef = useRef<any>(null);
+  
   const [blockedPopup, setBlockedPopup] = useState<{
     isOpen: boolean;
     goalId: string;
@@ -60,13 +61,10 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
     (actionData: any) => {
       if (!dispatch) return;
 
-      console.log("Status change received:", actionData);
       const { value, row: goalId } = actionData.data || actionData;
-      console.log("Status change:", { value, goalId });
 
       if (value === "BLOCKED") {
         // Show popup for blocked status
-        console.log("Blocked status selected - showing popup");
         setBlockedPopup({ isOpen: true, goalId });
       } else if (value === "IN_REVIEW") {
         // Show report progress popup for IN_REVIEW transition
@@ -148,7 +146,6 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   const totalGoals = useMemo(() => countGoalsInTree(treeData), [treeData]);
 
   const handleRowClick = (event: any) => {
-    console.log("Row selected:", event); // Debug log
     if (onGoalSelect && event?.id) {
       onGoalSelect(event.id);
     }
@@ -224,7 +221,6 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         if (!dispatch) return;
 
         const { id, column, value } = event;
-        console.log("update-cell event:", { id, column, value });
 
         if (column === "description") {
           dispatch(

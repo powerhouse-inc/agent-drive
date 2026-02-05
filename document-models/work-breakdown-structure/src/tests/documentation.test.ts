@@ -546,10 +546,10 @@ describe("Documentation Operations", () => {
       );
 
       const goals = updatedDocument.state.global.goals;
-      const parent = goals.find(g => g.id === "parent-goal");
-      const child1 = goals.find(g => g.id === "child-1");
-      const child2 = goals.find(g => g.id === "child-2");
-      const grandchild = goals.find(g => g.id === "grandchild-1");
+      const parent = goals.find((g) => g.id === "parent-goal");
+      const child1 = goals.find((g) => g.id === "child-1");
+      const child2 = goals.find((g) => g.id === "child-2");
+      const grandchild = goals.find((g) => g.id === "grandchild-1");
 
       // All goals should be marked as draft
       expect(parent?.isDraft).toBe(true);
@@ -671,10 +671,10 @@ describe("Documentation Operations", () => {
       );
 
       const goals = updatedDocument.state.global.goals;
-      const parent = goals.find(g => g.id === "parent-goal");
-      const child1 = goals.find(g => g.id === "child-1");
-      const child2 = goals.find(g => g.id === "child-2");
-      const grandchild = goals.find(g => g.id === "grandchild-1");
+      const parent = goals.find((g) => g.id === "parent-goal");
+      const child1 = goals.find((g) => g.id === "child-1");
+      const child2 = goals.find((g) => g.id === "child-2");
+      const grandchild = goals.find((g) => g.id === "grandchild-1");
 
       // All goals should be marked as ready (not draft)
       expect(parent?.isDraft).toBe(false);

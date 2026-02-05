@@ -10,7 +10,6 @@ export default function Editor() {
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
 
   const handleGoalSelect = (goalId: string) => {
-    console.log("Goal selected:", goalId); // Debug log
     setSelectedGoalId(goalId);
   };
 

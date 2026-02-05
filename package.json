@@ -40,8 +40,10 @@
     "./style.css": "./dist/style.css"
   },
   "scripts": {
-    "build": "npm run tsc && npm run tailwind",
+    "postinstall": "node scripts/patch-svar-grid.cjs",
+    "build": "npm run patch-svar-grid && npm run tsc && npm run tailwind",
     "build:patched": "npm run patch-imports && pnpm build",
+    "patch-svar-grid": "node scripts/patch-svar-grid.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint --config eslint.config.js --cache --cache-strategy content",
