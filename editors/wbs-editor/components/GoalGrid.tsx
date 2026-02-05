@@ -269,16 +269,28 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         </div>
       </div>
 
-      <div className="flex-1 border border-gray-200 rounded-lg overflow-hidden">
-        <Willow>
-          <Grid
-            data={treeData}
-            columns={columns}
-            tree={true}
-            init={init}
-            onSelectRow={handleRowClick}
-          />
-        </Willow>
+      <div 
+        className="flex-1 border border-gray-200 rounded-lg" 
+        style={{ 
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}
+      >
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+          <div style={{ width: "calc(100% - 2px)" }}>
+            <Willow>
+              <Grid
+                data={treeData}
+                columns={columns}
+                tree={true}
+                init={init}
+                onSelectRow={handleRowClick}
+              />
+            </Willow>
+          </div>
+        </div>
       </div>
 
       <BlockedStatusPopup

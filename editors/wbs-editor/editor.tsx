@@ -19,6 +19,7 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Toolbar */}
       <div
         style={{
           maxWidth: "1600px",
@@ -28,19 +29,31 @@ export default function Editor() {
       >
         <DocumentToolbar />
       </div>
+      
+      {/* Main container with maximum height and separate scroll areas */}
       <div
-        className="flex flex-1 overflow-hidden border border-gray-200 shadow-md"
-        style={{ maxWidth: "1600px", margin: "0 auto", width: "100%" }}
+        className="flex overflow-hidden border border-gray-200 shadow-md"
+        style={{ 
+          maxWidth: "1600px", 
+          margin: "0 auto", 
+          width: "100%",
+          maxHeight: "calc(100vh - 120px)", // Leave room for toolbar and margins
+          height: "calc(100vh - 120px)"
+        }}
       >
-        {/* Main content area - takes remaining space */}
-        <div className="flex-1 p-8 overflow-auto bg-white">
+        {/* Main content area with its own scrollbar */}
+        <div className="flex-1 p-8 overflow-y-auto overflow-x-hidden bg-white">
           <GoalHierarchy onGoalSelect={handleGoalSelect} />
         </div>
 
-        {/* Sidebar - fixed width */}
+        {/* Sidebar with its own scrollbar */}
         <div
-          className="border-l border-gray-200 bg-gray-50 overflow-auto"
-          style={{ flexShrink: 0, width: "400px", minWidth: "400px" }}
+          className="border-l border-gray-200 bg-gray-50 overflow-y-auto overflow-x-hidden"
+          style={{ 
+            flexShrink: 0, 
+            width: "400px", 
+            minWidth: "400px"
+          }}
         >
           {selectedGoalId ? (
             <GoalEditSidebar
