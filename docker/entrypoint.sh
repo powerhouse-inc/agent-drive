@@ -8,4 +8,4 @@ if [ -n "$DATABASE_URL" ] && echo "$DATABASE_URL" | grep -q "^postgres" && [ "$S
 fi
 
 echo "[entrypoint] Starting service on port ${PORT:-3000}..."
-exec pnpm run service --port ${PORT:-3000}
+exec pnpm run service
