@@ -15,7 +15,7 @@ FROM node:24-alpine AS base
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache python3 make g++ git bash \
+RUN apk add --no-cache python3 make g++ git bash openssl \
     && ln -sf /usr/bin/python3 /usr/bin/python
 
 # Setup pnpm
@@ -132,6 +132,6 @@ ENV SKIP_DB_MIGRATIONS="false"
 EXPOSE ${PORT}
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+    CMD curl -so /dev/null http://localhost:${PORT}/graphql || exit 1
 
 ENTRYPOINT ["/app/entrypoint.sh"]
