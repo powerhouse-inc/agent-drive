@@ -42,6 +42,7 @@ COPY document-models/ ./document-models/
 COPY editors/ ./editors/
 COPY processors/ ./processors/
 COPY subgraphs/ ./subgraphs/
+COPY scripts/ ./scripts/
 COPY index.ts index.html style.css ./
 
 # Install dependencies
