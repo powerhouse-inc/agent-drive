@@ -81,10 +81,54 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.target }}
           cache-to: type=gha,mode=max,scope=${{ matrix.target }}
 
-  summary:
+  update-k8s:
+    name: Update K8s Hosting
     needs: [prepare, build-and-push]
-    runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout k8s-hosting repository
+        uses: actions/checkout@v4
+        with:
+          repository: powerhouse-inc/powerhouse-k8s-hosting
+          token: ${{ secrets.K8S_REPO_PAT }}
+          path: k8s-hosting
+
+      - name: Install yq
+        uses: mikefarah/yq@v4
+
+      - name: Update image tags
+        run: |
+          TAG="${{ needs.prepare.outputs.tag }}"
+          VALUES_FILE="k8s-hosting/tenants/rupert/rupert-values.yaml"
+
+          echo "Updating ${VALUES_FILE} with tag ${TAG}"
+
+          yq -i ".switchboard.image.tag = \"${TAG}\"" "$VALUES_FILE"
+          yq -i ".connect.image.tag = \"${TAG}\"" "$VALUES_FILE"
+
+          echo "Updated image tags to ${TAG}"
+
+      - name: Commit and push changes
+        run: |
+          cd k8s-hosting
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add tenants/rupert/rupert-values.yaml
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TAG="${{ needs.prepare.outputs.tag }}"
+            git commit -m "chore(rupert): update connect and switchboard to ${TAG}"
+            git push
+          fi
+
+  summary:
+    needs: [prepare, build-and-push, update-k8s]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name != 'pull_request'
     steps:
       - name: Output image info
         run: |
@@ -96,3 +140,5 @@ jobs:
           echo "| \`${{ env.VETRA_REGISTRY }}/rupert/switchboard\` | \`${{ needs.prepare.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**All tags:** \`${{ needs.prepare.outputs.tag }}\`, \`${{ needs.prepare.outputs.branch }}\`${{ github.ref == 'refs/heads/main' && ', `latest`' || '' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**K8s rollout:** ${{ needs.update-k8s.result }}" >> $GITHUB_STEP_SUMMARY
