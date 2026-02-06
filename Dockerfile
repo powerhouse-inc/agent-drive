@@ -1,10 +1,10 @@
 # =============================================================================
-# Multi-stage Dockerfile for Agent Drive
+# Multi-stage Dockerfile for Powerhouse Document Model Packages
 # Produces two images: connect (frontend) and switchboard (backend)
 #
 # Build commands:
-#   docker build --target connect -t cr.vetra.io/rupert/connect:<tag> .
-#   docker build --target switchboard -t cr.vetra.io/rupert/switchboard:<tag> .
+#   docker build --target connect -t <registry>/<project>/connect:<tag> .
+#   docker build --target switchboard -t <registry>/<project>/switchboard:<tag> .
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -34,24 +34,18 @@ RUN pnpm add -g prisma@5.17.0 prettier
 
 WORKDIR /app/project
 
-# Copy package files first for better caching
+# Copy all project files
 COPY package.json pnpm-lock.yaml ./
-COPY .npmrc* ./
-
-# Copy project configuration files
-COPY powerhouse.manifest.json powerhouse.config.json* ./
-COPY tsconfig*.json vite.config.ts* vitest.config.ts* eslint.config.js* ./
-
-# Copy source directories
+COPY powerhouse.manifest.json powerhouse.config.json ./
+COPY tsconfig*.json vite.config.ts vitest.config.ts eslint.config.js ./
 COPY document-models/ ./document-models/
 COPY editors/ ./editors/
 COPY processors/ ./processors/
 COPY subgraphs/ ./subgraphs/
-COPY scripts/ ./scripts/
 COPY index.ts index.html style.css ./
 
-# Install dependencies (--ignore-scripts to skip broken postinstall in @powerhousedao/agent-manager)
-RUN pnpm install --ignore-scripts
+# Install dependencies
+RUN pnpm install
 
 # Build the project
 RUN pnpm build
@@ -124,7 +118,7 @@ COPY --from=base /app/project /app/project
 
 WORKDIR /app/project
 
-# Copy entrypoint script
+# Copy entrypoint
 COPY docker/switchboard-entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
