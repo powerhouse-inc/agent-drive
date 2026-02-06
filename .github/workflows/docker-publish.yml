@@ -16,16 +16,14 @@ on:
 
 env:
   VETRA_REGISTRY: cr.vetra.io
-  SWITCHBOARD_IMAGE: cr.vetra.io/rupert/switchboard
-  CONNECT_IMAGE: cr.vetra.io/rupert/connect
 
 jobs:
-  build-and-push:
+  prepare:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      branch: ${{ steps.version.outputs.branch }}
+      sha: ${{ steps.version.outputs.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,20 +33,30 @@ jobs:
       - name: Get version info
         id: version
         run: |
-          # Get short SHA
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
 
-          # Get branch name (sanitized for Docker tags)
           BRANCH=$(echo "${GITHUB_REF_NAME}" | sed 's/[^a-zA-Z0-9._-]/-/g')
           echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
 
-          # Use input tag if provided, otherwise use branch-sha
           if [ -n "${{ github.event.inputs.tag }}" ]; then
             echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
           else
             echo "tag=${BRANCH}-${SHORT_SHA}" >> $GITHUB_OUTPUT
           fi
+
+  build-and-push:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        target: [connect, switchboard]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -60,46 +68,31 @@ jobs:
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: Build and push Switchboard image
+      - name: Build and push ${{ matrix.target }} image
         uses: docker/build-push-action@v5
         with:
           context: .
-          target: switchboard
+          target: ${{ matrix.target }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.SWITCHBOARD_IMAGE }}:${{ steps.version.outputs.tag }}
-            ${{ env.SWITCHBOARD_IMAGE }}:${{ steps.version.outputs.branch }}
-            ${{ github.ref == 'refs/heads/main' && format('{0}:latest', env.SWITCHBOARD_IMAGE) || '' }}
-          cache-from: type=gha,scope=switchboard
-          cache-to: type=gha,mode=max,scope=switchboard
+            ${{ env.VETRA_REGISTRY }}/rupert/${{ matrix.target }}:${{ needs.prepare.outputs.tag }}
+            ${{ env.VETRA_REGISTRY }}/rupert/${{ matrix.target }}:${{ needs.prepare.outputs.branch }}
+            ${{ github.ref == 'refs/heads/main' && format('{0}/rupert/{1}:latest', env.VETRA_REGISTRY, matrix.target) || '' }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
 
-      - name: Build and push Connect image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          target: connect
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            ${{ env.CONNECT_IMAGE }}:${{ steps.version.outputs.tag }}
-            ${{ env.CONNECT_IMAGE }}:${{ steps.version.outputs.branch }}
-            ${{ github.ref == 'refs/heads/main' && format('{0}:latest', env.CONNECT_IMAGE) || '' }}
-          cache-from: type=gha,scope=connect
-          cache-to: type=gha,mode=max,scope=connect
-
+  summary:
+    needs: [prepare, build-and-push]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
       - name: Output image info
-        if: github.event_name != 'pull_request'
         run: |
           echo "## Docker Images Published" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Switchboard" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.SWITCHBOARD_IMAGE }}:${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | Tag |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| \`${{ env.VETRA_REGISTRY }}/rupert/connect\` | \`${{ needs.prepare.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`${{ env.VETRA_REGISTRY }}/rupert/switchboard\` | \`${{ needs.prepare.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Connect" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.CONNECT_IMAGE }}:${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ steps.version.outputs.branch }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "- \`latest\`" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "**All tags:** \`${{ needs.prepare.outputs.tag }}\`, \`${{ needs.prepare.outputs.branch }}\`${{ github.ref == 'refs/heads/main' && ', `latest`' || '' }}" >> $GITHUB_STEP_SUMMARY
