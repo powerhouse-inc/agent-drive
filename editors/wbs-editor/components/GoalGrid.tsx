@@ -25,7 +25,7 @@ interface GoalGridProps {
 export function GoalGrid({ onGoalSelect }: GoalGridProps) {
   const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();
   const apiRef = useRef<any>(null);
-  
+
   const [blockedPopup, setBlockedPopup] = useState<{
     isOpen: boolean;
     goalId: string;
@@ -269,13 +269,13 @@ export function GoalGrid({ onGoalSelect }: GoalGridProps) {
         </div>
       </div>
 
-      <div 
-        className="flex-1 border border-gray-200 rounded-lg" 
-        style={{ 
+      <div
+        className="flex-1 border border-gray-200 rounded-lg"
+        style={{
           minHeight: 0,
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>

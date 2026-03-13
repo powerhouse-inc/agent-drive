@@ -29,16 +29,16 @@ export default function Editor() {
       >
         <DocumentToolbar />
       </div>
-      
+
       {/* Main container with maximum height and separate scroll areas */}
       <div
         className="flex overflow-hidden border border-gray-200 shadow-md"
-        style={{ 
-          maxWidth: "1600px", 
-          margin: "0 auto", 
+        style={{
+          maxWidth: "1600px",
+          margin: "0 auto",
           width: "100%",
           maxHeight: "calc(100vh - 120px)", // Leave room for toolbar and margins
-          height: "calc(100vh - 120px)"
+          height: "calc(100vh - 120px)",
         }}
       >
         {/* Main content area with its own scrollbar */}
@@ -49,10 +49,10 @@ export default function Editor() {
         {/* Sidebar with its own scrollbar */}
         <div
           className="border-l border-gray-200 bg-gray-50 overflow-y-auto overflow-x-hidden"
-          style={{ 
-            flexShrink: 0, 
-            width: "400px", 
-            minWidth: "400px"
+          style={{
+            flexShrink: 0,
+            width: "400px",
+            minWidth: "400px",
           }}
         >
           {selectedGoalId ? (
