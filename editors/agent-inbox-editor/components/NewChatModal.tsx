@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
-import type { AgentInboxAction } from "@powerhousedao/agent-manager/document-models/agent-inbox";
-import type { Stakeholder as DocumentStakeholder } from "../../../document-models/agent-inbox/gen/schema/types.js";
+import type {
+  AgentInboxAction,
+  Stakeholder as DocumentStakeholder,
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 import {
   addStakeholder,
   setStakeholderName,
@@ -10,7 +12,7 @@ import {
   setStakeholderAvatar,
   removeStakeholder,
   createThread,
-} from "../../../document-models/agent-inbox/gen/creators.js";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 interface NewChatModalProps {
   isOpen: boolean;
@@ -143,8 +145,8 @@ export function NewChatModal({
           );
         }
         break;
-      case "ethAddress":
-        // Only dispatch if address has changed
+      // Only dispatch if address has changed
+      case "ethAddress": {
         const newAddress = trimmedValue || undefined;
         const currentAddress = stakeholder.ethAddress || undefined;
         if (newAddress !== currentAddress) {
@@ -156,8 +158,9 @@ export function NewChatModal({
           );
         }
         break;
-      case "avatar":
-        // Only dispatch if avatar URL has changed
+      }
+      // Only dispatch if avatar URL has changed
+      case "avatar": {
         const newAvatar = trimmedValue || undefined;
         const currentAvatar = stakeholder.avatar || undefined;
         if (newAvatar !== currentAvatar) {
@@ -169,6 +172,7 @@ export function NewChatModal({
           );
         }
         break;
+      }
     }
     setEditingStakeholderId(null);
   };

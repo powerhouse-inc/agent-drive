@@ -4,7 +4,7 @@ import { ThreadsList } from "./components/ThreadsList.js";
 import { MessageThread } from "./components/MessageThread.js";
 import { NewChatModal } from "./components/NewChatModal.js";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect/index";
-import { useSelectedAgentInboxDocument } from "../../document-models/agent-inbox/hooks.js";
+import { useSelectedAgentInboxDocument } from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 export default function Editor() {
   const [document, dispatch] = useSelectedAgentInboxDocument();

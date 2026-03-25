@@ -27,7 +27,7 @@ export function flatToTree(goals: Goal[]): TreeGoal[] {
       rootGoals.push(treeGoal);
     } else {
       // This goal has a parent
-      const parent = goalMap.get(goal.parentId);
+      const parent = goal.parentId && goalMap.get(goal.parentId);
       if (parent) {
         if (!parent.data) {
           parent.data = [];

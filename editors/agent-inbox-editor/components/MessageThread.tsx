@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
-import type { AgentInboxAction } from "@powerhousedao/agent-manager/document-models/agent-inbox";
-import MarkdownIt from "markdown-it";
 import {
+  archiveThread,
+  confirmThreadResolved,
+  markMessageRead,
+  proposeThreadResolved,
+  reopenThread,
   sendStakeholderMessage,
   setThreadTopic,
-  proposeThreadResolved,
-  confirmThreadResolved,
-  archiveThread,
-  reopenThread,
-  markMessageRead,
-} from "../../../document-models/agent-inbox/gen/creators.js";
+  type AgentInboxAction,
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
+import MarkdownIt from "markdown-it";
+
 
 interface Message {
   id: string;
@@ -24,21 +25,21 @@ interface Message {
 interface Stakeholder {
   id: string;
   name: string;
-  avatar: string | null;
+  avatar: string | null | undefined;
   removed: boolean;
 }
 
 interface Agent {
-  name: string | null;
-  role: string | null;
-  ethAddress: string | null;
-  description: string | null;
-  avatar: string | null;
+  name: string | null | undefined;
+  role: string | null | undefined;
+  ethAddress: string | null | undefined;
+  description: string | null | undefined;
+  avatar: string | null | undefined;
 }
 
 interface Thread {
   id: string;
-  topic: string | null;
+  topic: string | null | undefined;
   stakeholder: string;
   status: string;
   messages: Message[];

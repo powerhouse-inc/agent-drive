@@ -7,15 +7,15 @@ import {
   setAgentRole,
   setAgentDescription,
   setAgentAvatar,
-} from "../../../document-models/agent-inbox/gen/creators.js";
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
 
 interface AgentPanelProps {
   agent: {
-    name: string | null;
-    role: string | null;
-    ethAddress: string | null;
-    description: string | null;
-    avatar: string | null;
+    name: string | null | undefined;
+    role: string | null | undefined;
+    ethAddress: string | null | undefined;
+    description: string | null | undefined;
+    avatar: string | null | undefined;
   };
   dispatch: DocumentDispatch<AgentInboxAction>;
   onCollapse?: () => void;
@@ -36,7 +36,7 @@ export function AgentPanel({ agent, dispatch, onCollapse }: AgentPanelProps) {
     }
   }, [editingField]);
 
-  const startEdit = (field: string, value: string | null) => {
+  const startEdit = (field: string, value: string | null | undefined) => {
     setEditingField(field);
     setTempValue(value || "");
   };
