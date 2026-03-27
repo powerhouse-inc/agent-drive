@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, Fragment } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import {
@@ -224,12 +224,6 @@ export function MessageThread({
     const hasUnreadAgentMessages = thread.messages.some(
       (msg) => msg.flow === "Outgoing" && !msg.read,
     );
-
-    console.log("Scroll check:", {
-      isAtBottom,
-      hasUnreadAgentMessages,
-      hasMarkedAsRead,
-    });
 
     // If at bottom (100% scroll) and there are unread messages, start timer
     if (isAtBottom && hasUnreadAgentMessages && !hasMarkedAsRead) {
@@ -495,7 +489,7 @@ export function MessageThread({
                 );
 
                 return (
-                  <>
+                  <Fragment key={message.id}>
                     {/* New Messages Divider */}
                     {index === firstUnreadAgentMessageIndex && (
                       <div
@@ -510,7 +504,6 @@ export function MessageThread({
                       </div>
                     )}
                     <div
-                      key={message.id}
                       className={`flex ${isFromAgent ? "justify-start" : "justify-end"}`}
                     >
                       <div
@@ -597,7 +590,7 @@ export function MessageThread({
                         </div>
                       </div>
                     </div>
-                  </>
+                  </Fragment>
                 );
               })}
 
