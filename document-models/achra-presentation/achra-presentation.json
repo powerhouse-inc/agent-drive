@@ -936,17 +936,17 @@
                             "description": "Remove an item from an Icon List slide",
                             "errors": [
                                 {
-                                    "id": "err-tl-snf-16",
-                                    "name": "SlideNotFoundError",
                                     "code": "SLIDE_NOT_FOUND",
                                     "description": "The specified slide ID does not exist",
+                                    "id": "err-tl-snf-16",
+                                    "name": "SlideNotFoundError",
                                     "template": ""
                                 },
                                 {
-                                    "id": "err-tl-inf-11",
-                                    "name": "ItemNotFoundError",
                                     "code": "ITEM_NOT_FOUND",
                                     "description": "The specified item ID does not exist",
+                                    "id": "err-tl-inf-11",
+                                    "name": "ItemNotFoundError",
                                     "template": ""
                                 }
                             ],
@@ -962,17 +962,17 @@
                             "description": "Reorder items on an Icon List slide",
                             "errors": [
                                 {
-                                    "id": "err-tl-snf-17",
-                                    "name": "SlideNotFoundError",
                                     "code": "SLIDE_NOT_FOUND",
                                     "description": "The specified slide ID does not exist",
+                                    "id": "err-tl-snf-17",
+                                    "name": "SlideNotFoundError",
                                     "template": ""
                                 },
                                 {
-                                    "id": "err-tl-inf-12",
-                                    "name": "ItemNotFoundError",
                                     "code": "ITEM_NOT_FOUND",
                                     "description": "The specified item ID does not exist",
+                                    "id": "err-tl-inf-12",
+                                    "name": "ItemNotFoundError",
                                     "template": ""
                                 }
                             ],
@@ -988,10 +988,10 @@
                             "description": "Add a highlight box to a Split Highlight slide",
                             "errors": [
                                 {
-                                    "id": "err-tl-snf-18",
-                                    "name": "SlideNotFoundError",
                                     "code": "SLIDE_NOT_FOUND",
                                     "description": "The specified slide ID does not exist",
+                                    "id": "err-tl-snf-18",
+                                    "name": "SlideNotFoundError",
                                     "template": ""
                                 }
                             ],
@@ -1007,17 +1007,17 @@
                             "description": "Update a highlight box",
                             "errors": [
                                 {
-                                    "id": "err-tl-snf-19",
-                                    "name": "SlideNotFoundError",
                                     "code": "SLIDE_NOT_FOUND",
                                     "description": "The specified slide ID does not exist",
+                                    "id": "err-tl-snf-19",
+                                    "name": "SlideNotFoundError",
                                     "template": ""
                                 },
                                 {
-                                    "id": "err-tl-inf-13",
-                                    "name": "ItemNotFoundError",
                                     "code": "ITEM_NOT_FOUND",
                                     "description": "The specified item ID does not exist",
+                                    "id": "err-tl-inf-13",
+                                    "name": "ItemNotFoundError",
                                     "template": ""
                                 }
                             ],
@@ -1033,17 +1033,17 @@
                             "description": "Remove a highlight box",
                             "errors": [
                                 {
-                                    "id": "err-tl-snf-20",
-                                    "name": "SlideNotFoundError",
                                     "code": "SLIDE_NOT_FOUND",
                                     "description": "The specified slide ID does not exist",
+                                    "id": "err-tl-snf-20",
+                                    "name": "SlideNotFoundError",
                                     "template": ""
                                 },
                                 {
-                                    "id": "err-tl-inf-14",
-                                    "name": "ItemNotFoundError",
                                     "code": "ITEM_NOT_FOUND",
                                     "description": "The specified item ID does not exist",
+                                    "id": "err-tl-inf-14",
+                                    "name": "ItemNotFoundError",
                                     "template": ""
                                 }
                             ],
@@ -1059,17 +1059,17 @@
                             "description": "Reorder highlight boxes",
                             "errors": [
                                 {
-                                    "id": "err-tl-snf-21",
-                                    "name": "SlideNotFoundError",
                                     "code": "SLIDE_NOT_FOUND",
                                     "description": "The specified slide ID does not exist",
+                                    "id": "err-tl-snf-21",
+                                    "name": "SlideNotFoundError",
                                     "template": ""
                                 },
                                 {
-                                    "id": "err-tl-inf-15",
-                                    "name": "ItemNotFoundError",
                                     "code": "ITEM_NOT_FOUND",
                                     "description": "The specified item ID does not exist",
+                                    "id": "err-tl-inf-15",
+                                    "name": "ItemNotFoundError",
                                     "template": ""
                                 }
                             ],

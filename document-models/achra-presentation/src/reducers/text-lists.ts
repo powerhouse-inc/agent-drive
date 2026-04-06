@@ -1,113 +1,238 @@
+import type { Slide, TextListField } from "../../gen/schema/types.js";
 import type { AchraPresentationTextListsOperations } from "@powerhousedao/agent-manager/document-models/achra-presentation";
+
+function getTextList(slide: Slide, field: TextListField) {
+  return field === "BULLET_ITEMS" ? slide.bulletItems : slide.steps;
+}
 
 export const achraPresentationTextListsOperations: AchraPresentationTextListsOperations =
   {
     addTextItemOperation(state, action) {
-      // TODO: Implement "addTextItemOperation" reducer
-      throw new Error('Reducer "addTextItemOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const list = getTextList(slide, action.input.listField);
+      const item = { id: action.input.id, text: action.input.text };
+      const pos = action.input.position;
+      if (pos !== undefined && pos !== null && pos >= 0 && pos <= list.length) {
+        list.splice(pos, 0, item);
+      } else {
+        list.push(item);
+      }
     },
+
     updateTextItemOperation(state, action) {
-      // TODO: Implement "updateTextItemOperation" reducer
-      throw new Error('Reducer "updateTextItemOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const list = getTextList(slide, action.input.listField);
+      const item = list.find((i) => i.id === action.input.id);
+      if (!item) return;
+      item.text = action.input.text;
     },
+
     deleteTextItemOperation(state, action) {
-      // TODO: Implement "deleteTextItemOperation" reducer
-      throw new Error('Reducer "deleteTextItemOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const list = getTextList(slide, action.input.listField);
+      const idx = list.findIndex((i) => i.id === action.input.id);
+      if (idx !== -1) list.splice(idx, 1);
     },
+
     reorderTextItemsOperation(state, action) {
-      // TODO: Implement "reorderTextItemsOperation" reducer
-      throw new Error(
-        'Reducer "reorderTextItemsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const list = getTextList(slide, action.input.listField);
+      const map = new Map(list.map((i) => [i.id, i]));
+      const reordered = action.input.itemIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      list.length = 0;
+      list.push(...(reordered as typeof list));
     },
+
     setColumnTitleOperation(state, action) {
-      // TODO: Implement "setColumnTitleOperation" reducer
-      throw new Error('Reducer "setColumnTitleOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const { columnIndex, title } = action.input;
+      while (slide.columns.length <= columnIndex) {
+        slide.columns.push({ title: null, bulletItems: [] });
+      }
+      slide.columns[columnIndex].title = title;
     },
+
     addColumnBulletOperation(state, action) {
-      // TODO: Implement "addColumnBulletOperation" reducer
-      throw new Error('Reducer "addColumnBulletOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const { columnIndex, id, text, position } = action.input;
+      while (slide.columns.length <= columnIndex) {
+        slide.columns.push({ title: null, bulletItems: [] });
+      }
+      const list = slide.columns[columnIndex].bulletItems;
+      const item = { id, text };
+      if (
+        position !== undefined &&
+        position !== null &&
+        position >= 0 &&
+        position <= list.length
+      ) {
+        list.splice(position, 0, item);
+      } else {
+        list.push(item);
+      }
     },
+
     updateColumnBulletOperation(state, action) {
-      // TODO: Implement "updateColumnBulletOperation" reducer
-      throw new Error(
-        'Reducer "updateColumnBulletOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const col = slide.columns[action.input.columnIndex];
+      if (!col) return;
+      const item = col.bulletItems.find((i) => i.id === action.input.id);
+      if (!item) return;
+      item.text = action.input.text;
     },
+
     deleteColumnBulletOperation(state, action) {
-      // TODO: Implement "deleteColumnBulletOperation" reducer
-      throw new Error(
-        'Reducer "deleteColumnBulletOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const col = slide.columns[action.input.columnIndex];
+      if (!col) return;
+      const idx = col.bulletItems.findIndex((i) => i.id === action.input.id);
+      if (idx !== -1) col.bulletItems.splice(idx, 1);
     },
+
     reorderColumnBulletsOperation(state, action) {
-      // TODO: Implement "reorderColumnBulletsOperation" reducer
-      throw new Error(
-        'Reducer "reorderColumnBulletsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const col = slide.columns[action.input.columnIndex];
+      if (!col) return;
+      const map = new Map(col.bulletItems.map((i) => [i.id, i]));
+      const reordered = action.input.bulletIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      col.bulletItems.length = 0;
+      col.bulletItems.push(...(reordered as typeof col.bulletItems));
     },
+
     addChecklistItemOperation(state, action) {
-      // TODO: Implement "addChecklistItemOperation" reducer
-      throw new Error(
-        'Reducer "addChecklistItemOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.checklistItems.push({
+        id: action.input.id,
+        text: action.input.text,
+        checked: action.input.checked ?? false,
+      });
     },
+
     updateChecklistItemOperation(state, action) {
-      // TODO: Implement "updateChecklistItemOperation" reducer
-      throw new Error(
-        'Reducer "updateChecklistItemOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const item = slide.checklistItems.find((i) => i.id === action.input.id);
+      if (!item) return;
+      if (action.input.text !== undefined && action.input.text !== null)
+        item.text = action.input.text;
+      if (action.input.checked !== undefined && action.input.checked !== null)
+        item.checked = action.input.checked;
     },
+
     deleteChecklistItemOperation(state, action) {
-      // TODO: Implement "deleteChecklistItemOperation" reducer
-      throw new Error(
-        'Reducer "deleteChecklistItemOperation" not yet implemented',
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.checklistItems.findIndex(
+        (i) => i.id === action.input.id,
       );
+      if (idx !== -1) slide.checklistItems.splice(idx, 1);
     },
+
     reorderChecklistItemsOperation(state, action) {
-      // TODO: Implement "reorderChecklistItemsOperation" reducer
-      throw new Error(
-        'Reducer "reorderChecklistItemsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.checklistItems.map((i) => [i.id, i]));
+      const reordered = action.input.itemIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.checklistItems.length = 0;
+      slide.checklistItems.push(...(reordered as typeof slide.checklistItems));
     },
+
     addIconListItemOperation(state, action) {
-      // TODO: Implement "addIconListItemOperation" reducer
-      throw new Error('Reducer "addIconListItemOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.iconListItems.push({
+        id: action.input.id,
+        title: action.input.title,
+        description: action.input.description || null,
+      });
     },
+
     updateIconListItemOperation(state, action) {
-      // TODO: Implement "updateIconListItemOperation" reducer
-      throw new Error(
-        'Reducer "updateIconListItemOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const item = slide.iconListItems.find((i) => i.id === action.input.id);
+      if (!item) return;
+      if (action.input.title) item.title = action.input.title;
+      if (
+        action.input.description !== undefined &&
+        action.input.description !== null
+      )
+        item.description = action.input.description;
     },
+
     deleteIconListItemOperation(state, action) {
-      // TODO: Implement "deleteIconListItemOperation" reducer
-      throw new Error(
-        'Reducer "deleteIconListItemOperation" not yet implemented',
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.iconListItems.findIndex(
+        (i) => i.id === action.input.id,
       );
+      if (idx !== -1) slide.iconListItems.splice(idx, 1);
     },
+
     reorderIconListItemsOperation(state, action) {
-      // TODO: Implement "reorderIconListItemsOperation" reducer
-      throw new Error(
-        'Reducer "reorderIconListItemsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.iconListItems.map((i) => [i.id, i]));
+      const reordered = action.input.itemIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.iconListItems.length = 0;
+      slide.iconListItems.push(...(reordered as typeof slide.iconListItems));
     },
+
     addHighlightOperation(state, action) {
-      // TODO: Implement "addHighlightOperation" reducer
-      throw new Error('Reducer "addHighlightOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.highlights.push({
+        id: action.input.id,
+        value: action.input.value,
+        label: action.input.label,
+        sublabel: action.input.sublabel || null,
+      });
     },
+
     updateHighlightOperation(state, action) {
-      // TODO: Implement "updateHighlightOperation" reducer
-      throw new Error('Reducer "updateHighlightOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const h = slide.highlights.find((i) => i.id === action.input.id);
+      if (!h) return;
+      if (action.input.value) h.value = action.input.value;
+      if (action.input.label) h.label = action.input.label;
+      if (action.input.sublabel !== undefined && action.input.sublabel !== null)
+        h.sublabel = action.input.sublabel;
     },
+
     deleteHighlightOperation(state, action) {
-      // TODO: Implement "deleteHighlightOperation" reducer
-      throw new Error('Reducer "deleteHighlightOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.highlights.findIndex((i) => i.id === action.input.id);
+      if (idx !== -1) slide.highlights.splice(idx, 1);
     },
+
     reorderHighlightsOperation(state, action) {
-      // TODO: Implement "reorderHighlightsOperation" reducer
-      throw new Error(
-        'Reducer "reorderHighlightsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.highlights.map((i) => [i.id, i]));
+      const reordered = action.input.highlightIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.highlights.length = 0;
+      slide.highlights.push(...(reordered as typeof slide.highlights));
     },
   };

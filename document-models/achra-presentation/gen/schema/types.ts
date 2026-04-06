@@ -123,12 +123,12 @@ export type AddProcessStepInput = {
 export type AddSlideInput = {
   id: Scalars["OID"]["input"];
   position?: InputMaybe<Scalars["Int"]["input"]>;
-  template: SlideTemplate;
+  template: SlideTemplate | `${SlideTemplate}`;
 };
 
 export type AddTextItemInput = {
   id: Scalars["OID"]["input"];
-  listField: TextListField;
+  listField: TextListField | `${TextListField}`;
   position?: InputMaybe<Scalars["Int"]["input"]>;
   slideId: Scalars["OID"]["input"];
   text: Scalars["String"]["input"];
@@ -197,7 +197,7 @@ export type DeleteSlideInput = {
 
 export type DeleteTextItemInput = {
   id: Scalars["OID"]["input"];
-  listField: TextListField;
+  listField: TextListField | `${TextListField}`;
   slideId: Scalars["OID"]["input"];
 };
 
@@ -284,7 +284,7 @@ export type ReorderSlidesInput = {
 
 export type ReorderTextItemsInput = {
   itemIds: Array<Scalars["OID"]["input"]>;
-  listField: TextListField;
+  listField: TextListField | `${TextListField}`;
   slideId: Scalars["OID"]["input"];
 };
 
@@ -302,7 +302,7 @@ export type SetPresentationInfoInput = {
 
 export type SetSlideTemplateInput = {
   slideId: Scalars["OID"]["input"];
-  template: SlideTemplate;
+  template: SlideTemplate | `${SlideTemplate}`;
 };
 
 export type Slide = {
@@ -333,7 +333,7 @@ export type Slide = {
   steps: Array<TextItem>;
   subtitle: Maybe<Scalars["String"]["output"]>;
   supertitle: Maybe<Scalars["String"]["output"]>;
-  template: SlideTemplate;
+  template: SlideTemplate | `${SlideTemplate}`;
   title: Maybe<Scalars["String"]["output"]>;
 };
 
@@ -459,7 +459,7 @@ export type UpdateSlideContentInput = {
 
 export type UpdateTextItemInput = {
   id: Scalars["OID"]["input"];
-  listField: TextListField;
+  listField: TextListField | `${TextListField}`;
   slideId: Scalars["OID"]["input"];
   text: Scalars["String"]["input"];
 };

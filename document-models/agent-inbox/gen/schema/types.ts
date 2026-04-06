@@ -108,7 +108,7 @@ export type AgentInfo = {
 
 export type ArchiveThreadInput = {
   /** Which party is archiving the thread (Agent or Stakeholder) */
-  archivedBy: ParticipantRole;
+  archivedBy: ParticipantRole | `${ParticipantRole}`;
   /** ID of the thread to archive */
   threadId: Scalars["OID"]["input"];
 };
@@ -121,7 +121,7 @@ export type ChatMessage = {
   /** The actual text content of the message */
   content: Scalars["String"]["output"];
   /** Direction of message flow (Incoming from stakeholder, Outgoing from agent) */
-  flow: Flow;
+  flow: Flow | `${Flow}`;
   /** Unique identifier for this message */
   id: Scalars["OID"]["output"];
   /** Whether the recipient has marked this message as read */
@@ -132,7 +132,7 @@ export type ChatMessage = {
 
 export type ConfirmThreadResolvedInput = {
   /** Which party is confirming the resolution (Agent or Stakeholder) */
-  confirmedBy: ParticipantRole;
+  confirmedBy: ParticipantRole | `${ParticipantRole}`;
   /** ID of the thread to confirm as resolved */
   threadId: Scalars["OID"]["input"];
 };
@@ -169,7 +169,7 @@ export type InitialMessageInput = {
   /** The message text content */
   content: Scalars["String"]["input"];
   /** Direction of message (Incoming from stakeholder, Outgoing from agent) */
-  flow: Flow;
+  flow: Flow | `${Flow}`;
   /** Unique identifier for the message */
   id: Scalars["OID"]["input"];
   /** Timestamp when the message was sent */
@@ -198,7 +198,7 @@ export type MessageThread = {
   /** ID reference to the stakeholder participating in this conversation */
   stakeholder: Scalars["OID"]["output"];
   /** Current workflow status of the thread (open, resolved, archived) */
-  status: ThreadStatus;
+  status: ThreadStatus | `${ThreadStatus}`;
   /** Optional topic or subject line describing the thread's purpose */
   topic: Maybe<Scalars["String"]["output"]>;
 };
@@ -222,7 +222,7 @@ export type ParticipantRole =
 
 export type ProposeThreadResolvedInput = {
   /** Which party is proposing the resolution (Agent or Stakeholder) */
-  proposedBy: ParticipantRole;
+  proposedBy: ParticipantRole | `${ParticipantRole}`;
   /** ID of the thread to propose for resolution */
   threadId: Scalars["OID"]["input"];
 };
@@ -234,7 +234,7 @@ export type RemoveStakeholderInput = {
 
 export type ReopenThreadInput = {
   /** Which party is reopening the thread (Agent or Stakeholder) */
-  reopenedBy: ParticipantRole;
+  reopenedBy: ParticipantRole | `${ParticipantRole}`;
   /** ID of the thread to reopen */
   threadId: Scalars["OID"]["input"];
 };

@@ -3,65 +3,121 @@ import type { AchraPresentationStructureFlowOperations } from "@powerhousedao/ag
 export const achraPresentationStructureFlowOperations: AchraPresentationStructureFlowOperations =
   {
     addProcessStepOperation(state, action) {
-      // TODO: Implement "addProcessStepOperation" reducer
-      throw new Error('Reducer "addProcessStepOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.processSteps.push({
+        id: action.input.id,
+        title: action.input.title,
+        description: action.input.description || null,
+      });
     },
+
     updateProcessStepOperation(state, action) {
-      // TODO: Implement "updateProcessStepOperation" reducer
-      throw new Error(
-        'Reducer "updateProcessStepOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const step = slide.processSteps.find((s) => s.id === action.input.id);
+      if (!step) return;
+      if (action.input.title) step.title = action.input.title;
+      if (
+        action.input.description !== undefined &&
+        action.input.description !== null
+      )
+        step.description = action.input.description;
     },
+
     deleteProcessStepOperation(state, action) {
-      // TODO: Implement "deleteProcessStepOperation" reducer
-      throw new Error(
-        'Reducer "deleteProcessStepOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.processSteps.findIndex((s) => s.id === action.input.id);
+      if (idx !== -1) slide.processSteps.splice(idx, 1);
     },
+
     reorderProcessStepsOperation(state, action) {
-      // TODO: Implement "reorderProcessStepsOperation" reducer
-      throw new Error(
-        'Reducer "reorderProcessStepsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.processSteps.map((s) => [s.id, s]));
+      const reordered = action.input.stepIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.processSteps.length = 0;
+      slide.processSteps.push(...(reordered as typeof slide.processSteps));
     },
+
     addAgendaItemOperation(state, action) {
-      // TODO: Implement "addAgendaItemOperation" reducer
-      throw new Error('Reducer "addAgendaItemOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.agendaItems.push({
+        id: action.input.id,
+        title: action.input.title,
+      });
     },
+
     updateAgendaItemOperation(state, action) {
-      // TODO: Implement "updateAgendaItemOperation" reducer
-      throw new Error(
-        'Reducer "updateAgendaItemOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const item = slide.agendaItems.find((i) => i.id === action.input.id);
+      if (!item) return;
+      item.title = action.input.title;
     },
+
     deleteAgendaItemOperation(state, action) {
-      // TODO: Implement "deleteAgendaItemOperation" reducer
-      throw new Error(
-        'Reducer "deleteAgendaItemOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.agendaItems.findIndex((i) => i.id === action.input.id);
+      if (idx !== -1) slide.agendaItems.splice(idx, 1);
     },
+
     reorderAgendaItemsOperation(state, action) {
-      // TODO: Implement "reorderAgendaItemsOperation" reducer
-      throw new Error(
-        'Reducer "reorderAgendaItemsOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.agendaItems.map((i) => [i.id, i]));
+      const reordered = action.input.itemIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.agendaItems.length = 0;
+      slide.agendaItems.push(...(reordered as typeof slide.agendaItems));
     },
+
     addMilestoneOperation(state, action) {
-      // TODO: Implement "addMilestoneOperation" reducer
-      throw new Error('Reducer "addMilestoneOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.milestones.push({
+        id: action.input.id,
+        period: action.input.period,
+        title: action.input.title,
+        description: action.input.description || null,
+      });
     },
+
     updateMilestoneOperation(state, action) {
-      // TODO: Implement "updateMilestoneOperation" reducer
-      throw new Error('Reducer "updateMilestoneOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const ms = slide.milestones.find((m) => m.id === action.input.id);
+      if (!ms) return;
+      if (action.input.period) ms.period = action.input.period;
+      if (action.input.title) ms.title = action.input.title;
+      if (
+        action.input.description !== undefined &&
+        action.input.description !== null
+      )
+        ms.description = action.input.description;
     },
+
     deleteMilestoneOperation(state, action) {
-      // TODO: Implement "deleteMilestoneOperation" reducer
-      throw new Error('Reducer "deleteMilestoneOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.milestones.findIndex((m) => m.id === action.input.id);
+      if (idx !== -1) slide.milestones.splice(idx, 1);
     },
+
     reorderMilestonesOperation(state, action) {
-      // TODO: Implement "reorderMilestonesOperation" reducer
-      throw new Error(
-        'Reducer "reorderMilestonesOperation" not yet implemented',
-      );
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.milestones.map((m) => [m.id, m]));
+      const reordered = action.input.milestoneIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.milestones.length = 0;
+      slide.milestones.push(...(reordered as typeof slide.milestones));
     },
   };

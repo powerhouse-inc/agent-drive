@@ -56,6 +56,13 @@
             "documentTypes": [
                 "powerhouse/agent-inbox"
             ]
+        },
+        {
+            "id": "achra-presentation-editor",
+            "name": "Achra Presentation Editor",
+            "documentTypes": [
+                "achra/presentation"
+            ]
         }
     ],
     "apps": [],

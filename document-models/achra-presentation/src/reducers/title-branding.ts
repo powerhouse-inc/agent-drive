@@ -3,19 +3,37 @@ import type { AchraPresentationTitleBrandingOperations } from "@powerhousedao/ag
 export const achraPresentationTitleBrandingOperations: AchraPresentationTitleBrandingOperations =
   {
     addLinkOperation(state, action) {
-      // TODO: Implement "addLinkOperation" reducer
-      throw new Error('Reducer "addLinkOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      slide.links.push({
+        id: action.input.id,
+        text: action.input.text,
+      });
     },
+
     updateLinkOperation(state, action) {
-      // TODO: Implement "updateLinkOperation" reducer
-      throw new Error('Reducer "updateLinkOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const link = slide.links.find((l) => l.id === action.input.id);
+      if (!link) return;
+      link.text = action.input.text;
     },
+
     deleteLinkOperation(state, action) {
-      // TODO: Implement "deleteLinkOperation" reducer
-      throw new Error('Reducer "deleteLinkOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const idx = slide.links.findIndex((l) => l.id === action.input.id);
+      if (idx !== -1) slide.links.splice(idx, 1);
     },
+
     reorderLinksOperation(state, action) {
-      // TODO: Implement "reorderLinksOperation" reducer
-      throw new Error('Reducer "reorderLinksOperation" not yet implemented');
+      const slide = state.slides.find((s) => s.id === action.input.slideId);
+      if (!slide) return;
+      const map = new Map(slide.links.map((l) => [l.id, l]));
+      const reordered = action.input.linkIds
+        .map((id) => map.get(id))
+        .filter(Boolean);
+      slide.links.length = 0;
+      slide.links.push(...(reordered as typeof slide.links));
     },
   };
