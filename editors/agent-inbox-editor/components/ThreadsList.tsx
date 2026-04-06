@@ -3,7 +3,7 @@ interface Thread {
   stakeholderId: string;
   stakeholderName: string;
   stakeholderRemoved?: boolean;
-  topic: string | null;
+  topic: string | null | undefined;
   status: string;
   lastMessage: string;
   lastMessageTime: string;
@@ -12,7 +12,7 @@ interface Thread {
 
 interface ThreadsListProps {
   threads: Thread[];
-  selectedThreadId: string | null;
+  selectedThreadId: string | null | undefined;
   onThreadSelect: (threadId: string) => void;
 }
 

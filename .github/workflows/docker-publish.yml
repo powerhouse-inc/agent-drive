@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Build and Publish Docker Images
 
 on:
   push:
@@ -16,15 +16,14 @@ on:
 
 env:
   VETRA_REGISTRY: cr.vetra.io
-  VETRA_IMAGE: cr.vetra.io/rupert/agent-drive
 
 jobs:
-  build-and-push:
+  prepare:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      branch: ${{ steps.version.outputs.branch }}
+      sha: ${{ steps.version.outputs.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,20 +33,30 @@ jobs:
       - name: Get version info
         id: version
         run: |
-          # Get short SHA
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
 
-          # Get branch name (sanitized for Docker tags)
           BRANCH=$(echo "${GITHUB_REF_NAME}" | sed 's/[^a-zA-Z0-9._-]/-/g')
           echo "branch=${BRANCH}" >> $GITHUB_OUTPUT
 
-          # Use input tag if provided, otherwise use branch-sha
           if [ -n "${{ github.event.inputs.tag }}" ]; then
             echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
           else
             echo "tag=${BRANCH}-${SHORT_SHA}" >> $GITHUB_OUTPUT
           fi
+
+  build-and-push:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        target: [connect, switchboard]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -59,29 +68,77 @@ jobs:
           username: ${{ secrets.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push ${{ matrix.target }} image
         uses: docker/build-push-action@v5
         with:
           context: .
-          target: switchboard
+          target: ${{ matrix.target }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.VETRA_IMAGE }}:${{ steps.version.outputs.tag }}
-            ${{ env.VETRA_IMAGE }}:${{ steps.version.outputs.branch }}
-            ${{ github.ref == 'refs/heads/main' && format('{0}:latest', env.VETRA_IMAGE) || '' }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ env.VETRA_REGISTRY }}/rupert/${{ matrix.target }}:${{ needs.prepare.outputs.tag }}
+            ${{ env.VETRA_REGISTRY }}/rupert/${{ matrix.target }}:${{ needs.prepare.outputs.branch }}
+            ${{ github.ref == 'refs/heads/main' && format('{0}/rupert/{1}:latest', env.VETRA_REGISTRY, matrix.target) || '' }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
 
-      - name: Output image info
-        if: github.event_name != 'pull_request'
+  update-k8s:
+    name: Update K8s Hosting
+    needs: [prepare, build-and-push]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout k8s-hosting repository
+        uses: actions/checkout@v4
+        with:
+          repository: powerhouse-inc/powerhouse-k8s-hosting
+          token: ${{ secrets.K8S_REPO_PAT }}
+          path: k8s-hosting
+
+      - name: Install yq
+        uses: mikefarah/yq@v4
+
+      - name: Update image tags
         run: |
-          echo "## Docker Image Published" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.VETRA_IMAGE }}:${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ steps.version.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ steps.version.outputs.branch }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "- \`latest\`" >> $GITHUB_STEP_SUMMARY
+          TAG="${{ needs.prepare.outputs.tag }}"
+          VALUES_FILE="k8s-hosting/tenants/rupert/rupert-values.yaml"
+
+          echo "Updating ${VALUES_FILE} with tag ${TAG}"
+
+          yq -i ".switchboard.image.tag = \"${TAG}\"" "$VALUES_FILE"
+          yq -i ".connect.image.tag = \"${TAG}\"" "$VALUES_FILE"
+
+          echo "Updated image tags to ${TAG}"
+
+      - name: Commit and push changes
+        run: |
+          cd k8s-hosting
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add tenants/rupert/rupert-values.yaml
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TAG="${{ needs.prepare.outputs.tag }}"
+            git commit -m "chore(rupert): update connect and switchboard to ${TAG}"
+            git push
           fi
+
+  summary:
+    needs: [prepare, build-and-push, update-k8s]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name != 'pull_request'
+    steps:
+      - name: Output image info
+        run: |
+          echo "## Docker Images Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | Tag |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| \`${{ env.VETRA_REGISTRY }}/rupert/connect\` | \`${{ needs.prepare.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`${{ env.VETRA_REGISTRY }}/rupert/switchboard\` | \`${{ needs.prepare.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**All tags:** \`${{ needs.prepare.outputs.tag }}\`, \`${{ needs.prepare.outputs.branch }}\`${{ github.ref == 'refs/heads/main' && ', `latest`' || '' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**K8s rollout:** ${{ needs.update-k8s.result }}" >> $GITHUB_STEP_SUMMARY

@@ -1,5 +1,5 @@
 import { generateId } from "document-model/core";
-import { useSelectedAgentProjectsDocument } from "../../document-models/agent-projects/hooks.js";
+import { useSelectedAgentProjectsDocument } from "@powerhousedao/agent-manager/document-models/agent-projects";
 import {
   createProject,
   runProject,

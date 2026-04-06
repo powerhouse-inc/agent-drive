@@ -1,17 +1,18 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, Fragment } from "react";
 import { generateId } from "document-model/core";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
-import type { AgentInboxAction } from "@powerhousedao/agent-manager/document-models/agent-inbox";
-import MarkdownIt from "markdown-it";
 import {
+  archiveThread,
+  confirmThreadResolved,
+  markMessageRead,
+  proposeThreadResolved,
+  reopenThread,
   sendStakeholderMessage,
   setThreadTopic,
-  proposeThreadResolved,
-  confirmThreadResolved,
-  archiveThread,
-  reopenThread,
-  markMessageRead,
-} from "../../../document-models/agent-inbox/gen/creators.js";
+  type AgentInboxAction,
+} from "@powerhousedao/agent-manager/document-models/agent-inbox";
+import MarkdownIt from "markdown-it";
+
 
 interface Message {
   id: string;
@@ -24,21 +25,21 @@ interface Message {
 interface Stakeholder {
   id: string;
   name: string;
-  avatar: string | null;
+  avatar: string | null | undefined;
   removed: boolean;
 }
 
 interface Agent {
-  name: string | null;
-  role: string | null;
-  ethAddress: string | null;
-  description: string | null;
-  avatar: string | null;
+  name: string | null | undefined;
+  role: string | null | undefined;
+  ethAddress: string | null | undefined;
+  description: string | null | undefined;
+  avatar: string | null | undefined;
 }
 
 interface Thread {
   id: string;
-  topic: string | null;
+  topic: string | null | undefined;
   stakeholder: string;
   status: string;
   messages: Message[];
@@ -223,12 +224,6 @@ export function MessageThread({
     const hasUnreadAgentMessages = thread.messages.some(
       (msg) => msg.flow === "Outgoing" && !msg.read,
     );
-
-    console.log("Scroll check:", {
-      isAtBottom,
-      hasUnreadAgentMessages,
-      hasMarkedAsRead,
-    });
 
     // If at bottom (100% scroll) and there are unread messages, start timer
     if (isAtBottom && hasUnreadAgentMessages && !hasMarkedAsRead) {
@@ -494,7 +489,7 @@ export function MessageThread({
                 );
 
                 return (
-                  <>
+                  <Fragment key={message.id}>
                     {/* New Messages Divider */}
                     {index === firstUnreadAgentMessageIndex && (
                       <div
@@ -509,7 +504,6 @@ export function MessageThread({
                       </div>
                     )}
                     <div
-                      key={message.id}
                       className={`flex ${isFromAgent ? "justify-start" : "justify-end"}`}
                     >
                       <div
@@ -596,7 +590,7 @@ export function MessageThread({
                         </div>
                       </div>
                     </div>
-                  </>
+                  </Fragment>
                 );
               })}
 

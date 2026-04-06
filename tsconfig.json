@@ -12,7 +12,6 @@
     "lib": ["ESNext", "dom", "dom.iterable"],
 
     // Other Outputs
-    "sourceMap": false,
     "declaration": true,
     "declarationMap": true,
 
@@ -38,5 +37,5 @@
     "skipLibCheck": true
   },
   "include": ["**/*", "./powerhouse.manifest.json"],
-  "exclude": ["dist", "node_modules", ".ph"]
+  "exclude": ["dist", "node_modules", ".ph", "vitest.config.ts"]
 }
